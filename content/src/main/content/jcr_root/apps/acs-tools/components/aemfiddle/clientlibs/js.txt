@@ -1,4 +1,8 @@
 #base=js
 
-aemfiddle.js
-splitpane.js
+angularjs/angular.js
+angularjs/angular-sanitize.js
+
+app.js
+app-controller.js
+split-pane.js

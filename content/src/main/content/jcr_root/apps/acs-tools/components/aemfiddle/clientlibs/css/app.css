@@ -1,0 +1,200 @@
+/* Z-Indexes */
+#notifications {
+    z-index: 10000;
+}
+
+.rail {
+    z-index: 1000;
+}
+
+#output {
+    z-index: 900;
+}
+
+/* Header */
+
+header .logo .spinner {
+    width: 27px;
+    height: 27px;
+    margin-top: .5rem;
+}
+
+
+header .drawer input.resource {
+    background-color: #333;
+    border: 1px solid #1F1F1F;
+    color: #DCDCDC;
+    margin: 0;
+    font-size: 0.85rem;
+    width: 250px;
+
+    -webkit-box-shadow: inset 0 2px 0 0 #111;
+    -moz-box-shadow: inset 0 2px 0 0 #111;
+    box-shadow: inset 0 2px 0 0 #111;
+}
+
+header .drawer input.resource:focus {
+    width: 500px;
+}
+
+header .drawer .run-code-button {
+    margin: 9px 1rem 0 1rem;
+    padding: 5px .5rem;
+}
+
+header .drawer .toggle-rail-button {
+    margin-top: 2px;
+}
+
+/* Rail */
+
+.rail {
+    position: absolute;
+    top: 0;
+    right: 0;;
+}
+
+.rail .badge {
+    margin-top: -3px;
+    float: right;
+}
+
+.rail section .divider {
+    margin: 0 .75em 0 .5em;
+    width: 1px;
+    border-right: solid 1px #666;
+    border-left: solid 1px #333;
+}
+
+/* Rail Controls */
+.rail {
+    border-left: solid 1px #444;
+}
+
+.rail .create-fiddle .fields {
+    margin: .5rem 0;
+}
+
+.rail .create-fiddle .fields label {
+    display: block;
+    margin-bottom: .25em;
+}
+
+.rail .create-fiddle .button {
+    min-width: 5rem;
+}
+
+/* MyFiddles List */
+
+.rail .myfiddles-list-wrapper {
+    position: relative;
+}
+
+.rail .myfiddles-list {
+    position: absolute;
+    top: 4.25rem;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow-y: auto;
+}
+
+.rail .myfiddles-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.rail .myfiddles-list ul li {
+    font-size: 1rem;
+    margin: 0;
+    padding: .6rem .5rem .5rem .5rem;
+    border-bottom: dotted 1px #333;
+}
+
+.rail .myfiddles-list ul li.active {
+    background-color: #333;
+}
+
+.rail .myfiddles-list ul li a {
+    color: #ccc;
+}
+
+.rail .myfiddles-list a.delete-button {
+    float :right;
+    color: red;
+}
+
+#ace-input,
+#output {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+}
+
+/* Input */
+#ace-input .ace_scrollbar {
+    background-color: #0F0F0F;
+}
+
+/* Output */
+
+.output-rendered,
+#ace-output {
+    top: 47px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+}
+
+#output .toolbar {
+    background-color: #EEEEEE;
+    border-bottom: solid 1px #D7D7D7;
+}
+
+#output .output-status {
+    line-height: 3rem;
+    white-space: nowrap;
+}
+
+#output .toolbar .toggle-output-icon {
+    margin-left: .5rem;
+}
+
+#output .output-rendered {
+    background-color: #fff;
+    overflow: auto;
+    padding: .5rem 2rem;
+}
+
+#output .welcome {
+    padding: 2rem 5rem;
+    color: #999;
+}
+
+#output .placeholder-bg {
+    background-image: url('../images/placeholder-bg.png');
+    background-position: center center;
+    background-repeat: no-repeat;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    position: absolute;
+}
+
+/* Notifications */
+#notifications {
+    position: absolute;
+    bottom: 15px;
+    right: 25px;
+    width: 500px;
+}
+
+#notifications ul {
+    list-style: none;
+}
+

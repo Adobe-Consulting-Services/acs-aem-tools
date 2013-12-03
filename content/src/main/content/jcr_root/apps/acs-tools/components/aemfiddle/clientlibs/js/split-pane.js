@@ -14,51 +14,17 @@
  *  limitations under the License.
  */
 
-/*global editor: false, outputSrc: false */
+/*global aemFiddle: false, moment: false, angular: false, confirm: false */
 $(function () {
     var MIN_WIDTH = 250,
-        $left = $('#editor-wrapper'),
-        $right = $('#output-wrapper'),
+        $left = $('#left-pane'),
+        $right = $('#right-pane'),
         $window = $(window);
-
-    function resize(event, ui) {
-        var percent = (ui.size.width / $window.width()) * 100;
-
-        $left.css('right', (100 - percent) + '%');
-        $right.css('left', percent + '%');
-
-        $left.data('width', 100 - percent);
-        $right.data('width', percent);
-
-        resizeOutputHeader();
-    };
-
-    $left.resizable({ handles: 'e', resize: resize, stop: stop });
-
-    reset();
-
-
-
-    function stop(event, ui) {
-        var leftPercent = ((ui.size.width / $window.width())) * 100 ;
-        $left.css('right', (100 - leftPercent) + '%');
-
-        var rightPercent = ($left.width() / $window.width()) * 100;
-        $right.css('left', rightPercent + '%');
-
-        $left.data('width', leftPercent);
-        $right.data('width', rightPercent);
-
-        editor.resize();
-        outputSrc.resize(true);
-
-        reset();
-    };
 
     function resizeOutputHeader() {
         var width = $right.width() - 100;
-        $('.output-status, .output-status-empty').css('width', width + 'px');
-    };
+        $('.output-status').css('width', width + 'px');
+    }
 
     function reset() {
         var maxWidth = $window.width() - MIN_WIDTH;
@@ -69,39 +35,74 @@ $(function () {
         $left.css('height', $right.height()).css('bottom', 0);
 
         resizeOutputHeader();
-    };
+    }
+
+    function resize(event, ui) {
+        if($right.data('hidden')) { return; }
+
+        var percent = (ui.size.width / $window.width()) * 100;
+
+        $left.css('right', (100 - percent) + '%');
+        $right.css('left', percent + '%');
+
+        /* Widths */
+        $left.data('width', 100 - percent);
+        $right.data('width', percent);
+
+        resizeOutputHeader();
+    }
+
+    function stop(event, ui) {
+        var leftPercent, rightPercent;
+        if($right.data('hidden')) { return; }
+
+        leftPercent = ((ui.size.width / $window.width())) * 100 ;
+        $left.css('right', (100 - leftPercent) + '%');
+
+        rightPercent = ($left.width() / $window.width()) * 100;
+        $right.css('left', rightPercent + '%');
+
+        /* Widths */
+        $left.data('width', leftPercent);
+        $right.data('width', rightPercent);
+
+        aemFiddle.ace.output.editor.resize();
+        aemFiddle.ace.input.editor.resize(true);
+
+        reset();
+    }
+
+    $left.resizable({ handles: 'e', resize: resize, stop: stop });
 
     $(window).resize(function() {
+        var $handle;
         // Set to auto to allow Window.resize to work
         $left.css('width', 'auto');
 
         if($window.width() < MIN_WIDTH * 2) {
             // Hide Right Pane and Handle
             if(!$right.data('hidden')) {
-                var $handle = $('.ui-resizable-handle');
+                $handle = $('.ui-resizable-handle');
 
                 $right.hide();
                 $right.data('hidden', true);
-                $handle.hide();
+                $handle.css('display', 'none');
                 $left.css('right', 0);
             }
         } else {
             // Re-Show Right Pane and Handle
             if($right.data('hidden')) {
-                var $handle = $('.ui-resizable-handle');
+                $handle = $('.ui-resizable-handle');
 
-                var leftPercent = $left.data('percent');
-                var rightPercent = $right.data('percent');
-
-                $left.css('right', leftPercent + '%');
-                $right.css('left', rightPercent + '%');
+                $left.css('right', '50%');
+                $right.css('left', '50%');
                 $right.show();
                 $right.data('hidden', false);
 
-                $handle.show();
+                $handle.css('display', 'block');
 
-                editor.resize();
-                outputSrc.resize();
+                aemFiddle.ace.output.editor.resize();
+                aemFiddle.ace.input.editor.resize();
             }
         }
 

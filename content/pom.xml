@@ -72,6 +72,7 @@
                     <predefinedVars>jQuery,window,$</predefinedVars>
                     <excludes>
                         <exclude>**/apps/acs-tools/components/aemfiddle/clientlibs/aceeditor/**/*.js</exclude>
+                        <exclude>**/apps/acs-tools/components/aemfiddle/clientlibs/js/angularjs/**/*.js</exclude>
                     </excludes>
                 </configuration>
             </plugin>
