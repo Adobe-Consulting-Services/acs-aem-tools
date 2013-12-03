@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
-    <filter root="/apps/acs-tools"/>
+    <filter root="/apps/acs-tools">
+      <exclude pattern="/apps/acs-tools/components/aemfiddle/fiddles/.*"/>
+    </filter>
+    <filter root="/etc/acs-tools"/>
 </workspaceFilter>
