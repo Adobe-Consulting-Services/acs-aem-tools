@@ -3,4 +3,5 @@
     jcr:primaryType="sling:OrderedFolder">
     <jcr:content jcr:primaryType="nt:unstructured"/>
     <aem-fiddle/>
+    <jsp-code-display/>
 </jcr:root>

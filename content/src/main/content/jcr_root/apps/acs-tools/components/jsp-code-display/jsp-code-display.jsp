@@ -48,6 +48,7 @@ if (line != null) {
     if (matcher.matches()) {
         String packageName = matcher.group(1);
         String fileName = matcher.group(4);
+        String lineNumber = matcher.group(5);
         
         Resource fileResource = resourceResolver.getResource("/var/classes/" + packageName.replace('.', '/') + "/" + fileName);
         InputStream instream = fileResource.adaptTo(InputStream.class);
@@ -60,7 +61,7 @@ $(window).load(function() {
     SyntaxHighlighter.highlight();
     // not sure why this needs to happen 1 second later.
     setTimeout(function() {
-        var line = $(".line.number83");
+        var line = $(".line.number<%= lineNumber %>");
         if (line.size() > 0) {
             $(document).scrollTop(line.position().top);
         }
