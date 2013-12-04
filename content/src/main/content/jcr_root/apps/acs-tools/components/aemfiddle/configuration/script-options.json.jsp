@@ -19,25 +19,38 @@
   --%>
 <%@include file="/libs/foundation/global.jsp" %><%
 %><%@page session="false" contentType="application/json; charset=utf-8" pageEncoding="UTF-8"
-  import="java.util.Map,
-      java.util.HashMap,
+  import="java.util.List,
       javax.script.ScriptEngineManager,
       javax.script.ScriptEngineFactory,
-      org.apache.sling.commons.json.JSONArray"
+      org.apache.sling.commons.json.JSONArray,
+      org.apache.sling.commons.json.JSONObject"
 %><%
   final ScriptEngineManager scriptEngineManager = sling.getService(ScriptEngineManager.class);
-  final JSONArray jsonArray = new JSONArray();  
+  final JSONArray jsonArray = new JSONArray();
 
   for(final ScriptEngineFactory scriptEngineFactory : scriptEngineManager.getEngineFactories()) {
-        if (scriptEngineFactory.getExtensions().isEmpty()) {
+        final List<String> extensions = scriptEngineFactory.getExtensions();
+        if (extensions.isEmpty()) {
           continue;
-        } 
+        }
+        final String languageName = scriptEngineFactory.getLanguageName();
 
-    final Map<String, String> map = new HashMap();
-        map.put("label", scriptEngineFactory.getLanguageName());
-        map.put("value", scriptEngineFactory.getExtensions().get(0));
+        if (extensions.contains("ecma") && extensions.contains("esp")) {
+            final JSONObject obj1 = new JSONObject();
+            obj1.put("label", languageName);
+            obj1.put("value", "ecma");
+            jsonArray.put(obj1);
 
-        jsonArray.put(map);
+            final JSONObject obj2 = new JSONObject();
+            obj2.put("label", "ESP");
+            obj2.put("value", "esp");
+            jsonArray.put(obj2);
+        } else {
+            final JSONObject obj = new JSONObject();
+            obj.put("label", languageName);
+            obj.put("value", extensions.get(0));
+            jsonArray.put(obj);
+        }
   } 
 %>
 <%= jsonArray.toString() %>

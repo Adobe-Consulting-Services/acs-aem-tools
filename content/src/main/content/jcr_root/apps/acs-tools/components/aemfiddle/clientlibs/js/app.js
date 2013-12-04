@@ -54,11 +54,13 @@ aemFiddle.ace = {
             aemFiddle.ace.input.editor.getSelection().clearSelection();
         },
         supportsMode: function(scriptExt) {
-            var supportedExts = [ 'ecma', 'ftl', 'groovy', 'java', 'jsp','jst', 'py' ,'scala', 'vtl'];
+            var supportedExts = [ 'ecma', 'esp', 'ftl', 'groovy', 'java', 'jsp','jst', 'py' ,'scala', 'vtl'];
             return supportedExts.indexOf(scriptExt) !== -1;
         }, 
         setMode: function(scriptExt) {
-            if('ecma' === scriptExt) {
+            if ('ecma' === scriptExt) {
+                aemFiddle.ace.input.editor.getSession().setMode("ace/mode/javascript");                
+            } else if ('esp' === scriptExt) {
                 aemFiddle.ace.input.editor.getSession().setMode("ace/mode/ejs");                
             } else if ('erb' === scriptExt) { 
                 aemFiddle.ace.input.editor.getSession().setMode("ace/mode/html_ruby");                
