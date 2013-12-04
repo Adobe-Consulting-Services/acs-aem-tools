@@ -50,7 +50,7 @@ aemFiddle.controller('CodeCtrl', ['$scope', '$http', '$timeout', function($scope
     /* Defaults */
     $scope.data.ui.scriptExtOptions = [
         { label: 'Java Server Pages', value: 'jsp' },
-        { label: 'java Servlet Compiler', value: 'java'}
+        { label: 'Java Servlet Compiler', value: 'java'}
     ];
 
 
