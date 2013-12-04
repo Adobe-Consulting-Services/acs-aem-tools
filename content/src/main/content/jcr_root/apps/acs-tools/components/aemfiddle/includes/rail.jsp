@@ -90,7 +90,7 @@
                        href="#delete">Delete</a>
 
                     <a ng-click="myfiddles.load(fiddle)"
-                       href="#load">{{fiddle.title}}</a>
+                       href="#load">{{fiddle.title}}<span class="script-extension">.{{fiddle.scriptExt}}</span></a>
 
                 </li>
             </ul>

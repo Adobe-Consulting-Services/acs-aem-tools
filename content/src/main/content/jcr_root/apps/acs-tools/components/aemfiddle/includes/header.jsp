@@ -42,6 +42,12 @@
                placeholder="Absolute path to resource"
                class="resource"/>
 
+        <!-- Script language -->
+        <select ng-model="data.execution.params.scriptExt"
+              ng-options="option.value as option.label for option in data.ui.scriptExtOptions"
+              class="script-language-select">
+        </select>
+
         <%-- Run Code Button --%>
         <button ng-click="app.run('<%= runURL %>')"
                 class="primary run-code-button">
