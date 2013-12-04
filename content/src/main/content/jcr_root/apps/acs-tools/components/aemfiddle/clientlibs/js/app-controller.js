@@ -28,6 +28,7 @@ aemFiddle.controller('CodeCtrl', ['$scope', '$http', '$timeout', function($scope
     /* App Data */
     $scope.data.app = {
         runURL: $('#app-data').data('run-url'),
+        resourcePath: $('#app-data').data('resource-path'),
         myFiddlesPath: $('#app-data').data('myfiddles-path'),
         currentPagePath:  $('#app-data').data('current-page-path')
     };
@@ -46,10 +47,10 @@ aemFiddle.controller('CodeCtrl', ['$scope', '$http', '$timeout', function($scope
             visible: false
         }
     };
+    /* Defaults */
     $scope.data.ui.scriptExtOptions = [
-        { label: 'JSP', value: 'jsp', aceMode: 'jsp' },
-        { label: 'ECMA', value: 'esp', aceMode: 'javascript' },
-        { label: 'Groovy', value: 'groovy', aceMode: 'groovy' }
+        { label: 'Java Server Pages', value: 'jsp' },
+        { label: 'java Servlet Compiler', value: 'java'}
     ];
 
 
@@ -124,20 +125,19 @@ aemFiddle.controller('CodeCtrl', ['$scope', '$http', '$timeout', function($scope
             $scope.data.execution.running = false;
             $scope.data.execution.count++;
 
-            if(status !== 200) {
-                $scope.ui.notify('notice', 'Warning', 'Your code contains errors. See output for details.');
-            }
         }).error(function(data, status, headers, config) {
             $scope.data.execution.result = {
                 success: false,
-                executedAt: new Date().getTime(), //moment().format('h:mm:ss a'),
+                executedAt: new Date().getTime(),
                 resource: $scope.data.execution.params.resource || $scope.data.app.currentPagePath,
                 data: data
             };
 
             aemFiddle.ace.output.load(data);
-
+            $scope.data.ui.output.hasData = true;
             $scope.data.execution.running = false;
+            $scope.data.execution.count++;
+
             $scope.ui.notify('notice', 'Warning', 'Your code contains errors. See output for details.');        
         });
     };
@@ -254,7 +254,7 @@ aemFiddle.controller('CodeCtrl', ['$scope', '$http', '$timeout', function($scope
                     $scope.data.myfiddles.list,
                     $scope.data.myfiddles.current);
 
-            // Set extension 
+            // Set extension    
             $scope.data.execution.params.scriptExt = data.scriptext || 'jsp';
             
             // Reload input
@@ -392,7 +392,22 @@ aemFiddle.controller('CodeCtrl', ['$scope', '$http', '$timeout', function($scope
 
 
     /* Initialization */
+
     $scope.myfiddles.list($scope.data.app.myFiddlesPath);
     /* Store initial input src for use during reset */
     $scope.data.execution.initialSrc = aemFiddle.ace.input.editor.getValue();
+
+    /* Get script language options from Server */
+    $http.get(
+        $scope.data.app.resourcePath + '.configuration.script-options.json'
+    ).then(function (response) {
+        $scope.data.ui.scriptExtOptions = [];
+
+        angular.forEach(response.data, function(value, key) {
+            if(aemFiddle.ace.input.supportsMode(value.value)) {
+                $scope.data.ui.scriptExtOptions.push(value);
+            }
+        });
+    });
+
 }]);

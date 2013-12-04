@@ -31,7 +31,8 @@
     final UserProperties userProperties = upm.getUserProperties(authorizable, "profile");
 
     /* App Data */
-    final String runURL = resourceResolver.map(resource.getPath()) + ".run.html";
+    final String resourcePath = resourceResolver.map(resource.getPath());
+    final String runURL = resourcePath + ".run.html";
     final String myFiddlesPath = resourceResolver.map(userProperties.getNode().getPath() + "/" + SAVE_TO);
     final String currentPagePath = resourceResolver.map(currentPage.getPath());
 
@@ -52,6 +53,7 @@
     <body ng-controller="CodeCtrl">
         <div id="app-data"
              data-run-url="<%= runURL %>"
+             data-resource-path="<%= resourcePath %>"
              data-myfiddles-path="<%= myFiddlesPath %>"
              data-current-page-path="<%= currentPagePath %>"
         ></div>

@@ -52,22 +52,32 @@ aemFiddle.ace = {
             aemFiddle.ace.input.editor.scrollToRow(0);
             aemFiddle.ace.input.editor.gotoLine(12, 0, false);
             aemFiddle.ace.input.editor.getSelection().clearSelection();
-        }, setMode: function(scriptExt) {
-            if('esp' === scriptExt) {
+        },
+        supportsMode: function(scriptExt) {
+            var supportedExts = [ 'ecma', 'ftl', 'groovy', 'java', 'jsp','jst', 'py' ,'scala', 'vtl'];
+            return supportedExts.indexOf(scriptExt) !== -1;
+        }, 
+        setMode: function(scriptExt) {
+            if('ecma' === scriptExt) {
                 aemFiddle.ace.input.editor.getSession().setMode("ace/mode/ejs");                
-            } else if ('groovy' === scriptExt) { 
-                aemFiddle.ace.input.editor.getSession().setMode("ace/mode/groovy");                
             } else if ('erb' === scriptExt) { 
                 aemFiddle.ace.input.editor.getSession().setMode("ace/mode/html_ruby");                
-            } else if ('scala' === scriptExt) { 
-                aemFiddle.ace.input.editor.getSession().setMode("ace/mode/scala");                
-            } else if ('py' === scriptExt) { 
-                aemFiddle.ace.input.editor.getSession().setMode("ace/mode/python");                
             } else if ('ftl' === scriptExt) { 
                 aemFiddle.ace.input.editor.getSession().setMode("ace/mode/ftl");                
+            } else if ('groovy' === scriptExt) { 
+                aemFiddle.ace.input.editor.getSession().setMode("ace/mode/groovy");                
+            } else if ('java' === scriptExt) { 
+                aemFiddle.ace.input.editor.getSession().setMode("ace/mode/java");                
+            } else if ('jst' === scriptExt) { 
+                aemFiddle.ace.input.editor.getSession().setMode("ace/mode/ejs");                
+            } else if ('py' === scriptExt) { 
+                aemFiddle.ace.input.editor.getSession().setMode("ace/mode/python");                
+            } else if ('scala' === scriptExt) { 
+                aemFiddle.ace.input.editor.getSession().setMode("ace/mode/scala");                
             } else if ('vtl' === scriptExt) { 
                 aemFiddle.ace.input.editor.getSession().setMode("ace/mode/velocity");                
             } else {
+                // JSP as default
                 aemFiddle.ace.input.editor.getSession().setMode("ace/mode/jsp");                
             }
         }
