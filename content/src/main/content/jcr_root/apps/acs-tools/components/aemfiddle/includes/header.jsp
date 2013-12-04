@@ -43,7 +43,7 @@
                class="resource"/>
 
         <%-- Run Code Button --%>
-        <button ng-click="app.run('<%= runURL %>', '<%= executeURL %>')"
+        <button ng-click="app.run('<%= runURL %>')"
                 class="primary run-code-button">
             <span ng-hide="data.execution.running">Run Code</span>
             <span ng-show="data.execution.running">Running Code...</span>

@@ -39,9 +39,8 @@ aemFiddle.ace = {
                 name: 'RunCodeCommand',
                 bindKey: { win: 'Ctrl-S', mac: 'Command-K' },
                 exec: function (editor) {
-                    var runURL = $('#app-data').data('run-url'),
-                    executeURL = $('#app-data').data('execute-url');
-                    angular.element($('body')).scope().app.run(runURL, executeURL);
+                    var runURL = $('#app-data').data('run-url');
+                    angular.element($('body')).scope().app.run(runURL);
 
                  },
                 readOnly: true // false if this command should not apply in readOnly mode

@@ -25,16 +25,13 @@
                 org.apache.sling.api.resource.Resource" %><%
 
     final String SAVE_TO = "fiddles";
-    final String executeSelector = "execute";
-    final String fiddleScript = "/apps/acs-tools/components/aemfiddle/fiddles/" + executeSelector +".jsp";
 
     final UserPropertiesManager upm = resourceResolver.adaptTo(UserPropertiesManager.class);
     final Authorizable authorizable = resourceResolver.adaptTo(Authorizable.class);
     final UserProperties userProperties = upm.getUserProperties(authorizable, "profile");
 
     /* App Data */
-    final String runURL = resourceResolver.map(fiddleScript);
-    final String executeURL = resourceResolver.map(resource.getPath()) + "." + executeSelector;
+    final String runURL = resourceResolver.map(resource.getPath()) + ".run.html";
     final String myFiddlesPath = resourceResolver.map(userProperties.getNode().getPath() + "/" + SAVE_TO);
     final String currentPagePath = resourceResolver.map(currentPage.getPath());
 
@@ -51,9 +48,9 @@
         <cq:includeClientLib css="aemfiddle.app"/>
     </head>
 
+
     <body ng-controller="CodeCtrl">
         <div id="app-data"
-             data-execute-url="<%= executeURL %>"
              data-run-url="<%= runURL %>"
              data-myfiddles-path="<%= myFiddlesPath %>"
              data-current-page-path="<%= currentPagePath %>"

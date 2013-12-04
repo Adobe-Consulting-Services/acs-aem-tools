@@ -28,7 +28,6 @@ aemFiddle.controller('CodeCtrl', ['$scope', '$http', '$timeout', function($scope
     /* App Data */
     $scope.data.app = {
         runURL: $('#app-data').data('run-url'),
-        executeURL: $('#app-data').data('execute-url'),
         myFiddlesPath: $('#app-data').data('myfiddles-path'),
         currentPagePath:  $('#app-data').data('current-page-path')
     };
@@ -83,7 +82,7 @@ aemFiddle.controller('CodeCtrl', ['$scope', '$http', '$timeout', function($scope
 
     /* Core Execution Methods */
 
-    $scope.app.run = function(runURL, executeURL) {
+    $scope.app.run = function(runURL) {
         if($scope.app.throttle()) {
             return;
         }
@@ -98,43 +97,10 @@ aemFiddle.controller('CodeCtrl', ['$scope', '$http', '$timeout', function($scope
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
             },
             data: $.param({
-                './jcr:primaryType': 'nt:file',
-                './jcr:content/jcr:primaryType': 'nt:resource',
-                './jcr:content/jcr:mimeType': 'text/plain',
-                './jcr:content/jcr:encoding': 'utf-8',
-                './jcr:content/jcr:lastModified': moment().format(),
-                './jcr:content/jcr:lastModified@TypeHint': 'Date',
-                './jcr:content/jcr:data': aemFiddle.ace.input.editor.getValue(),
-                './jcr:content/jcr:data@TypeHint': 'Binary'
-            })
-        }).success(function(data, status, headers, config) {
-            $scope.app.execute(executeURL);
-        }).error(function(data, status, headers, config) {
-            $scope.data.execution.result.data = data;
-            aemFiddle.ace.output.load(data);
-
-            $scope.data.execution.running = false;
-            $scope.ui.notify('error', 'Error', 'Your code could not be saved to AEM for execution.');
-        });
-    };
-
-
-    /**
-     * Execute current fiddle against the provided resource
-     **/
-    $scope.app.execute = function(url) {
-
-        $http({
-            method: 'GET',
-            url: url,
-            headers: {
-                'Accept': '*/*',
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-            },
-            params: {
-                't': new Date().getTime(),
+                'scriptdata': aemFiddle.ace.input.editor.getValue(),
+                'scriptext' : 'jsp',
                 'resource': $scope.data.execution.params.resource
-            }
+            })
         }).success(function(data, status, headers, config) {
             $scope.data.execution.result = {
                 success: true,
@@ -151,7 +117,6 @@ aemFiddle.controller('CodeCtrl', ['$scope', '$http', '$timeout', function($scope
             if(status !== 200) {
                 $scope.ui.notify('notice', 'Warning', 'Your code contains errors. See output for details.');
             }
-
         }).error(function(data, status, headers, config) {
             $scope.data.execution.result = {
                 success: false,
@@ -163,8 +128,7 @@ aemFiddle.controller('CodeCtrl', ['$scope', '$http', '$timeout', function($scope
             aemFiddle.ace.output.load(data);
 
             $scope.data.execution.running = false;
-            $scope.ui.notify('notice', 'Warning', 'Your code contains errors. See output for details.');
-        });
+            $scope.ui.notify('notice', 'Warning', 'Your code contains errors. See output for details.');        });
     };
 
     $scope.app.throttle = function() {
