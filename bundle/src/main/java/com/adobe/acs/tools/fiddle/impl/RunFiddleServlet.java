@@ -2,6 +2,7 @@ package com.adobe.acs.tools.fiddle.impl;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -21,7 +22,7 @@ import org.osgi.service.event.EventAdmin;
 @SuppressWarnings("serial")
 @SlingServlet(resourceTypes = "acs-tools/components/aemfiddle", selectors = "run", methods = "POST")
 public class RunFiddleServlet extends SlingAllMethodsServlet {
-    
+
     @Reference
     private EventAdmin eventAdmin;
 
@@ -34,9 +35,12 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
         final String ext = request.getParameter("scriptext");
 
         InMemoryScript script = InMemoryScript.set(ext, data);
-        
-        eventAdmin.sendEvent(new Event(SlingConstants.TOPIC_RESOURCE_CHANGED, Collections.singletonMap(
-                SlingConstants.PROPERTY_PATH, script.getPath())));
+
+        // doing this as a synchronous event so we ensure that 
+        // the JSP has been invalidated
+        Map<String, String> props = Collections.singletonMap(
+                SlingConstants.PROPERTY_PATH, script.getPath());
+        eventAdmin.sendEvent(new Event(SlingConstants.TOPIC_RESOURCE_CHANGED, props));
 
         final RequestDispatcherOptions options = new RequestDispatcherOptions();
         options.setForceResourceType(Constants.PSEDUO_COMPONENT_PATH);
