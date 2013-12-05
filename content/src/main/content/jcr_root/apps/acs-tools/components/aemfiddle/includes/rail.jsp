@@ -48,13 +48,6 @@
                class="icon-add"
                title="Create new fiddle">Create</a>
 
-            <span class="divider"></span>
-
-            <a href="#reset"
-               ng-disabled="data.ui.myfiddles.createFiddle.visible"
-               ng-click="app.reset()"
-               class="icon-refresh"
-               title="Reset">Reset</a>
         </section>
 
         <%-- Create Fiddle Form --%>

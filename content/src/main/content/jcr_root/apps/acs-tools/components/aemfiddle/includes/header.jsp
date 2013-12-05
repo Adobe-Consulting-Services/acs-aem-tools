@@ -36,17 +36,28 @@
     </nav>
 
     <div class="drawer">
+        <!-- Script language -->
+        <select ng-model="data.ui.scriptExtOption"
+              ng-options="option.value as option.label for option in data.ui.scriptExtOptions"
+              class="script-language-select">
+        </select> 
+        
+        <!-- New Fiddle -->
+        <a href="#new"
+           ng-disabled="data.ui.myfiddles.createFiddle.visible"
+           ng-click="app.new()"
+           class="icon-add medium"
+           title="New">New Fiddle</a>
+
+        <span class="divider"></span>
+
         <%-- Resource Execution Context --%>
         <input ng-model="data.execution.params.resource"
                type="text"
                placeholder="Absolute path to resource"
                class="resource"/>
 
-        <!-- Script language -->
-        <select ng-model="data.execution.params.scriptExt"
-              ng-options="option.value as option.label for option in data.ui.scriptExtOptions"
-              class="script-language-select">
-        </select>
+        <span class="divider"></span>
 
         <%-- Run Code Button --%>
         <button ng-click="app.run('<%= runURL %>')"
