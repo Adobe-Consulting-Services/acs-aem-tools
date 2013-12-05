@@ -47,12 +47,10 @@ aemFiddle.controller('CodeCtrl', ['$scope', '$http', '$timeout', function($scope
             visible: false
         }
     };
-    /* Defaults */
-    $scope.data.ui.scriptExtOptions = [
-        { label: 'Java Server Pages', value: 'jsp' },
-        { label: 'Java Servlet Compiler', value: 'java'}
-    ];
-
+    
+    /* Defaults */    
+    $scope.data.ui.scriptExtOption = 'jsp';
+    $scope.data.ui.scriptExtOptions = [];
 
     /* Execution Data */
     $scope.data.execution = {
@@ -82,9 +80,14 @@ aemFiddle.controller('CodeCtrl', ['$scope', '$http', '$timeout', function($scope
     /* Notifications */
     $scope.data.notifications = [];
 
+    /* Templates */
+    $scope.data.templates = [];
+
+
 
     /* Watchers */
     $scope.$watch('data.execution.params.scriptExt', function(newValue, oldValue) {
+        $scope.data.ui.scriptExtOption = newValue;
         aemFiddle.ace.input.setMode(newValue);
     });
 
@@ -94,6 +97,7 @@ aemFiddle.controller('CodeCtrl', ['$scope', '$http', '$timeout', function($scope
     $scope.execution = {};
     $scope.myfiddles = {};
     $scope.ui = {};
+    $scope.util = {};
 
     /* Core Execution Methods */
 
@@ -143,15 +147,23 @@ aemFiddle.controller('CodeCtrl', ['$scope', '$http', '$timeout', function($scope
     };
 
     /* Core App Methods */
-    $scope.app.reset = function() {
-        var confirmReset = confirm("Are you sure you want to reset? All unsaved code will be lost.");
+    $scope.app['new'] = function(skipConfirm) {
+        var scriptExt = $scope.data.ui.scriptExtOption,
+            resetConfirmed = false;
 
-        if(confirmReset) {
+        if(skipConfirm || !aemFiddle.ace.input.isDirty()) {
+            resetConfirmed = true;
+        } else {
+            resetConfirmed = confirm("Are you sure you want a new fiddle? All unsaved code will be lost.");
+        }
+
+        if(resetConfirmed) {
             // Reset input to default code
-            aemFiddle.ace.input.load($scope.data.execution.initialSrc);
+            aemFiddle.ace.input.load($scope.util.getDefaultTemplate(scriptExt), scriptExt);
+            $scope.data.execution.params.scriptExt = scriptExt;
+
             // Clear output
             aemFiddle.ace.output.load('');
-            $scope.data.execution.params.scriptExt = 'jsp';
             $scope.data.execution.result = {
                 data: '',
                 executedAt: 0,
@@ -241,6 +253,12 @@ aemFiddle.controller('CodeCtrl', ['$scope', '$http', '$timeout', function($scope
         var url = '';
         if(fiddle && fiddle.path) {  url = fiddle.path; }
 
+        if(aemFiddle.ace.input.isDirty()) {
+            if(!confirm("Loading this fiddle will lose all unsaved changes.")) {
+                return;
+            }
+        }
+
         $http({
             method: 'GET',
             url: url + '.json',
@@ -258,7 +276,7 @@ aemFiddle.controller('CodeCtrl', ['$scope', '$http', '$timeout', function($scope
             $scope.data.execution.params.scriptExt = data.scriptext || 'jsp';
             
             // Reload input
-            aemFiddle.ace.input.load(data.scriptdata);
+            aemFiddle.ace.input.load(data.scriptdata, data.scriptext);
 
              // Clear output
             aemFiddle.ace.output.load('');
@@ -391,23 +409,49 @@ aemFiddle.controller('CodeCtrl', ['$scope', '$http', '$timeout', function($scope
     };
 
 
-    /* Initialization */
-
-    $scope.myfiddles.list($scope.data.app.myFiddlesPath);
-    /* Store initial input src for use during reset */
-    $scope.data.execution.initialSrc = aemFiddle.ace.input.editor.getValue();
-
-    /* Get script language options from Server */
-    $http.get(
-        $scope.data.app.resourcePath + '.configuration.script-options.json'
-    ).then(function (response) {
-        $scope.data.ui.scriptExtOptions = [];
-
-        angular.forEach(response.data, function(value, key) {
-            if(aemFiddle.ace.input.supportsMode(value.value)) {
-                $scope.data.ui.scriptExtOptions.push(value);
+    $scope.util.getDefaultTemplate = function(scriptExt) {
+        var templateData = '';
+        angular.forEach($scope.data.templates, function(template, key) {
+            if(!templateData && template['default'] && (template.scriptExt === scriptExt)) {
+                templateData = template.scriptData;
             }
         });
-    });
+
+        return templateData;
+    };
+
+
+    /* App Initialization */
+
+    var init = function () {
+        $scope.myfiddles.list($scope.data.app.myFiddlesPath);
+        /* Store initial input src for use during reset */
+
+        /* Get script language options from Server */
+        $http.get(
+            $scope.data.app.resourcePath + '.configuration.script-options.json'
+        ).then(function (response) {
+            $scope.data.ui.scriptExtOptions = [];
+
+            angular.forEach(response.data, function(value, key) {
+                $scope.data.ui.scriptExtOptions.push(value);
+            });
+        });
+
+        /* Get code templates */
+        $http.get(
+            $scope.data.app.resourcePath + '.configuration.code-templates.json'
+        ).then(function (response) {
+            $scope.data.templates = [];
+
+            angular.forEach(response.data, function(value, key) {
+                $scope.data.templates.push(value);
+            });
+
+            $scope.app['new'](true);
+        });
+    };
+
+    init();  
 
 }]);
