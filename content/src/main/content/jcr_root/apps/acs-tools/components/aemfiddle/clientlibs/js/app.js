@@ -37,26 +37,26 @@ aemFiddle.ace = {
             aemFiddle.ace.input.editor.gotoLine(12);
             aemFiddle.ace.input.editor.commands.addCommand({
                 name: 'RunCodeCommand',
-                bindKey: { win: 'Ctrl-S', mac: 'Command-K' },
+                bindKey: { win: 'Ctrl-K', mac: 'Command-K' },
                 exec: function (editor) {
                     var runURL = $('#app-data').data('run-url');
                     angular.element($('body')).scope().app.run(runURL);
-
                  },
                 readOnly: true // false if this command should not apply in readOnly mode
             });
+            aemFiddle.ace.input.editor.getSession().on('change', function() {
+                aemFiddle.ace.input.setDirty(true);
+            });
         },
-        load: function(data) {
+        load: function(data, scriptExt) {
             aemFiddle.ace.input.editor.setValue(data);
+            aemFiddle.ace.input.setMode(scriptExt);
             aemFiddle.ace.input.editor.scrollToLine(0);
             aemFiddle.ace.input.editor.scrollToRow(0);
             aemFiddle.ace.input.editor.gotoLine(12, 0, false);
             aemFiddle.ace.input.editor.getSelection().clearSelection();
+            aemFiddle.ace.input.setDirty(false);
         },
-        supportsMode: function(scriptExt) {
-            var supportedExts = [ 'ecma', 'esp', 'ftl', 'groovy', 'java', 'jsp','jst', 'py' ,'scala', 'vtl'];
-            return supportedExts.indexOf(scriptExt) !== -1;
-        }, 
         setMode: function(scriptExt) {
             if ('ecma' === scriptExt) {
                 aemFiddle.ace.input.editor.getSession().setMode("ace/mode/javascript");                
@@ -70,6 +70,8 @@ aemFiddle.ace = {
                 aemFiddle.ace.input.editor.getSession().setMode("ace/mode/groovy");                
             } else if ('java' === scriptExt) { 
                 aemFiddle.ace.input.editor.getSession().setMode("ace/mode/java");                
+            } else if ('jsp' === scriptExt) { 
+                aemFiddle.ace.input.editor.getSession().setMode("ace/mode/jsp");                
             } else if ('jst' === scriptExt) { 
                 aemFiddle.ace.input.editor.getSession().setMode("ace/mode/ejs");                
             } else if ('py' === scriptExt) { 
@@ -79,10 +81,18 @@ aemFiddle.ace = {
             } else if ('vtl' === scriptExt) { 
                 aemFiddle.ace.input.editor.getSession().setMode("ace/mode/velocity");                
             } else {
-                // JSP as default
-                aemFiddle.ace.input.editor.getSession().setMode("ace/mode/jsp");                
+                // HTML as default
+                aemFiddle.ace.input.editor.getSession().setMode("ace/mode/html");                
             }
+        },
+        isDirty: function() {
+            return aemFiddle.ace.input.editor.getSession().dirty;
+        }, 
+        setDirty: function(dirty) {
+            aemFiddle.ace.input.editor.getSession().dirty = dirty;
+            return dirty;            
         }
+
     },
     output: {
         editor: ace.edit("ace-output"),
