@@ -2,4 +2,5 @@
 <workspaceFilter version="1.0">
     <filter root="/apps/acs-tools" />
     <filter root="/etc/acs-tools"/>
+    <filter root="/etc/clientlibs/acs-tools"/>
 </workspaceFilter>
