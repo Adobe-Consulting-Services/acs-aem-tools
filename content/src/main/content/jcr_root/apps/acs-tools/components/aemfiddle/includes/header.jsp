@@ -25,34 +25,39 @@
 
     <%-- Logo --%>
     <div class="logo">
-        <span ng-hide="data.execution.running"><a href="/"><i class="icon-marketingcloud medium"></i></a></span>
-        <span ng-show="data.execution.running"><span class="spinner"></span></span>
+        <span ng-hide="data.app.running"><a href="/"><i class="icon-marketingcloud medium"></i></a></span>
+        <span ng-show="data.app.running"><span class="spinner"></span></span>
     </div>
 
     <%-- Limited Breadcrumbs --%>
     <nav class="crumbs">
         <a href="/miscadmin">Tools</a>
         <a href="<%= currentPagePath %>.html">AEM Fiddle</a>
+        <a href="#">{{ data.src.scriptExt }}</a>      
     </nav>
 
     <div class="drawer">
-        <!-- Script language -->
-        <select ng-model="data.ui.scriptExtOption"
-              ng-options="option.value as option.label for option in data.ui.scriptExtOptions"
-              class="script-language-select">
-        </select> 
         
-        <!-- New Fiddle -->
-        <a href="#new"
-           ng-disabled="data.ui.myfiddles.createFiddle.visible"
-           ng-click="app.new()"
-           class="icon-add medium"
-           title="New">New Fiddle</a>
+        <!-- POC 
+        <a href="#popover-new" 
+          data-toggle="popover" 
+          data-point-from="bottom" 
+          data-align-from="right"
+          class="icon-add medium">New</a>
+        
+        <div id="popover-new" class="popover arrow-right">
+          <ul>
+            <li ng-repeat="scriptExtOption in data.ui.scriptExtOptions">
+                <a ng-click="app.new(scriptExtOption.value, false)"
+                    href="#new-{{scriptExtOption.value}}">{{scriptExtOption.label}}</a>
+            </li>
+          </ul>
+        </div>-->
 
         <span class="divider"></span>
 
         <%-- Resource Execution Context --%>
-        <input ng-model="data.execution.params.resource"
+        <input ng-model="data.src.resource"
                type="text"
                placeholder="Absolute path to resource"
                class="resource"/>
@@ -62,8 +67,8 @@
         <%-- Run Code Button --%>
         <button ng-click="app.run('<%= runURL %>')"
                 class="primary run-code-button">
-            <span ng-hide="data.execution.running">Run Code</span>
-            <span ng-show="data.execution.running">Running Code...</span>
+            <span ng-hide="data.app.running">Run Code</span>
+            <span ng-show="data.app.running">Running Code...</span>
         </button>
 
         <span class="divider"></span>

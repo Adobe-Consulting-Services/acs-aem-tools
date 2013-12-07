@@ -50,7 +50,7 @@
     </head>
 
 
-    <body ng-controller="CodeCtrl">
+    <body ng-controller="MainCtrl">
         <div id="app-data"
              data-run-url="<%= runURL %>"
              data-resource-path="<%= resourcePath %>"
@@ -66,6 +66,7 @@
             <div class="content">
                 <div id="left-pane">
                     <%@include file="includes/input.jsp" %>
+                    
                     <%-- Resize strip/handle --%>
                     <div id="handle" class="ui-resizable-handle ui-resizable-e"></div>
                 </div>
