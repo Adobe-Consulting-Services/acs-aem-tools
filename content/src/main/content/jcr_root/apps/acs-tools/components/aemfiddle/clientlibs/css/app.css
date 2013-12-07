@@ -38,6 +38,26 @@ header .logo .spinner {
     margin-top: .5rem;
 }
 
+header #popover-new {
+}
+
+header #popover-new ul,
+header #popover-new li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+header #popover-new a {
+    display: block;
+    padding: 0 1rem;
+}
+
+header #popover-new a:hover {
+    background-color: #ccc;
+    text-decoration: none;
+}
+
 
 header .drawer input.resource,
 header .drawer select.script-language-select {

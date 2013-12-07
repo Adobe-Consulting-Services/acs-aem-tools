@@ -37,9 +37,9 @@
             <span class="output-status">
                 <span ng-show="data.ui.output.hasData">
                     Executed at
-                    [ {{data.execution.result.executedAt | date:'h:mm:ss a'}} ]
+                    [ {{data.result.executedAt | date:'h:mm:ss a'}} ]
                     against
-                    [ {{data.execution.result.resource}} ]
+                    [ {{data.result.resource}} ]
                 </span>
 
                 <span ng-hide="data.ui.output.hasData">
@@ -92,6 +92,6 @@
             </div>
          </div>
 
-        <div ng-bind-html="data.execution.result.data" ng-show="data.ui.output.hasData"></div>
+        <div ng-bind-html="data.result.data" ng-show="data.ui.output.hasData"></div>
     </div>
 </div>

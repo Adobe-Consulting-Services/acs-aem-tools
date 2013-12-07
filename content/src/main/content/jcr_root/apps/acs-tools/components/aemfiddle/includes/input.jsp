@@ -24,7 +24,6 @@
 
 <div id="input">
     <%-- ACE Editor bound to #ace-input --%>
-    <div id="ace-input"
-         class="code-editor"></div>
+    <div id="ace-input" class="code-editor"></div>
 </div>
 
