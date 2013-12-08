@@ -56,12 +56,11 @@
         <span class="divider"></span>
 
         <!-- New -->
-
         <a href="#popover-new"
            data-toggle="popover"
            data-point-from="bottom"
            data-align-from="right"
-           class="icon-add medium action-icon-medium">New</a>
+           class="icon-add-circle medium action-icon-medium">New</a>
 
         <div id="popover-new" class="popover arrow-right">
             <ul>
@@ -76,7 +75,6 @@
 
         <%-- Rail Toggle Button --%>
         <a ng-click="ui.toggleRail()"
-              class="toggle-rail-button medium icon-viewlist action-icon-medium">Show/Hide MyFiddles</a>
+              class="toggle-rail-button medium icon-navigation action-icon-medium">Show/Hide MyFiddles</a>
     </div>
-
 </header>
