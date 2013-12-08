@@ -33,33 +33,15 @@
     <nav class="crumbs">
         <a href="/miscadmin">Tools</a>
         <a href="<%= currentPagePath %>.html">AEM Fiddle</a>
-        <a href="#">{{ data.src.scriptExt }}</a>      
+        <a href="#">{{ui.getLanguage(data.src.scriptExt)}}</a>
     </nav>
 
     <div class="drawer">
-        
-        <!-- POC 
-        <a href="#popover-new" 
-          data-toggle="popover" 
-          data-point-from="bottom" 
-          data-align-from="right"
-          class="icon-add medium">New</a>
-        
-        <div id="popover-new" class="popover arrow-right">
-          <ul>
-            <li ng-repeat="scriptExtOption in data.ui.scriptExtOptions">
-                <a ng-click="app.new(scriptExtOption.value, false)"
-                    href="#new-{{scriptExtOption.value}}">{{scriptExtOption.label}}</a>
-            </li>
-          </ul>
-        </div>-->
-
-        <span class="divider"></span>
 
         <%-- Resource Execution Context --%>
         <input ng-model="data.src.resource"
                type="text"
-               placeholder="Absolute path to resource"
+               placeholder="Absolute resource path"
                class="resource"/>
 
         <span class="divider"></span>
@@ -73,9 +55,28 @@
 
         <span class="divider"></span>
 
+        <!-- New -->
+
+        <a href="#popover-new"
+           data-toggle="popover"
+           data-point-from="bottom"
+           data-align-from="right"
+           class="icon-add medium action-icon-medium">New</a>
+
+        <div id="popover-new" class="popover arrow-right">
+            <ul>
+                <li ng-repeat="scriptExtOption in data.ui.scriptExtOptions">
+                    <a ng-click="app.new(scriptExtOption.value, false)"
+                       href="#new-{{scriptExtOption.value}}">{{scriptExtOption.label}}</a>
+                </li>
+            </ul>
+        </div>
+
+        <span class="divider"></span>
+
         <%-- Rail Toggle Button --%>
         <a ng-click="ui.toggleRail()"
-              class="toggle-rail-button medium icon-viewlist">Show/Hide MyFiddles</a>
+              class="toggle-rail-button medium icon-viewlist action-icon-medium">Show/Hide MyFiddles</a>
     </div>
 
 </header>

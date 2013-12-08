@@ -68,7 +68,7 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
 
     /* Src; drives input */
     $scope.data.src = {
-        resource: $scope.data.app.currentPagePath,
+        resource: '',
         scriptData: '',
         scriptExt: $scope.data.defaults.scriptExt
     };
@@ -125,7 +125,6 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
         aemFiddle.ace.input.setMode($scope.data.src.scriptExt);
     });
 
-
     $scope.$watch('data.myfiddles.current', function(newValue, oldValue) {
         $scope.myfiddles.markAsActive($scope.data.myfiddles.list, newValue);
     });
@@ -154,20 +153,28 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
                 'scriptext' : $scope.data.src.scriptExt,
                 'resource': $scope.data.src.resource
             })
-        }).then(function(response) { 
-            var data = response.data,
-                status = response.status;
-            
-            /* 
-                Watchers handle: 
-                * !success notifications
-                * loading output editors
-            */
+        }).success(function(data, status, headers, config) {
+            /*
+             Watchers handle:
+             > !success notifications
+             > loading output editors
+             */
             $scope.data.result = $scope.util.buildResult(data, status === 200);
 
             $scope.data.ui.output.hasData = true;
             $scope.data.app.running = false;
+        }).error(function(data, status, headers, config) {
+            /*
+             Watchers handle:
+             > !success notifications
+             > loading output editors
+             */
+            $scope.data.result = $scope.util.buildResult(data, false);
+
+            $scope.data.ui.output.hasData = true;
+            $scope.data.app.running = false;
         });
+
     };
 
     /* Core App Methods */
@@ -214,6 +221,8 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
             })
         }).success(function(data, status, headers, config) {
             $scope.data.myfiddles.current = data.path;
+
+            aemFiddle.ace.input.setDirty(false);
 
             $scope.myfiddles.list(url);
             $scope.ui.hideCreateFiddle();
@@ -280,17 +289,20 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
         });
     };
 
-    $scope.myfiddles.update = function(fiddle) {
+    $scope.myfiddles.update = function(fiddlePath) {
+        var myFiddle;
         if($scope.data.ui.myfiddles.createFiddle.visible) { return; }
 
-        if(!$scope.data.myfiddles.current) {
+        myFiddle = $scope.util.getMyFiddle(fiddlePath);
+
+        if(!myFiddle) {
             $scope.ui.notify('info', 'Info', 'Create a new fiddle using the "+" sign before updating.');
             return;
         }
 
         $http({
             method: 'POST',
-            url: fiddle.path,
+            url: myFiddle.path,
             headers: {
                 'Accept': '*/*',
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -299,10 +311,11 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
                 'scriptdata': aemFiddle.ace.input.editor.getValue(),
                 'scriptext':  $scope.data.src.scriptExt
             })
-        }).success(function(data, status, headers, config) {                   
-            $scope.ui.notify('success', 'Updated', '"' + fiddle.title + '" was updated.');
+        }).success(function(data, status, headers, config) {
+            aemFiddle.ace.input.setDirty(false);
+            $scope.ui.notify('success', 'Updated', '"' + myFiddle.title + '" was updated.');
         }).error(function(data, status, headers, config) {
-            $scope.ui.notify('error', 'Error', '"' + fiddle.title + '" could not be updated.');
+            $scope.ui.notify('error', 'Error', '"' + myFiddle.title + '" could not be updated.');
         });
     };
 
@@ -324,7 +337,7 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
                 myfiddle = $scope.util.buildFiddle(entry.title, 
                     entry['jcr:created'],
                     url + '/' + key,
-                    entry.scriptExt);
+                    entry.scriptext);
 
                 $scope.data.myfiddles.list.push(myfiddle);
             });
@@ -388,8 +401,23 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
         $timeout(function() { $scope.data.notifications.pop(); }, timeout);
     };
 
+    $scope.ui.getLanguage = function(scriptExt) {
+        var i = 0,
+            item;
+        scriptExt = scriptExt || $scope.data.defaults.scriptExt;
 
-    /* Utils */
+        for(i; i  < $scope.data.ui.scriptExtOptions.length; i++) {
+            item = $scope.data.ui.scriptExtOptions[i];
+            if(item.value === scriptExt) {
+                return item.label;
+            }
+        }
+
+        return "Java Server Pages";
+    };
+
+
+        /* Utils */
 
     $scope.util.buildResult = function(data, success) { 
        return { 
@@ -407,7 +435,7 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
 
     $scope.util.buildSrc = function(resource, scriptData, scriptExt) { 
         return {
-            resource: resource || $scope.data.app.currentPagePath,
+            resource: resource,
             scriptData: scriptData || '',
             scriptExt: scriptExt || $scope.data.defaults.scriptExt
         };
@@ -443,6 +471,19 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
         return templateData;
     };
 
+    $scope.util.getMyFiddle = function(fiddlePath) {
+        var i = 0,
+            item;
+
+        for(i; i  < $scope.data.myfiddles.list.length; i++) {
+            item = $scope.data.myfiddles.list[i];
+            if(item.path === fiddlePath) {
+                return item;
+            }
+        }
+
+        return $scope.util.buildEmptyFiddle();
+    };
 
     /* App Initialization */
 
