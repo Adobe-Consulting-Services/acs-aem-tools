@@ -35,7 +35,7 @@
         <%-- Controls --%>
         <section>
             <a href="#update"
-               ng-disabled="!data.myfiddles.current.path || data.ui.myfiddles.createFiddle.visible"
+               ng-disabled="!data.myfiddles.current || data.ui.myfiddles.createFiddle.visible"
                ng-click="myfiddles.update(data.myfiddles.current)"
                class="icon-download"
                title="Update current fiddle">Update</a>

@@ -22,7 +22,7 @@
 
 <%-- Pane containing rendered output and output HTML view --%>
 
-<div id="output">
+<div id="output" class="{{!data.result.success ? 'output-error' : ''}}">
 
     <%-- Output Toolbar and Status --%>
     <nav class="toolbar">

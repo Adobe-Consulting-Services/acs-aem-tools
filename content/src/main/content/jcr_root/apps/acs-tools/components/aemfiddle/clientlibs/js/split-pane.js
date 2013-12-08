@@ -86,7 +86,7 @@ $(function () {
         if($window.width() < MIN_WIDTH * 2) {
             // Hide Right Pane and Handle
             if(!$right.data('hidden')) {
-                $handle = $('.ui-resizable-handle');
+                $handle = $('#handle');
 
                 $right.hide();
                 $right.data('hidden', true);
@@ -96,7 +96,7 @@ $(function () {
         } else {
             // Re-Show Right Pane and Handle
             if($right.data('hidden')) {
-                $handle = $('.ui-resizable-handle');
+                $handle = $('#handle');
 
                 $left.css('right', '50%');
                 $right.css('left', '50%');
