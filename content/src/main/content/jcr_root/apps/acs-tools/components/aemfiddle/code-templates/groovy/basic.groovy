@@ -1,3 +1,3 @@
-def planet='world';
+def name='world';
 
 println "Hello $name!"
