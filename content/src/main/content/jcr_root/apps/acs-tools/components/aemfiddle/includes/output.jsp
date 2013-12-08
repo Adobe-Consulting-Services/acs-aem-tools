@@ -56,7 +56,7 @@
 
         <%-- Initial Welcome Message --%>
         <div ng-show="!data.ui.output.hasData">
-            <div ng-show="!data.execution.count"
+            <div ng-show="!data.app.count"
                  class="welcome">
 
                 <h1>Welcome to AEM Fiddle!</h1>
@@ -80,14 +80,14 @@
                 </p>
 
                 <p>
-                    You can also Create, Load, Update and Delete code snippets by clicking on the
-                    <span class="icon-viewlist"></span>
+                    You can also Create, Load, Update and Delete code snippets by clicking on
+                    <span class="icon-navigation"></span>
                     in the header!
                 </p>
             </div>
 
             <%-- Initial Welcome Message --%>
-            <div ng-show="data.execution.count"
+            <div ng-show="data.app.count"
                  class="placeholder-bg">
             </div>
          </div>
