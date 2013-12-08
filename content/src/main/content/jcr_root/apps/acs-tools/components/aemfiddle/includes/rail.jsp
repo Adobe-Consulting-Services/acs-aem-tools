@@ -38,7 +38,7 @@
                ng-disabled="!data.myfiddles.current || data.ui.myfiddles.createFiddle.visible"
                ng-click="myfiddles.update(data.myfiddles.current)"
                class="icon-download"
-               title="Update current fiddle">Update</a>
+               title="Update">Update</a>
 
             <span class="divider"></span>
 
@@ -46,7 +46,7 @@
                ng-disabled="data.ui.myfiddles.createFiddle.visible"
                ng-click="ui.showCreateFiddle()"
                class="icon-add"
-               title="Create new fiddle">Create</a>
+               title="Create">Create</a>
 
         </section>
 
