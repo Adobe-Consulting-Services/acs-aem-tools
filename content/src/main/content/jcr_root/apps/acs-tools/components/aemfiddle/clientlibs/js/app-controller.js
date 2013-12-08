@@ -37,7 +37,9 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
         runURL: $('#app-data').data('run-url'),
         resourcePath: $('#app-data').data('resource-path'),
         myFiddlesPath: $('#app-data').data('myfiddles-path'),
-        currentPagePath:  $('#app-data').data('current-page-path')
+        currentPagePath:  $('#app-data').data('current-page-path'),
+        running: false,
+        count: 0
     };
 
 
@@ -63,8 +65,6 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
 
 
     /* Models */
-
-    $scope.data.app.running = false;
 
     /* Src; drives input */
     $scope.data.src = {
@@ -163,6 +163,7 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
 
             $scope.data.ui.output.hasData = true;
             $scope.data.app.running = false;
+            $scope.data.app.count++;
         }).error(function(data, status, headers, config) {
             /*
              Watchers handle:
@@ -173,6 +174,7 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
 
             $scope.data.ui.output.hasData = true;
             $scope.data.app.running = false;
+            $scope.data.app.count++;
         });
 
     };
