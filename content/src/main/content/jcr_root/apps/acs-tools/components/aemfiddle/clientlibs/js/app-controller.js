@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,7 +43,7 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
     };
 
 
-    /* Defaults */    
+    /* Defaults */
     $scope.data.defaults.scriptExt = 'jsp';
 
     /* UI Data */
@@ -63,7 +63,7 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
             visible: false
         }
     };
-    
+
     $scope.data.ui.scriptExtOptions = [];
 
 
@@ -71,6 +71,7 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
 
     /* Src; drives input */
     $scope.data.src = {
+        lastModifiedAt: 0,
         resource: '',
         scriptData: '',
         scriptExt: $scope.data.defaults.scriptExt
@@ -88,7 +89,7 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
     $scope.data.myfiddles = {
         list: [],
         current: null,
-        'new': { 
+        'new': {
             title: ''
         }
     };
@@ -102,9 +103,6 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
 
 
     /* Watchers */
-    $scope.$watch('data.src.scriptExt', function(newValue, oldValue) {
-        aemFiddle.ace.input.setMode(newValue);
-    });
 
     /* Update output editor */
     $scope.$watch('data.result.data', function(newValue, oldValue) {
@@ -114,18 +112,18 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
     /* Update on notifications */
     $scope.$watch('data.result.success', function(newValue, oldValue) {
         if(!newValue) {
-            $scope.ui.notify('notice', 'Warning', 'Your code contains errors. See output for details.');        
+            $scope.ui.notify('notice', 'Warning', 'Your code contains errors. See output for details.');
         }
     });
 
 
     /* Handles changes to Src */
-    $scope.$watch('data.src.scriptData', function(newValue, oldValue) {
-        aemFiddle.ace.input.load(newValue, $scope.data.src.scriptExt);
+    $scope.$watch('data.src', function(newValue, oldValue) {
+        aemFiddle.ace.input.load(newValue.scriptData, newValue.scriptExt);
     });
 
     $scope.$watch('data.src.scriptExt', function(newValue, oldValue) {
-        aemFiddle.ace.input.setMode($scope.data.src.scriptExt);
+        aemFiddle.ace.input.setMode(newValue);
     });
 
     $scope.$watch('data.myfiddles.current', function(newValue, oldValue) {
@@ -157,28 +155,28 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
                 'resource': $scope.data.src.resource
             })
         }).success(function(data, status, headers, config) {
-            /*
-             Watchers handle:
-             > !success notifications
-             > loading output editors
-             */
-            $scope.data.result = $scope.util.buildResult(data, status === 200);
+                /*
+                 Watchers handle:
+                 > !success notifications
+                 > loading output editors
+                 */
+                $scope.data.result = $scope.util.buildResult(data, status === 200);
 
-            $scope.data.ui.output.hasData = true;
-            $scope.data.app.running = false;
-            $scope.data.app.count++;
-        }).error(function(data, status, headers, config) {
-            /*
-             Watchers handle:
-             > !success notifications
-             > loading output editors
-             */
-            $scope.data.result = $scope.util.buildResult(data, false);
+                $scope.data.ui.output.hasData = true;
+                $scope.data.app.running = false;
+                $scope.data.app.count++;
+            }).error(function(data, status, headers, config) {
+                /*
+                 Watchers handle:
+                 > !success notifications
+                 > loading output editors
+                 */
+                $scope.data.result = $scope.util.buildResult(data, false);
 
-            $scope.data.ui.output.hasData = true;
-            $scope.data.app.running = false;
-            $scope.data.app.count++;
-        });
+                $scope.data.ui.output.hasData = true;
+                $scope.data.app.running = false;
+                $scope.data.app.count++;
+            });
 
     };
 
@@ -227,22 +225,22 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
                 './scriptext': $scope.data.src.scriptExt
             })
         }).success(function(data, status, headers, config) {
-            $scope.data.myfiddles.current = data.path;
+                $scope.data.myfiddles.current = data.path;
 
-            aemFiddle.ace.input.setDirty(false);
+                aemFiddle.ace.input.setDirty(false);
 
-            $scope.myfiddles.list(url);
-            $scope.ui.hideCreateFiddle();
+                $scope.myfiddles.list(url);
+                $scope.ui.hideCreateFiddle();
 
-            $scope.ui.notify('success', 'Saved', 'Your code was saved as "' + title + '".');
-        }).error(function(data, status, headers, config) {
-            $scope.ui.notify('error', 'Error', 'Your code could not be saved.');
-        });
+                $scope.ui.notify('success', 'Saved', 'Your code was saved as "' + title + '".');
+            }).error(function(data, status, headers, config) {
+                $scope.ui.notify('error', 'Error', 'Your code could not be saved.');
+            });
     };
 
 
     $scope.myfiddles['delete'] = function(fiddle) {
-        
+
         if(!confirm("Are you sure you want to delete this?")) { return; }
 
         $http({
@@ -256,16 +254,16 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
                 ':operation': 'delete'
             })
         }).success(function(data, status, headers, config) {
-            if($scope.data.myfiddles.current === fiddle.path) {
-                $scope.data.myfiddles.current = null;
-            }
+                if($scope.data.myfiddles.current === fiddle.path) {
+                    $scope.data.myfiddles.current = null;
+                }
 
-            $scope.myfiddles.list($scope.data.app.myFiddlesPath);
+                $scope.myfiddles.list($scope.data.app.myFiddlesPath);
 
-            $scope.ui.notify('info', 'Deleted', '"' + fiddle.title + '" was deleted.');
-        }).error(function(data, status, headers, config) {
-            $scope.ui.notify('error', 'Error', '"' + fiddle.title + '" could not be deleted.');
-        });
+                $scope.ui.notify('info', 'Deleted', '"' + fiddle.title + '" was deleted.');
+            }).error(function(data, status, headers, config) {
+                $scope.ui.notify('error', 'Error', '"' + fiddle.title + '" could not be deleted.');
+            });
     };
 
     $scope.myfiddles.load = function(fiddle) {
@@ -282,18 +280,18 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
                 t: new Date().getTime()
             }
         }).success(function(data, status, headers, config) {
-            $scope.data.src = $scope.util.buildSrc($scope.data.src.resource, 
-                    data.scriptdata, data.scriptext); 
+                $scope.data.src = $scope.util.buildSrc($scope.data.src.resource,
+                    data.scriptdata, data.scriptext);
 
-            $scope.data.result = $scope.util.resetResult();
+                $scope.data.result = $scope.util.resetResult();
 
-            $scope.data.myfiddles.current = fiddle.path;
-            $scope.data.ui.output.hasData = false;
+                $scope.data.myfiddles.current = fiddle.path;
+                $scope.data.ui.output.hasData = false;
 
-            $scope.ui.notify('info', 'Loaded', '"' + fiddle.title + '" was loaded.');
-        }).error(function(data, status, headers, config) {
-            $scope.ui.notify('error', "Error", '"' + fiddle.title + '" could not be loaded.');
-        });
+                $scope.ui.notify('info', 'Loaded', '"' + fiddle.title + '" was loaded.');
+            }).error(function(data, status, headers, config) {
+                $scope.ui.notify('error', "Error", '"' + fiddle.title + '" could not be loaded.');
+            });
     };
 
     $scope.myfiddles.update = function(fiddlePath) {
@@ -319,11 +317,11 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
                 'scriptext':  $scope.data.src.scriptExt
             })
         }).success(function(data, status, headers, config) {
-            aemFiddle.ace.input.setDirty(false);
-            $scope.ui.notify('success', 'Updated', '"' + myFiddle.title + '" was updated.');
-        }).error(function(data, status, headers, config) {
-            $scope.ui.notify('error', 'Error', '"' + myFiddle.title + '" could not be updated.');
-        });
+                aemFiddle.ace.input.setDirty(false);
+                $scope.ui.notify('success', 'Updated', '"' + myFiddle.title + '" was updated.');
+            }).error(function(data, status, headers, config) {
+                $scope.ui.notify('error', 'Error', '"' + myFiddle.title + '" could not be updated.');
+            });
     };
 
     $scope.myfiddles.list = function(url) {
@@ -334,29 +332,29 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
                 t: new Date().getTime()
             }
         }).success(function(data, status, headers, config) {
-            $scope.data.myfiddles.list = [];
+                $scope.data.myfiddles.list = [];
 
-            angular.forEach(data, function(entry, key) {
-                var myfiddle = {};
-                
-                if(typeof entry !== 'object') { return; }
+                angular.forEach(data, function(entry, key) {
+                    var myfiddle = {};
 
-                myfiddle = $scope.util.buildFiddle(entry.title, 
-                    entry['jcr:created'],
-                    url + '/' + key,
-                    entry.scriptext);
+                    if(typeof entry !== 'object') { return; }
 
-                $scope.data.myfiddles.list.push(myfiddle);
-            });
+                    myfiddle = $scope.util.buildFiddle(entry.title,
+                        entry['jcr:created'],
+                        url + '/' + key,
+                        entry.scriptext);
 
-            $scope.data.myfiddles.list.reverse();
+                    $scope.data.myfiddles.list.push(myfiddle);
+                });
 
-            $scope.myfiddles.markAsActive(
+                $scope.data.myfiddles.list.reverse();
+
+                $scope.myfiddles.markAsActive(
                     $scope.data.myfiddles.list,
                     $scope.data.myfiddles.current);
-        }).error(function(data, status, headers, config) {
-            $scope.ui.notify('error', "Error", "Could not retrieve your code.");
-        });
+            }).error(function(data, status, headers, config) {
+                $scope.ui.notify('error', "Error", "Could not retrieve your code.");
+            });
     };
 
     $scope.myfiddles.markAsActive = function(fiddles, currentFiddlePath) {
@@ -434,41 +432,41 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
 
     /* Utils */
 
-    $scope.util.buildResult = function(data, success) { 
-       return { 
-            success: success,   
+    $scope.util.buildResult = function(data, success) {
+        return {
+            success: success,
             executedAt: new Date().getTime(),
             resource: ($scope.data.src.result || $scope.data.app.currentPagePath),
-            data: data            
+            data: data
         };
     };
 
-    $scope.util.resetResult = function() { 
+    $scope.util.resetResult = function() {
         return $scope.util.buildResult('', true);
     };
 
-
-    $scope.util.buildSrc = function(resource, scriptData, scriptExt) { 
+    $scope.util.buildSrc = function(resource, scriptData, scriptExt) {
         return {
+            lastModifiedAt: new Date().getTime(),
             resource: resource,
             scriptData: scriptData || '',
             scriptExt: scriptExt || $scope.data.defaults.scriptExt
         };
     };
 
-    $scope.util.buildFiddle = function(title, createdAt, path, scriptExt) { 
-       return { 
-            title: title || moment(createdAt).format('M/D/YYYY, h:mm:ss a'), 
-            createdAt: createdAt,  
+    $scope.util.buildFiddle = function(title, createdAt, path, scriptExt) {
+        return {
+            title: title || moment(createdAt).format('M/D/YYYY, h:mm:ss a'),
+            createdAt: createdAt,
             path: path,
             scriptExt: scriptExt  || $scope.data.defaults.scriptExt,
             active: false
         };
     };
 
-    $scope.util.buildEmptyFiddle = function() { 
-       return { 
-            title: '',   
+    $scope.util.buildEmptyFiddle = function() {
+        return {
+            title: '',
             path: '',
             scriptExt: $scope.data.defaults.scriptExt,
             active: false
@@ -508,29 +506,29 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
 
         /* Get script language options from Server */
         $http.get(
-            $scope.data.app.resourcePath + '.configuration.script-options.json'
-        ).then(function (response) {
-            $scope.data.ui.scriptExtOptions = [];
+                $scope.data.app.resourcePath + '.configuration.script-options.json'
+            ).then(function (response) {
+                $scope.data.ui.scriptExtOptions = [];
 
-            angular.forEach(response.data, function(value, key) {
-                $scope.data.ui.scriptExtOptions.push(value);
+                angular.forEach(response.data, function(value, key) {
+                    $scope.data.ui.scriptExtOptions.push(value);
+                });
             });
-        });
 
         /* Get code templates */
         $http.get(
-            $scope.data.app.resourcePath + '.configuration.code-templates.json'
-        ).then(function (response) {
-            $scope.data.templates = [];
+                $scope.data.app.resourcePath + '.configuration.code-templates.json'
+            ).then(function (response) {
+                $scope.data.templates = [];
 
-            angular.forEach(response.data, function(value, key) {
-                $scope.data.templates.push(value);
+                angular.forEach(response.data, function(value, key) {
+                    $scope.data.templates.push(value);
+                });
+
+                $scope.app['new']($scope.data.defaults.scriptExt, true);
             });
-
-            $scope.app['new']($scope.data.defaults.scriptExt, true);
-        });
     };
 
-    init();  
+    init();
 
 }]);
