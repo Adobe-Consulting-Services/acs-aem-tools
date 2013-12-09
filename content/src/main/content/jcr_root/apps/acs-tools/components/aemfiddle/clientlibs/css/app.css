@@ -30,12 +30,18 @@
     z-index: 90;
 }
 
+#popover-new-blanket {
+    z-index: 1000;
+}
+
+
 /* Header */
 
-header .logo .spinner {
-    width: 27px;
-    height: 27px;
-    margin-top: .5rem;
+header .logo i.medium {
+    width: 1.625rem !important;
+    height: 1.625rem !important;
+    font-size: 1.4rem !important;
+    line-height: 1.2 !important;
 }
 
 header .crumbs .script-extension {
@@ -49,24 +55,6 @@ header .crumbs .script-extension {
     -moz-border-radius: 3px;
     border-radius: 3px;
 }
-
-header #popover-new ul,
-header #popover-new li {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-header #popover-new a {
-    display: block;
-    padding: 0 1rem;
-}
-
-header #popover-new a:hover {
-    background-color: #ccc;
-    text-decoration: none;
-}
-
 
 header .drawer input.resource,
 header .drawer select.script-language-select {
@@ -102,6 +90,52 @@ header .drawer .divider {
     margin: 0 .5rem;
 }
 
+header .drawer #popover-new {
+    position: absolute;
+    right: 2.1rem;
+}
+
+#popover-new-blanket {
+    background: #000;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    opacity: 0.5;
+    filter:alpha(opacity=50);
+}
+
+header .drawer #popover-new .popover {
+    display: block;
+    position: relative;
+}
+
+header .drawer #popover-new .popover.arrow-top:before {
+    left: auto;
+    right: 2rem;
+}
+
+header .drawer #popover-new ul,
+header .drawer #popover-new li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+header .drawer #popover-new a {
+    color: #333;
+    display: block;
+    padding: 0 1rem;
+}
+
+header .drawer #popover-new a:hover {
+    color: #000;
+    background-color: #ccc;
+    text-decoration: none;
+}
+
 header .drawer #popover-new a .script-extension {
     background: #ddd;
     color: #666;
@@ -118,17 +152,10 @@ header .drawer #popover-new a:hover .script-extension {
     background: #ccc;
 }
 
-header .drawer #popover-new a {
-    color: #333;
-}
 
-header .drawer #popover-new a:hover {
-    color: #000;
-}
 
-header .drawer #popover-new {
-    right: 2.3rem !important;
-}
+
+
 
 /* Rail */
 

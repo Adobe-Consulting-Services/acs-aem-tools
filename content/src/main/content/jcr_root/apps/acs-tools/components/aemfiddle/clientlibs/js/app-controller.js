@@ -55,6 +55,9 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
     $scope.data.ui.rail = {
         visible: false
     };
+    $scope.data.ui.newPopover = {
+        visible: false
+    };
     $scope.data.ui.myfiddles = {
         createFiddle: {
             visible: false
@@ -182,6 +185,8 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
     /* Core App Methods */
     $scope.app['new'] = function(scriptExt, skipConfirm) {
         var resetConfirmed = false;
+
+        $scope.ui.hideNewPopover();
 
         if(skipConfirm || !aemFiddle.ace.input.isDirty()) {
             resetConfirmed = true;
@@ -390,6 +395,14 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
         $scope.data.myfiddles['new'].title = '';
     };
 
+    $scope.ui.toggleNewPopover = function() {
+        $scope.data.ui.newPopover.visible = !$scope.data.ui.newPopover.visible;
+    };
+
+    $scope.ui.hideNewPopover = function() {
+        $scope.data.ui.newPopover.visible = false;
+    };
+
     $scope.ui.notify = function(type, title, message) {
         var notification = {
             type: type,
@@ -419,7 +432,7 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
     };
 
 
-        /* Utils */
+    /* Utils */
 
     $scope.util.buildResult = function(data, success) { 
        return { 
