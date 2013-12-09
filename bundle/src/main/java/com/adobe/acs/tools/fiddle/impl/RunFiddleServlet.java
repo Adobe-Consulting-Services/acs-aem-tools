@@ -69,7 +69,6 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
 
         RequestDispatcher dispatcher = request.getRequestDispatcher(resource, options);
         GetRequest getRequest = new GetRequest(request);
-        WCMMode.DISABLED.toRequest(getRequest);
         dispatcher.forward(getRequest, response);
     }
 

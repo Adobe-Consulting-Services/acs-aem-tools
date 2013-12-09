@@ -143,7 +143,7 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
 
         $http({
             method: 'POST',
-            url: runURL,
+            url: runURL + "?wcmmode=disabled",
             headers: {
                 'Accept': '*/*',
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
