@@ -38,6 +38,8 @@ import org.apache.sling.api.wrappers.SlingHttpServletRequestWrapper;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 
+import com.day.cq.wcm.api.WCMMode;
+
 @SuppressWarnings("serial")
 @SlingServlet(resourceTypes = "acs-tools/components/aemfiddle", selectors = "run", methods = "POST")
 public class RunFiddleServlet extends SlingAllMethodsServlet {
@@ -66,7 +68,9 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
         options.setReplaceSelectors("");
 
         RequestDispatcher dispatcher = request.getRequestDispatcher(resource, options);
-        dispatcher.forward(new GetRequest(request), response);
+        GetRequest getRequest = new GetRequest(request);
+        WCMMode.DISABLED.toRequest(getRequest);
+        dispatcher.forward(getRequest, response);
     }
 
     private Resource getResource(SlingHttpServletRequest request) {
