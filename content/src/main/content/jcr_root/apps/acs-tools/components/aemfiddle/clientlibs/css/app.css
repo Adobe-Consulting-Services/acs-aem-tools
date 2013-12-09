@@ -38,7 +38,16 @@ header .logo .spinner {
     margin-top: .5rem;
 }
 
-header #popover-new {
+header .crumbs .script-extension {
+    background: #333;
+    color: #999;
+    padding: 4px .5rem;
+    font-size: .95rem;
+    margin-left: .25rem;
+
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
 }
 
 header #popover-new ul,
@@ -93,6 +102,22 @@ header .drawer .divider {
     margin: 0 .5rem;
 }
 
+header .drawer #popover-new a .script-extension {
+    background: #ddd;
+    color: #666;
+    padding: 4px .5rem;
+    font-size: .95rem;
+    margin-left: .25rem;
+
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+header .drawer #popover-new a:hover .script-extension {
+    background: #ccc;
+}
+
 header .drawer #popover-new a {
     color: #333;
 }
@@ -102,7 +127,7 @@ header .drawer #popover-new a:hover {
 }
 
 header .drawer #popover-new {
-    right: 2.65rem !important;
+    right: 2.3rem !important;
 }
 
 /* Rail */
