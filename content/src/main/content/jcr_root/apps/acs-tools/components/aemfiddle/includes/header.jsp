@@ -33,7 +33,8 @@
     <nav class="crumbs">
         <a href="/miscadmin">Tools</a>
         <a href="<%= currentPagePath %>.html">AEM Fiddle</a>
-        <a href="#">{{ui.getLanguage(data.src.scriptExt)}}</a>
+        <a href="#">{{ui.getLanguage(data.src.scriptExt)}}
+            <span class="script-extension">.{{data.src.scriptExt}}</span></a>
     </nav>
 
     <div class="drawer">
@@ -64,9 +65,10 @@
 
         <div id="popover-new" class="popover arrow-right">
             <ul>
-                <li ng-repeat="scriptExtOption in data.ui.scriptExtOptions">
-                    <a ng-click="app.new(scriptExtOption.value, false)"
-                       href="#new-{{scriptExtOption.value}}">{{scriptExtOption.label}}</a>
+                <li ng-repeat="option in data.ui.scriptExtOptions">
+                    <a ng-click="app.new(option.value, false)"
+                       href="#new-{{option.value}}">{{option.label}} <span
+                            class="script-extension">.{{option.value}}</span></a>
                 </li>
             </ul>
         </div>
