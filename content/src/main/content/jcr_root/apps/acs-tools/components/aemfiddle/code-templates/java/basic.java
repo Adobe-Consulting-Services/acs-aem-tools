@@ -17,6 +17,6 @@ public class fiddle extends SlingAllMethodsServlet {
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
 
         // Code here
-        response.getWriter().println("Hello world");
+        response.getWriter().println("Hello from " + request.getResource().getPath());
     }
 }

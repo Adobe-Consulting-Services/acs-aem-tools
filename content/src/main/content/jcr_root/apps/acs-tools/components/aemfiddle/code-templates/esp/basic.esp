@@ -6,10 +6,11 @@ var app = {
     resourceResolver: request.getResourceResolver(),
     resource: resource,
     properties: resource.adaptTo(Packages.org.apache.sling.api.resource.ValueMap),
-    currentNode: resource.adaptTo(Packages.javax.jcr.Node),
+    currentNode: currentNode,
+    session: currentNode.getSession(),
     pageManager: request.getResourceResolver().adaptTo(Packages.com.day.cq.wcm.api.PageManager),
     xss: sling.getService(Packages.com.adobe.granite.xss.XSSAPI)
 };
 %>
 
-Hello <%= 'world' %>!
+Hello from <%= app.resource.getPath() %>!
