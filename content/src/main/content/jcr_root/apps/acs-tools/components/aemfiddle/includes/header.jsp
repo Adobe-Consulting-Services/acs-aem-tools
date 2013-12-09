@@ -26,7 +26,7 @@
     <%-- Logo --%>
     <div class="logo">
         <span ng-hide="data.app.running"><a href="/"><i class="icon-marketingcloud medium"></i></a></span>
-        <span ng-show="data.app.running"><span class="spinner"></span></span>
+        <span ng-show="data.app.running"><a href="#"></a><i class="icon-spinner spinner medium"></i></a></span>
     </div>
 
     <%-- Limited Breadcrumbs --%>
@@ -57,20 +57,19 @@
         <span class="divider"></span>
 
         <!-- New -->
-        <a href="#popover-new"
-           data-toggle="popover"
-           data-point-from="bottom"
-           data-align-from="right"
-           class="icon-add-circle medium action-icon-medium">New</a>
+        <a ng-click="ui.toggleNewPopover()"
+           class="icon-add-circle medium action-icon-medium">New {{data.ui.newPopover.visible}}</a>
 
-        <div id="popover-new" class="popover arrow-right">
-            <ul>
-                <li ng-repeat="option in data.ui.scriptExtOptions">
-                    <a ng-click="app.new(option.value, false)"
-                       href="#new-{{option.value}}">{{option.label}} <span
-                            class="script-extension">.{{option.value}}</span></a>
-                </li>
-            </ul>
+        <div id="popover-new" ng-show="data.ui.newPopover.visible">
+            <div class="popover arrow-top">
+                <ul>
+                    <li ng-repeat="option in data.ui.scriptExtOptions">
+                        <a ng-click="app.new(option.value, false)"
+                           href="#new-{{option.value}}">{{option.label}} <span
+                                class="script-extension">.{{option.value}}</span></a>
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <span class="divider"></span>

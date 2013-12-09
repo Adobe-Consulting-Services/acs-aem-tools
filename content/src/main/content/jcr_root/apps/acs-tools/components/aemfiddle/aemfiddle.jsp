@@ -51,6 +51,9 @@
 
 
     <body ng-controller="MainCtrl">
+        <div ng-click="ui.hideNewPopover()"
+             ng-show="data.ui.newPopover.visible"
+             id="popover-new-blanket"></div>
         <div id="app-data"
              data-run-url="<%= runURL %>"
              data-resource-path="<%= resourcePath %>"
