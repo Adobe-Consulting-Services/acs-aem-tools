@@ -93,8 +93,16 @@ header .drawer .divider {
     margin: 0 .5rem;
 }
 
+header .drawer #popover-new a {
+    color: #333;
+}
+
+header .drawer #popover-new a:hover {
+    color: #000;
+}
+
 header .drawer #popover-new {
-    right: 2.75rem !important;
+    right: 2.65rem !important;
 }
 
 /* Rail */
