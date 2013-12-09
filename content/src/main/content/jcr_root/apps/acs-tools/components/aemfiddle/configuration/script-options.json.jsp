@@ -52,5 +52,5 @@
             jsonArray.put(obj);
         }
   } 
-%>
-<%= jsonArray.toString() %>
+%><%
+%><%= jsonArray.toString() %>

@@ -22,7 +22,7 @@
 
 <%-- Pane containing rendered output and output HTML view --%>
 
-<div id="output">
+<div id="output" class="{{!data.result.success ? 'output-error' : ''}}">
 
     <%-- Output Toolbar and Status --%>
     <nav class="toolbar">
@@ -37,9 +37,9 @@
             <span class="output-status">
                 <span ng-show="data.ui.output.hasData">
                     Executed at
-                    [ {{data.execution.result.executedAt | date:'h:mm:ss a'}} ]
+                    [ {{data.result.executedAt | date:'h:mm:ss a'}} ]
                     against
-                    [ {{data.execution.result.resource}} ]
+                    [ {{data.result.resource}} ]
                 </span>
 
                 <span ng-hide="data.ui.output.hasData">
@@ -56,7 +56,7 @@
 
         <%-- Initial Welcome Message --%>
         <div ng-show="!data.ui.output.hasData">
-            <div ng-show="!data.execution.count"
+            <div ng-show="!data.app.count"
                  class="welcome">
 
                 <h1>Welcome to AEM Fiddle!</h1>
@@ -80,18 +80,18 @@
                 </p>
 
                 <p>
-                    You can also Create, Load, Update and Delete code snippets by clicking on the
-                    <span class="icon-viewlist"></span>
+                    You can also Create, Load, Update and Delete code snippets by clicking on
+                    <span class="icon-navigation"></span>
                     in the header!
                 </p>
             </div>
 
             <%-- Initial Welcome Message --%>
-            <div ng-show="data.execution.count"
+            <div ng-show="data.app.count"
                  class="placeholder-bg">
             </div>
          </div>
 
-        <div ng-bind-html="data.execution.result.data" ng-show="data.ui.output.hasData"></div>
+        <div ng-bind-html="data.result.data" ng-show="data.ui.output.hasData"></div>
     </div>
 </div>

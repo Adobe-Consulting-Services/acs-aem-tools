@@ -25,41 +25,58 @@
 
     <%-- Logo --%>
     <div class="logo">
-        <span ng-hide="data.execution.running"><a href="/"><i class="icon-marketingcloud medium"></i></a></span>
-        <span ng-show="data.execution.running"><span class="spinner"></span></span>
+        <span ng-hide="data.app.running"><a href="/"><i class="icon-marketingcloud medium"></i></a></span>
+        <span ng-show="data.app.running"><span class="spinner"></span></span>
     </div>
 
     <%-- Limited Breadcrumbs --%>
     <nav class="crumbs">
         <a href="/miscadmin">Tools</a>
         <a href="<%= currentPagePath %>.html">AEM Fiddle</a>
+        <a href="#">{{ui.getLanguage(data.src.scriptExt)}}
+            <span class="script-extension">.{{data.src.scriptExt}}</span></a>
     </nav>
 
     <div class="drawer">
+
         <%-- Resource Execution Context --%>
-        <input ng-model="data.execution.params.resource"
+        <input ng-model="data.src.resource"
                type="text"
-               placeholder="Absolute path to resource"
+               placeholder="Absolute resource path"
                class="resource"/>
 
-        <!-- Script language -->
-        <select ng-model="data.execution.params.scriptExt"
-              ng-options="option.value as option.label for option in data.ui.scriptExtOptions"
-              class="script-language-select">
-        </select>
+        <span class="divider"></span>
 
         <%-- Run Code Button --%>
         <button ng-click="app.run('<%= runURL %>')"
                 class="primary run-code-button">
-            <span ng-hide="data.execution.running">Run Code</span>
-            <span ng-show="data.execution.running">Running Code...</span>
+            <span ng-hide="data.app.running">Run Code</span>
+            <span ng-show="data.app.running">Running Code...</span>
         </button>
+
+        <span class="divider"></span>
+
+        <!-- New -->
+        <a href="#popover-new"
+           data-toggle="popover"
+           data-point-from="bottom"
+           data-align-from="right"
+           class="icon-add-circle medium action-icon-medium">New</a>
+
+        <div id="popover-new" class="popover arrow-right">
+            <ul>
+                <li ng-repeat="option in data.ui.scriptExtOptions">
+                    <a ng-click="app.new(option.value, false)"
+                       href="#new-{{option.value}}">{{option.label}} <span
+                            class="script-extension">.{{option.value}}</span></a>
+                </li>
+            </ul>
+        </div>
 
         <span class="divider"></span>
 
         <%-- Rail Toggle Button --%>
         <a ng-click="ui.toggleRail()"
-              class="toggle-rail-button medium icon-viewlist">Show/Hide MyFiddles</a>
+              class="toggle-rail-button medium icon-navigation action-icon-medium">Show/Hide MyFiddles</a>
     </div>
-
 </header>

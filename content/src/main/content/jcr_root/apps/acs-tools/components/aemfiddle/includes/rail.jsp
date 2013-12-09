@@ -35,10 +35,10 @@
         <%-- Controls --%>
         <section>
             <a href="#update"
-               ng-disabled="(!data.myfiddles.current || !data.myfiddles.current.path) || data.ui.myfiddles.createFiddle.visible"
+               ng-disabled="!data.myfiddles.current || data.ui.myfiddles.createFiddle.visible"
                ng-click="myfiddles.update(data.myfiddles.current)"
                class="icon-download"
-               title="Update current fiddle">Update</a>
+               title="Update">Update</a>
 
             <span class="divider"></span>
 
@@ -46,15 +46,8 @@
                ng-disabled="data.ui.myfiddles.createFiddle.visible"
                ng-click="ui.showCreateFiddle()"
                class="icon-add"
-               title="Create new fiddle">Create</a>
+               title="Create">Create</a>
 
-            <span class="divider"></span>
-
-            <a href="#reset"
-               ng-disabled="data.ui.myfiddles.createFiddle.visible"
-               ng-click="app.reset()"
-               class="icon-refresh"
-               title="Reset">Reset</a>
         </section>
 
         <%-- Create Fiddle Form --%>
