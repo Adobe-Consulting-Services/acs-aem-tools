@@ -1,4 +1,4 @@
-
+<%
 var app = {
     sling: sling,
     request: request,
@@ -10,5 +10,6 @@ var app = {
     pageManager: request.getResourceResolver().adaptTo(Packages.com.day.cq.wcm.api.PageManager),
     xss: sling.getService(Packages.com.adobe.granite.xss.XSSAPI)
 };
- 
-response.getWriter().print( 'Hello world!' );
+%>
+
+Hello <%= 'world' %>!
