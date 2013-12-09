@@ -2,4 +2,4 @@ var obj = {};
  
 obj.lang = "ECMA";
 
-response.getWriter().print( 'Hello from ' + obj.lang + ' land!' );
+out.write( 'Hello from ' + obj.lang + ' land!' );

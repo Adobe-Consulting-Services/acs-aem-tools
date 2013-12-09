@@ -1,3 +1,3 @@
 def name='world';
 
-println "Hello $name!"
+out.write "Hello $name!"
