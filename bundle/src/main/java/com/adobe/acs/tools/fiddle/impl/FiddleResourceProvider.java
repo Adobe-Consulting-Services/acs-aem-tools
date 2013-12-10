@@ -42,10 +42,8 @@ public class FiddleResourceProvider implements ResourceProvider {
 
     public Resource getResource(ResourceResolver resourceResolver, String path) {
         InMemoryScript script = InMemoryScript.get();
-        if (script != null) {
-            if (path.equals(script.getPath())) {
-                return script.toResource(resourceResolver);
-            }
+        if (script != null && path.equals(script.getPath())) {
+            return script.toResource(resourceResolver);
         }
 
         return null;
