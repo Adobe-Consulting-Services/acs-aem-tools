@@ -395,6 +395,7 @@
     </pluginRepositories>
   <modules>
     <module>bundle</module>
+    <module>bundle-live-reload</module>
     <module>content</module>
   </modules>
 </project>

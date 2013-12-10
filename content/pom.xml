@@ -48,7 +48,6 @@
                     <embeddeds>
                         <embedded>
                             <groupId>${project.groupId}</groupId>
-                            <artifactId>acs-aem-tools-bundle</artifactId>
                             <target>/apps/acs-tools/install</target>
                         </embedded>
                     </embeddeds>
@@ -95,6 +94,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>acs-aem-tools-bundle</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>acs-aem-tools-bundle-livereload</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
