@@ -63,3 +63,19 @@ jspCodeDisplay.controller('MainCtrl', function($scope, $http) {
         });
     };
 });
+
+
+$(function() {
+    function resizeEditor() {
+        var $editor = $('#editor'),
+            buffer = 45;
+        $editor.css('height', (window.innerHeight - $editor.offset().top - buffer) + 'px');
+        jspCodeDisplay.editor.resize();
+    }
+
+    $(window).resize(function() {
+        resizeEditor();
+    });
+
+    resizeEditor();
+});

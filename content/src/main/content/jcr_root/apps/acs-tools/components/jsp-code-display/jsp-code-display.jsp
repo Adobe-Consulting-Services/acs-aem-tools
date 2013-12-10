@@ -61,7 +61,7 @@
             </form>
         
             <div class="alert error" ng-show="error">
-                <button class="close" data-dismiss="alert">�</button>
+                <button class="close" data-dismiss="alert">&times;</button>
                 <strong>ERROR</strong><div>{{errorMessage}}</div>
             </div>
             
