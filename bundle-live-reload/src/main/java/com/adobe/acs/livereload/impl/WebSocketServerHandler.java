@@ -158,7 +158,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
             handleCommand(obj, ctx);
 
         } catch (JSONException e) {
-            throw new IllegalArgumentException(String.format("%s is not a valid JSON object"));
+            throw new IllegalArgumentException(String.format("%s is not a valid JSON object", request));
         }
 
     }

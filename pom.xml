@@ -292,7 +292,8 @@
                             <execution>
                                 <phase>package</phase>
                                 <goals>
-                                    <goal>findbugs</goal>
+                                    <!-- build will fail on warnings -->
+                                    <goal>check</goal> 
                                 </goals>
                             </execution>
                         </executions>

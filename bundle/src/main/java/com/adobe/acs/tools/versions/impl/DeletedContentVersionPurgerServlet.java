@@ -72,7 +72,7 @@ public class DeletedContentVersionPurgerServlet extends SlingAllMethodsServlet {
                     // but we'll live with catching this exception
                     session.getNodeByIdentifier(contentUuid);
                 } catch (ItemNotFoundException e) {
-                    writer.printf("Could not find content node for uuid %s from version history at %s. Thus deleting.\n", contentUuid,
+                    writer.printf("Could not find content node for uuid %s from version history at %s. Thus deleting.%n", contentUuid,
                             node.getPath());
 
                     List<String> names = new ArrayList<String>();
