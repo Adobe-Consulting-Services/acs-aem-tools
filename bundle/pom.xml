@@ -43,6 +43,12 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>com.adobe.acs.acs-aem-tools-bundle</Bundle-SymbolicName>
+                        <Embed-Directory>target/dependency</Embed-Directory>
+                        <Embed-StripGroup>false</Embed-StripGroup>
+
+                        <Embed-Dependency>
+                            acs-aem-commons-content;inline=true
+                        </Embed-Dependency>
                     </instructions>
                 </configuration>
             </plugin>
@@ -129,6 +135,12 @@
             <artifactId>cq-wcm-api</artifactId>
             <version>5.6.6</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.acs</groupId>
+            <artifactId>acs-aem-commons-bundle</artifactId>
+            <version>1.3.0</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
 

@@ -19,7 +19,7 @@
   --%>
 <%@include file="/libs/foundation/global.jsp" %><%
 %><%@page session="false" contentType="application/json; charset=utf-8" pageEncoding="UTF-8"
-  import="com.adobe.acs.commons.util.ResourceDataUtil,
+  import="com.adobe.acs.tools.fiddle.FiddleHelper,
       java.util.List,
   	  java.util.Set,
   	  java.util.HashSet,
@@ -32,6 +32,7 @@ final String DEFAULT_TEMPLATE_NAME = "basic";
 final JSONArray jsonArray = new JSONArray();
 final Set<String> extensions = new HashSet<String>();
 
+final FiddleHelper fiddleHelper = sling.getService(FiddleHelper.class);
 final Resource templatesRoot = resourceResolver.getResource(component.getPath() + "/code-templates");
 
 /* Get the extensions registered with the server */
@@ -51,7 +52,7 @@ for(final String extension : extensions) {
 		final JSONObject obj = new JSONObject();	
 		
 		obj.put("title", template.getName());
-		obj.put("scriptData", ResourceDataUtil.getNTFileAsString(template.getPath(), resourceResolver));
+		obj.put("scriptData", fiddleHelper.getCodeTemplate(template));
 		obj.put("scriptExt", extension);
 
 		// Check if this language has a defined default template
