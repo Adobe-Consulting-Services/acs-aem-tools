@@ -47,7 +47,7 @@
                         <Embed-StripGroup>false</Embed-StripGroup>
 
                         <Embed-Dependency>
-                            acs-aem-commons-content;inline=true
+                            com.adobe.acs.commons.util.ResourceDataUtil;inline=true
                         </Embed-Dependency>
                     </instructions>
                 </configuration>
