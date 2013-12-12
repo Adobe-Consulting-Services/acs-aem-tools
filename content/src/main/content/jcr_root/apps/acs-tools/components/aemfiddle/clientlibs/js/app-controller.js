@@ -353,7 +353,10 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
                     $scope.data.myfiddles.list,
                     $scope.data.myfiddles.current);
             }).error(function(data, status, headers, config) {
-                $scope.ui.notify('error', "Error", "Could not retrieve your code.");
+                // 404 indicates the fiddles node is not created; most likely a first time user.
+                if(status !== 404) {
+                    $scope.ui.notify('error', "Error", "Could not retrieve your code.");
+                }
             });
     };
 
