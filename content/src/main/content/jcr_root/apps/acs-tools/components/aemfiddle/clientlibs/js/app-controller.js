@@ -63,7 +63,10 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
             visible: false
         }
     };
-
+    $scope.data.ui.cursor = {
+        row: 0,
+        column: 0
+    };
     $scope.data.ui.scriptExtOptions = [];
 
 
@@ -404,6 +407,11 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
         $scope.data.ui.newPopover.visible = false;
     };
 
+    $scope.ui.updateCursor = function(row, column) {
+        $scope.data.ui.cursor.row = row;
+        $scope.data.ui.cursor.column = column;
+    };
+
     $scope.ui.notify = function(type, title, message) {
         var notification = {
             type: type,
@@ -507,29 +515,38 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
         $scope.myfiddles.list($scope.data.app.myFiddlesPath);
         /* Store initial input src for use during reset */
 
+        /* Update input cursor location */
+        aemFiddle.ace.input.editor.getSession().selection.on('changeCursor', function(e) {
+            var cursor = aemFiddle.ace.input.editor.getCursorPosition();
+
+            $timeout(function() {
+                $scope.ui.updateCursor(cursor.row + 1, cursor.column + 1);
+            });
+        });
+
         /* Get script language options from Server */
         $http.get(
-                $scope.data.app.resourcePath + '.configuration.script-options.json'
-            ).then(function (response) {
-                $scope.data.ui.scriptExtOptions = [];
+            $scope.data.app.resourcePath + '.configuration.script-options.json'
+        ).then(function (response) {
+            $scope.data.ui.scriptExtOptions = [];
 
-                angular.forEach(response.data, function(value, key) {
-                    $scope.data.ui.scriptExtOptions.push(value);
-                });
+            angular.forEach(response.data, function(value, key) {
+                $scope.data.ui.scriptExtOptions.push(value);
             });
+        });
 
         /* Get code templates */
         $http.get(
-                $scope.data.app.resourcePath + '.configuration.code-templates.json'
-            ).then(function (response) {
-                $scope.data.templates = [];
+            $scope.data.app.resourcePath + '.configuration.code-templates.json'
+        ).then(function (response) {
+            $scope.data.templates = [];
 
-                angular.forEach(response.data, function(value, key) {
-                    $scope.data.templates.push(value);
-                });
-
-                $scope.app['new']($scope.data.defaults.scriptExt, true);
+            angular.forEach(response.data, function(value, key) {
+                $scope.data.templates.push(value);
             });
+
+            $scope.app['new']($scope.data.defaults.scriptExt, true);
+        });
     };
 
     init();

@@ -25,5 +25,5 @@
 <div id="input">
     <%-- ACE Editor bound to #ace-input --%>
     <div id="ace-input" class="code-editor"></div>
+    <div id="status-bar" class="status-bar">Line {{data.ui.cursor.row}}, Column {{data.ui.cursor.column}}</div>
 </div>
-

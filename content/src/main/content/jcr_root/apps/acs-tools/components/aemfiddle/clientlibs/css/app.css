@@ -34,6 +34,10 @@
     z-index: 1000;
 }
 
+#status-bar {
+    z-index: 99;
+}
+
 
 /* Header */
 
@@ -249,9 +253,27 @@ header .drawer #popover-new a:hover .script-extension {
     position: absolute;
 }
 
+#ace-input {
+    bottom: 1.25rem;
+}
+
 /* Input */
 #ace-input .ace_scrollbar {
     background-color: #0F0F0F;
+}
+
+#input .status-bar {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 1.25rem;
+    text-align: right;
+    left: 0;
+    background-color: #222;
+    color: #999;
+    padding: 0 1rem;
+    font-size: .8rem;
+    line-height: 1.25rem;
 }
 
 /* Output */
