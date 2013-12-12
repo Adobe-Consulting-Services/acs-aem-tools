@@ -47,7 +47,7 @@
                         <Embed-StripGroup>false</Embed-StripGroup>
 
                         <Embed-Dependency>
-                            com.adobe.acs.commons.util.ResourceDataUtil;inline=true
+                            acs-aem-commons-bundle;inline=com/adobe/acs/commons/util/ResourceDataUtil.class
                         </Embed-Dependency>
                     </instructions>
                 </configuration>
@@ -129,6 +129,7 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
@@ -140,7 +141,7 @@
             <groupId>com.adobe.acs</groupId>
             <artifactId>acs-aem-commons-bundle</artifactId>
             <version>1.3.0</version>
-            <type>jar</type>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
