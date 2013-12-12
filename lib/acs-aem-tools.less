@@ -1,0 +1,46 @@
+@import "green.less";
+@import "core.less";
+
+
+#promo {
+	border-bottom: solid 1px #ccc;
+	margin-top: 2rem;
+
+	.promo-text {
+		margin-bottom: 2rem;
+		text-align: center;
+
+		h2 {			
+			color: @color1;
+			margin-top: 0;
+		}
+
+		p {
+			margin-left: 2rem;
+			margin-right: 2rem;
+		}
+	}
+}
+
+
+
+@screen-sm: 460px;
+@screen-md: 992px;
+@screen-lg: 1200px;
+
+/* Media Selectors */
+@media (min-width: @screen-sm) {
+	#promo {
+		margin-top: -3em;		
+	}
+}
+
+@media (min-width: @screen-md) {
+	#promo {
+		margin-top: -8rem;		
+	}
+}
+
+@media (min-width: @screen-lg) {
+	
+}
