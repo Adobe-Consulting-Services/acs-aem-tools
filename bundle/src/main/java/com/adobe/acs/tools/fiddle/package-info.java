@@ -18,6 +18,6 @@
  * #L%
  */
 @Version("1.0.0")
-package com.adobe.acs.tools;
+package com.adobe.acs.tools.fiddle;
 
 import aQute.bnd.annotation.Version;

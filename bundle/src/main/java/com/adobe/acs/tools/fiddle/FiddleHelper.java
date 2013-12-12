@@ -21,6 +21,10 @@ package com.adobe.acs.tools.fiddle;
 
 import org.apache.sling.api.resource.Resource;
 
+/**
+ * Utility methods to support AEM Fiddle.
+ *
+ */
 public interface FiddleHelper {
     /**
      * Returns the contents of the Code Template file as a String.
