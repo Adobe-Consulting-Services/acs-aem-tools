@@ -82,6 +82,7 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
 
     /* Results; Drives output view */
     $scope.data.result = {
+       lastModifiedAt: 0, 
         resource: '',
         executedAt: 0,
         data: '',
@@ -107,18 +108,14 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
 
     /* Watchers */
 
-    /* Update output editor */
-    $scope.$watch('data.result.data', function(newValue, oldValue) {
-        aemFiddle.ace.output.load(newValue);
-    });
-
     /* Update on notifications */
-    $scope.$watch('data.result.success', function(newValue, oldValue) {
-        if(!newValue) {
+    $scope.$watch('data.result', function(newValue, oldValue) {
+        aemFiddle.ace.output.load(newValue.data);
+
+        if(!newValue.success) {
             $scope.ui.notify('notice', 'Warning', 'Your code contains errors. See output for details.');
         }
     });
-
 
     /* Handles changes to Src */
     $scope.$watch('data.src', function(newValue, oldValue) {
@@ -445,6 +442,7 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
 
     $scope.util.buildResult = function(data, success) {
         return {
+            lastModifiedAt: new Date().getTime(),            
             success: success,
             executedAt: new Date().getTime(),
             resource: ($scope.data.src.result || $scope.data.app.currentPagePath),
