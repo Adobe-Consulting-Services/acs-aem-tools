@@ -42,9 +42,9 @@ import com.day.cq.widget.LibraryType;
 @Properties({ @Property(name = EventConstants.EVENT_TOPIC,
         value = "com/adobe/granite/ui/librarymanager/INVALIDATED")
 })
-public class ClientLibraryListener implements EventHandler {
+public final class ClientLibraryListener implements EventHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(ClientLibraryListener.class);
+    private static final Logger log = LoggerFactory.getLogger(ClientLibraryListener.class);
 
     @Reference
     private LiveReloadServer server;
@@ -57,7 +57,7 @@ public class ClientLibraryListener implements EventHandler {
             boolean minified = htmlLibraryManager.isMinifyEnabled();
 
             String path = (String) event.getProperty(SlingConstants.PROPERTY_PATH);
-            logger.info("Client Library at {} invalidated. Sending reload.", path);
+            log.info("Client Library at {} invalidated. Sending reload.", path);
 
             ClientLibrary library = htmlLibraryManager.getLibraries().get(path);
             if (library != null) {
@@ -68,7 +68,7 @@ public class ClientLibraryListener implements EventHandler {
             }
 
         } catch (JSONException e) {
-            logger.info("Unable to send reload", e);
+            log.info("Unable to send reload", e);
         }
     }
 

@@ -50,6 +50,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.sling.commons.json.JSONArray;
 import org.apache.sling.commons.json.JSONException;
@@ -59,9 +61,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * See http://feedback.livereload.com/knowledgebase/articles/86174-livereload-
- * protocol
+ * protocol.
  */
-public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> {
+public final class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> {
 
     private ChannelGroup group;
 
@@ -72,7 +74,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
         this.infos = infos;
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(WebSocketServerHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(WebSocketServerHandler.class);
 
     private static final String WEBSOCKET_PATH = "/websocket";
 
@@ -126,8 +128,8 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
         }
 
         // Handshake
-        WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(getWebSocketLocation(req),
-                null, false);
+        WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(
+                getWebSocketLocation(req), null, false);
         handshaker = wsFactory.newHandshaker(req);
         if (handshaker == null) {
             WebSocketServerHandshakerFactory.sendUnsupportedWebSocketVersionResponse(ctx.channel());
@@ -175,14 +177,13 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
             result.put("serverName", "AEM Live Reload Server");
 
             channel.write(new TextWebSocketFrame(result.toString()));
-            
+
             if (isSupported(obj)) {
-                logger.info("adding LiveReload channel");
+                log.info("adding LiveReload channel");
                 group.add(channel);
             }
 
-            ChannelInfo info = new ChannelInfo();
-            info.supported = isSupported(obj);
+            ChannelInfo info = new ChannelInfo(isSupported(obj));
             infos.put(channel, info);
         } else if (CMD_INFO.equals(cmd)) {
             ChannelInfo info = infos.get(channel);
@@ -190,17 +191,17 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
                 String url = obj.getString(URL);
                 try {
                     URI uri = new URI(url);
-                    info.uri = uri;
-                    
-                    logger.info("added uri to channel info {}", info);
-                    
+                    info.setUri(uri);
+
+                    log.info("added uri to channel info {}", info);
+
                 } catch (URISyntaxException e) {
-                    logger.warn("Unable to store uri " + url, e);
+                    log.warn("Unable to store uri " + url, e);
                 }
             }
         } else {
-            logger.warn("Unknown command {}", cmd);
-            logger.info(obj.toString(2));
+            log.warn("Unknown command {}", cmd);
+            log.info(obj.toString(2));
         }
     }
 
@@ -222,7 +223,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
 
     private static void sendHttpResponse(ChannelHandlerContext ctx, FullHttpRequest req, FullHttpResponse res) {
         // Generate an error page if response getStatus code is not OK (200).
-        if (res.getStatus().code() != 200) {
+        if (res.getStatus().code() != HttpServletResponse.SC_OK) {
             ByteBuf buf = Unpooled.copiedBuffer(res.getStatus().toString(), CharsetUtil.UTF_8);
             res.content().writeBytes(buf);
             buf.release();
@@ -231,14 +232,14 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
 
         // Send the response and close the connection if necessary.
         ChannelFuture f = ctx.channel().writeAndFlush(res);
-        if (!isKeepAlive(req) || res.getStatus().code() != 200) {
+        if (!isKeepAlive(req) || res.getStatus().code() != HttpServletResponse.SC_OK) {
             f.addListener(ChannelFutureListener.CLOSE);
         }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        logger.error("caught exception", cause);
+        log.error("caught exception", cause);
         ctx.close();
     }
 

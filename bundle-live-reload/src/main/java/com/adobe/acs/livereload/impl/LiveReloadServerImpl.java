@@ -52,11 +52,13 @@ import com.adobe.acs.livereload.LiveReloadServer;
 
 @Component(immediate = true, metatype = true)
 @Service
-public class LiveReloadServerImpl implements LiveReloadServer {
+public final class LiveReloadServerImpl implements LiveReloadServer {
 
-    private static final Logger logger = LoggerFactory.getLogger(LiveReloadServerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(LiveReloadServerImpl.class);
 
     private static final int DEFAULT_PORT = 35729;
+    
+    private static final int MAX_CONTENT_LENGTH = 65536;
 
     @Property(intValue = DEFAULT_PORT, label = "Port", description = "Web Socket Port")
     private static final String PROP_PORT = "port";
@@ -70,7 +72,7 @@ public class LiveReloadServerImpl implements LiveReloadServer {
 
     private boolean running;
 
-    private Channel channel;
+    private Channel serverChannel;
 
     private NioEventLoopGroup broadcastGroup;
 
@@ -117,7 +119,6 @@ public class LiveReloadServerImpl implements LiveReloadServer {
             }
             if (bossGroup != null) {
                 bossGroup.shutdownGracefully().sync();
-                ;
             }
             if (workerGroup != null) {
                 workerGroup.shutdownGracefully().sync();
@@ -126,7 +127,7 @@ public class LiveReloadServerImpl implements LiveReloadServer {
     }
 
     private void stopServer() throws InterruptedException {
-        channel.close().sync();
+        serverChannel.close().sync();
     }
 
     private void startServer() throws Exception {
@@ -136,9 +137,9 @@ public class LiveReloadServerImpl implements LiveReloadServer {
         b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
                 .childHandler(new WebSocketServerInitializer());
 
-        this.channel = b.bind(this.port).sync().channel();
+        this.serverChannel = b.bind(this.port).sync().channel();
 
-        logger.info("Web socket server started at port {}.", port);
+        log.info("Web socket server started at port {}.", port);
     }
 
     public void triggerReload(String path) throws JSONException {
@@ -157,11 +158,12 @@ public class LiveReloadServerImpl implements LiveReloadServer {
     }
 
     class WebSocketServerInitializer extends ChannelInitializer<SocketChannel> {
+
         @Override
         public void initChannel(SocketChannel ch) throws Exception {
             ChannelPipeline pipeline = ch.pipeline();
             pipeline.addLast("codec-http", new HttpServerCodec());
-            pipeline.addLast("aggregator", new HttpObjectAggregator(65536));
+            pipeline.addLast("aggregator", new HttpObjectAggregator(MAX_CONTENT_LENGTH));
             pipeline.addLast("handler", new WebSocketServerHandler(group, infos));
         }
     }
@@ -169,8 +171,8 @@ public class LiveReloadServerImpl implements LiveReloadServer {
     class ContentPageMatcher implements ChannelMatcher {
         public boolean matches(Channel channel) {
             ChannelInfo info = infos.get(channel);
-            if (info != null && info.supported && info.uri != null) {
-                String path = info.uri.getPath();
+            if (info != null && info.isSupported() && info.getUri() != null) {
+                String path = info.getUri().getPath();
                 for (String prefix : pathPrefixes) {
                     if (path.startsWith(prefix)) {
                         return true;

@@ -22,13 +22,30 @@ package com.adobe.acs.livereload.impl;
 import java.net.URI;
 
 class ChannelInfo {
-    
-    boolean supported = true;
-    URI uri;
+
+    private final boolean supported;
+
+    private URI uri;
+
+    public ChannelInfo(boolean supported) {
+        this.supported = supported;
+    }
+
+    public URI getUri() {
+        return uri;
+    }
+
+    public boolean isSupported() {
+        return supported;
+    }
+
+    public void setUri(URI uri) {
+        this.uri = uri;
+    }
 
     @Override
     public String toString() {
         return String.format("Supported: %s; URI: %s", supported, uri);
     }
-    
+
 }

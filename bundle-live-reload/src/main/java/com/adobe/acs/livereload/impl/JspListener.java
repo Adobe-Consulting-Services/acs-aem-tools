@@ -39,9 +39,9 @@ import com.adobe.acs.livereload.LiveReloadServer;
 @Properties({
         @Property(name = EventConstants.EVENT_TOPIC, value = "org/apache/sling/api/resource/Resource/CHANGED"),
         @Property(name = EventConstants.EVENT_FILTER, value = "(path=*.jsp)") })
-public class JspListener implements EventHandler {
+public final class JspListener implements EventHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(JspListener.class);
+    private static final Logger log = LoggerFactory.getLogger(JspListener.class);
 
     @Reference
     private LiveReloadServer server;
@@ -49,10 +49,10 @@ public class JspListener implements EventHandler {
     public void handleEvent(Event event) {
         try {
             String path = (String) event.getProperty(SlingConstants.PROPERTY_PATH);
-            logger.debug("jsp reload {}", path);
+            log.debug("jsp reload {}", path);
             server.triggerReload(path);
         } catch (JSONException e) {
-            logger.error("unable to reload from jsp", e);
+            log.error("unable to reload from jsp", e);
         }
     }
 }

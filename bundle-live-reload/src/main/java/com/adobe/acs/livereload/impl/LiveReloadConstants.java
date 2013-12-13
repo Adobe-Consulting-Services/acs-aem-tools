@@ -19,7 +19,7 @@
  */
 package com.adobe.acs.livereload.impl;
 
-public class LiveReloadConstants {
+public final class LiveReloadConstants {
 
     private LiveReloadConstants() {
     }
