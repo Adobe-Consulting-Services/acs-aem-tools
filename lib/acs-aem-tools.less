@@ -1,7 +1,6 @@
 @import "green.less";
 @import "core.less";
 
-
 #promo {
 	border-bottom: solid 1px #ccc;
 	margin-top: 2rem;
@@ -30,14 +29,22 @@
 
 /* Media Selectors */
 @media (min-width: @screen-sm) {
+	#jumbotron {
+		min-height: 30rem;
+	}
+
 	#promo {
-		margin-top: -3em;		
+		margin-top: -10rem;		
 	}
 }
 
 @media (min-width: @screen-md) {
+	#jumbotron {
+		min-height: 45rem;
+	}
+
 	#promo {
-		margin-top: -8rem;		
+		margin-top: -21rem;		
 	}
 }
 
