@@ -25,13 +25,8 @@ Installation of the ACS AEM Tools LiveReload functionality requires:
 1. [Download latest Netty 4.x](http://netty.io/downloads.html) (ex. netty-4.0.13.Final.tar.bz2)
 2. Unzip, and install the following OSGi Bundles via the [AEM Web Console](http://localhost:4502/system/console/bundles).
 
-* netty-buffer-4.x.x.Final.jar
-* netty-codec-4.x.x.Final.jar
 * netty-codec-http-4.x.x.Final.jar
-* netty-codec-socks-4.x.x.Final.jar
-* netty-common-4.x.x.Final.jar
 * netty-handler-4.x.x.Final.jar
-* netty-transport-4.x.x.Final.jar
 
 Resulting in the following Active bundles. If any bundles are not active, press the ">" next to them to activate.
 
