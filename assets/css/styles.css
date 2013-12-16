@@ -151,9 +151,9 @@ header .nav a:hover {
 .feature-doc .img-wrapper {
   margin: 0 auto;
   max-width: 900px;
+  text-align: center;
 }
 .feature-doc img {
-  display: block;
   max-width: 100%;
 }
 .feature-doc pre code {
