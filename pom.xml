@@ -37,6 +37,10 @@
         <license.addJavaLicenseAfterPackage>false</license.addJavaLicenseAfterPackage>
     </properties>
 
+    <scm>
+        <developerConnection>scm:git:git@github.com:Adobe-Consulting-Services/acs-aem-tools.git</developerConnection>
+    </scm>
+
     <build>
         <pluginManagement>
             <plugins>
