@@ -16,17 +16,17 @@ For more information on LiveReload, visit [http://livereload.com/](http://livere
 
 Installation of the ACS AEM Tools LiveReload functionality requires:
 
-* ACS AEM Tools Package
-* Netty OSGi Bundles
+* ACS AEM Tools package
+* Netty OSGi Bundles (via the [Netty content package](https://github.com/Adobe-Consulting-Services/com.adobe.acs.bundles.netty/releases))
 * LiveReload browser plugin
 
 ### Installing ACS AEM Tools
 
-1. Download and install the latest ACS AEM Tools Package and install via [AEM's Package Manager](http://localhost:4502/crx/packmgr)
+1. Download and install the latest ACS AEM Tools package and install via [AEM's Package Manager](http://localhost:4502/crx/packmgr)
 
 ### Installing Netty
 
-1. Download the Netty content package from [here](https://github.com/Adobe-Consulting-Services/com.adobe.acs.bundles.netty/releases) and install via [AEM's Package Manager](http://localhost:4502/crx/packmgr)
+1. Download the [Netty content package](https://github.com/Adobe-Consulting-Services/com.adobe.acs.bundles.netty/releases) and install via [AEM's Package Manager](http://localhost:4502/crx/packmgr)
 
 This includes the necessary Netty OSGi bundles.
 
