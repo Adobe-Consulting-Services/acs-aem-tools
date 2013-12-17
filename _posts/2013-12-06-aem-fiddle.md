@@ -8,9 +8,9 @@ categories: features
 tags: new
 ---
 
-The intent of AEM Fiddle is to provide an accessible, developer friendly environent for experimentation, POCs and other one-off tasks. 
+The intent of AEM Fiddle is to provide an accessible, developer friendly environent for experimentation, POCs and other one-off tasks. AEM Fiddle is **not** intended to be used as a full fledged application development environment.
 
-AEM Fiddle advantage over other AEM IDE's (like CRXDE Lite) is fundamentally: *time to execution*. 
+AEM Fiddle's fundamental advantage over other AEM IDE's is: *time to execution*. 
 
 Most AEM IDE/development tooling requires the orchestration of scripts, resources and `sling:resourceTypes`. AEM Fiddle allows you to begin coding and executing your code in seconds (literally).
 
@@ -19,7 +19,7 @@ Most AEM IDE/development tooling requires the orchestration of scripts, resource
 
 ![AEM Tools]({{ site.baseurl }}/images/aem-fiddle/miscadmin.png)
 
-Install the ACS AEM Tools CQ Package via the CRX Package Manager and then open AEM Fiddle from the AEM Tools console, or directly at [/etc/acs-tool/aemfiddle.html](http://localhost:4502/etc/acs-tools/aemfiddle.html)
+Install the ACS AEM Tools package via the AEM Package Manager and then open AEM Fiddle from the AEM Tools console, or directly at [/etc/acs-tool/aemfiddle.html](http://localhost:4502/etc/acs-tools/aemfiddle.html)
 
 ## Overview
 
