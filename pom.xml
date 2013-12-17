@@ -7,7 +7,7 @@
 
     <groupId>com.adobe.acs</groupId>
     <artifactId>acs-aem-tools</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2</version>
     <packaging>pom</packaging>
 
     <name>ACS AEM Tools - Reactor Project</name>
@@ -39,7 +39,8 @@
 
     <scm>
         <developerConnection>scm:git:git@github.com:Adobe-Consulting-Services/acs-aem-tools.git</developerConnection>
-    </scm>
+      <tag>acs-aem-tools-0.0.2</tag>
+  </scm>
 
     <build>
         <pluginManagement>
@@ -104,7 +105,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
