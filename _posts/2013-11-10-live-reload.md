@@ -8,6 +8,10 @@ categories: features
 tags: new
 ---
 
+LiveReload is a browser plugin which automatically reloads browser windows when files change. It uses WebSockets to create a persistent connection to the server. When used with AEM 5.6 or AEM 5.6.1, this feature supports reloading pages when JSPs change. When used with AEM 6.0, it will also list for client library changes.
+
+For more information on LiveReload, visit [http://livereload.com/](http://livereload.com/)
+
 ## Installation
 
 Installation of the ACS AEM Tools LiveReload functionality requires:
@@ -18,23 +22,13 @@ Installation of the ACS AEM Tools LiveReload functionality requires:
 
 ### Installing ACS AEM Tools
 
-1. Download and install the latest ACS AEM Tools Packagea and install via [AEM's Package Manager](http://localhost:4502/crx/packmgr)
+1. Download and install the latest ACS AEM Tools Package and install via [AEM's Package Manager](http://localhost:4502/crx/packmgr)
 
 ### Installing Netty
 
-1. [Download latest Netty 4.x](http://netty.io/downloads.html) (ex. netty-4.0.13.Final.tar.bz2)
-2. Unzip, and install the following OSGi Bundles via the [AEM Web Console](http://localhost:4502/system/console/bundles).
+1. Download the Netty content package from [here](https://github.com/Adobe-Consulting-Services/com.adobe.acs.bundles.netty/releases) and install via [AEM's Package Manager](http://localhost:4502/crx/packmgr)
 
-* netty-codec-http-4.x.x.Final.jar
-* netty-handler-4.x.x.Final.jar
-
-Resulting in the following Active bundles. If any bundles are not active, press the ">" next to them to activate.
-
-![Netty Bundles]({{ site.baseurl }}/images/aem-livereload/netty-bundles.png)
-
-Verify the ACS AEM Tools Live Reload Bundle is Active. If not, press the ">" to activate the bundle.
-
-![ACS AEM Tools LiveReload Bundle]({{ site.baseurl }}/images/aem-livereload/acs-aem-tools-livereload-bundle.png)
+This includes the necessary Netty OSGi bundles.
 
 ### Install LiveReload Browser Plugin
 
@@ -42,7 +36,7 @@ Verify the ACS AEM Tools Live Reload Bundle is Active. If not, press the ">" to 
 * [Firefox](https://addons.mozilla.org/en-US/firefox/addon/livereload/)
 * [Opera](https://addons.opera.com/en/extensions/details/livereload-201-beta/)
 * [IE](https://github.com/dvdotsenko/livereload_ie_extension)
-* [LiveReload Homepage](http://livereload.com/)
+
 
 ![Browser Plugin]({{ site.baseurl }}/images/aem-livereload/browser-plugin.png)
 
