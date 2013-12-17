@@ -12,7 +12,7 @@ tags: new
 
 ![AEM Tools]({{ site.baseurl }}/images/jsp-code-display/miscadmin.png)
 
-Install the ACS AEM Tools CQ Package via the CRX Package Manager and then open JSP Code Display from the AEM Tools console, or directly at [/etc/acs-tool/jsp-code-display.html](http://localhost:4502/etc/acs-tools/jsp-code-display.html)
+Install the ACS AEM Tools package via the AEM Package Manager and then open JSP Code Display from the AEM Tools console, or directly at [/etc/acs-tool/jsp-code-display.html](http://localhost:4502/etc/acs-tools/jsp-code-display.html)
 
 ## Overview
 
