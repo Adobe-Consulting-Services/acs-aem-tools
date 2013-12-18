@@ -1,8 +1,8 @@
 ---
 layout: feature
-title: Release 0.1.0 now available!
-description: First version!
-date: 2013-12-06 00:00:00
+title: Release 0.0.2 now available!
+description: First public release!
+date: 2013-12-18 00:00:00
 thumbnail: /images/default/thumbnail.png
 categories: news
 ---
