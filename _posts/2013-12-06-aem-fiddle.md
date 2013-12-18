@@ -19,7 +19,7 @@ Most AEM IDE/development tooling requires the orchestration of scripts, resource
 
 ![AEM Tools]({{ site.baseurl }}/images/aem-fiddle/miscadmin.png)
 
-Install the ACS AEM Tools package via the AEM Package Manager and then open AEM Fiddle from the AEM Tools console, or directly at [/etc/acs-tool/aemfiddle.html](http://localhost:4502/etc/acs-tools/aemfiddle.html)
+Install the ACS AEM Tools package via the AEM Package Manager and then open AEM Fiddle from the AEM Tools console, or directly at [/etc/acs-tool/aem-fiddle.html](http://localhost:4502/etc/acs-tools/aem-fiddle.html)
 
 ## Overview
 
