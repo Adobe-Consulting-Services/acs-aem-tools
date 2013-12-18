@@ -16,13 +16,13 @@
     <inceptionYear>2013</inceptionYear>
     <licenses>
         <license>
-          <name>The Apache Software License, Version 2.0</name>
+            <name>The Apache Software License, Version 2.0</name>
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
     <organization>
-      <name>Adobe</name>
-      <url>http://www.adobe.com/</url>
+        <name>Adobe</name>
+        <url>http://www.adobe.com/</url>
     </organization>
 
     <!-- ====================================================================== -->
@@ -39,9 +39,8 @@
 
     <scm>
         <developerConnection>scm:git:git@github.com:Adobe-Consulting-Services/acs-aem-tools.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
-
+        <tag>HEAD</tag>
+    </scm>
     <build>
         <pluginManagement>
             <plugins>
@@ -81,7 +80,7 @@
                     <version>0.0.20</version>
                 </plugin>
                 <!--This plugin's configuration is used to store Eclipse
-                    m2e settings only. It has no influence on the Maven build itself. -->
+                m2e settings only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
                     <artifactId>lifecycle-mapping</artifactId>
@@ -170,25 +169,25 @@
                     <artifactId>license-maven-plugin</artifactId>
                     <version>1.5</version>
                 </plugin>
-                 <plugin>
-                     <artifactId>maven-release-plugin</artifactId>
-                     <version>2.4.2</version>
-                     <configuration>
-                         <autoVersionSubmodules>true</autoVersionSubmodules>
-                     </configuration>
-                     <dependencies>
-                       <dependency>
-                         <groupId>org.apache.maven.scm</groupId>
-                         <artifactId>maven-scm-api</artifactId>
-                         <version>1.8.1</version>
-                       </dependency>
-                       <dependency>
-                         <groupId>org.apache.maven.scm</groupId>
-                         <artifactId>maven-scm-provider-gitexe</artifactId>
-                        <version>1.8.1</version>
-                       </dependency>
-                     </dependencies>
-                 </plugin>
+                <plugin>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.4.2</version>
+                    <configuration>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.scm</groupId>
+                            <artifactId>maven-scm-api</artifactId>
+                            <version>1.8.1</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.apache.maven.scm</groupId>
+                            <artifactId>maven-scm-provider-gitexe</artifactId>
+                            <version>1.8.1</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -297,18 +296,18 @@
                         </executions>
                     </plugin>
                     <!-- 
-                    <plugin>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>javadoc</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                     -->
+                   <plugin>
+                       <artifactId>maven-javadoc-plugin</artifactId>
+                       <executions>
+                           <execution>
+                               <phase>package</phase>
+                               <goals>
+                                   <goal>javadoc</goal>
+                               </goals>
+                           </execution>
+                       </executions>
+                   </plugin>
+                    -->
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>findbugs-maven-plugin</artifactId>
@@ -357,18 +356,18 @@
                         </executions>
                     </plugin>
                     <!-- 
-                    <plugin>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>javadoc</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                     -->
+                   <plugin>
+                       <artifactId>maven-javadoc-plugin</artifactId>
+                       <executions>
+                           <execution>
+                               <phase>package</phase>
+                               <goals>
+                                   <goal>javadoc</goal>
+                               </goals>
+                           </execution>
+                       </executions>
+                   </plugin>
+                    -->
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>findbugs-maven-plugin</artifactId>
@@ -398,13 +397,13 @@
     </profiles>
 
     <!--
-        Inclusion of repositories in POMs is controversial, to say the least.
-        It would be best if you proxied the Adobe repository using a Maven
-        Repository Manager. Once you do that, remove these sections.
-     -->
+       Inclusion of repositories in POMs is controversial, to say the least.
+       It would be best if you proxied the Adobe repository using a Maven
+       Repository Manager. Once you do that, remove these sections.
+    -->
     <repositories>
         <repository>
-            <id>adobe</id>
+            <id>adobe-central</id>
             <name>Adobe Public Repository</name>
             <url>http://repo.adobe.com/nexus/content/groups/public/</url>
             <layout>default</layout>
@@ -412,30 +411,30 @@
     </repositories>
     <pluginRepositories>
         <pluginRepository>
-            <id>adobe</id>
+            <id>adobe-central-plugin</id>
             <name>Adobe Public Repository</name>
             <url>http://repo.adobe.com/nexus/content/groups/public/</url>
             <layout>default</layout>
         </pluginRepository>
     </pluginRepositories>
 
-     <distributionManagement>
-         <repository>
-             <id>${releaseRepository-Id}</id>
-             <name>${releaseRepository-Name}</name>
-             <url>${releaseRepository-URL}</url>
-         </repository>
-         <snapshotRepository>
-             <id>${snapshotRepository-Id}</id>
-             <name>${snapshotRepository-Name}</name>
-             <url>${snapshotRepository-URL}</url>
-             <uniqueVersion>false</uniqueVersion>
-         </snapshotRepository>
-     </distributionManagement>
+    <distributionManagement>
+        <repository>
+            <id>${releaseRepository-Id}</id>
+            <name>${releaseRepository-Name}</name>
+            <url>${releaseRepository-URL}</url>
+        </repository>
+        <snapshotRepository>
+            <id>${snapshotRepository-Id}</id>
+            <name>${snapshotRepository-Name}</name>
+            <url>${snapshotRepository-URL}</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
 
-  <modules>
-    <module>bundle</module>
-    <module>bundle-live-reload</module>
-    <module>content</module>
-  </modules>
+    <modules>
+        <module>bundle</module>
+        <module>bundle-live-reload</module>
+        <module>content</module>
+    </modules>
 </project>
