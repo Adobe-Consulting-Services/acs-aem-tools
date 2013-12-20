@@ -12,6 +12,18 @@ Here are some of the ways you can contribute to ACS AEM Tools:
 
 New code contributions should be primarily made using GitHub pull requests. This involves you creating a personal fork of the project, adding your new code to a branch in your fork, and then triggering a pull request using the GitHub web UI (it's easier than it sounds). A pull request is both a technical process (to get the code from your branch into the main repository) and a framework for performing code reviews.
 
+The branch naming conventions in your fork should follow projects name conventions.
+
+*For new features:*
+
+* **feature/**meaningful-feature-name
+  * ex. `feature/jsp-code-display`
+
+*For defects:*
+
+* **defect/**feature-name/short-name-of-problem-being-fixed
+  * ex. `defect/jsp-code-display/result-panel-misaligned`
+
 In many cases, it is worth having a discussion with the community before investing serious time in development. For these cases, create an issue of type "feature review" with a description of the problem you are trying to solve.
 
 There's a good guide to performing pull requests at [https://help.github.com/articles/using-pull-requests](https://help.github.com/articles/using-pull-requests). In the terms used in that article, we use both the **Fork & Pull** and the **Shared Repository Model**.
