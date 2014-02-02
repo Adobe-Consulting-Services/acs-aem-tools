@@ -445,7 +445,7 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
             lastModifiedAt: new Date().getTime(),            
             success: success,
             executedAt: new Date().getTime(),
-            resource: ($scope.data.src.result || $scope.data.app.currentPagePath),
+            resource: ($scope.data.src.resource || $scope.data.app.currentPagePath),
             data: data
         };
     };
