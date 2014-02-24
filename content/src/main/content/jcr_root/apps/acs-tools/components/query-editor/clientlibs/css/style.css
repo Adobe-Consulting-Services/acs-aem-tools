@@ -1,0 +1,61 @@
+.page {
+    padding-bottom: 1.5rem;
+}
+
+.ace_editor {
+    margin: 0;
+    width: 50%;
+    height: 100%;
+    float: left;
+}
+
+.ace_editor .link {
+    border-bottom: 1px solid #E6DB74 !important;
+    position: relative;
+}
+
+/* statusbar */
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    line-height: 1.5rem;
+    background: #232323;
+    color: #e6e6e6;
+    box-sizing: border-box;
+    padding: 0 0.3rem;
+}
+
+footer > * {
+    vertical-align: middle;
+    font-size: 0.75rem;
+}
+
+footer > .status {
+    display: inline-block;
+}
+
+footer > .ace_status-indicator {
+    float: right;
+}
+
+.loader {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 100%;
+    background-color: transparent;
+    border: 2px solid rgba(255, 255, 255, .2);
+    border-top-color: #fff;
+    -webkit-animation: rotate 0.5s infinite linear;
+}
+
+@-webkit-keyframes rotate {
+    from {
+        -webkit-transform: translate(2px, 2px) rotate(0deg);
+    }
+    to {
+        -webkit-transform: translate(2px, 2px) rotate(360deg);
+    }
+}
