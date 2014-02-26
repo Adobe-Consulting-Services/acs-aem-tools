@@ -4,7 +4,7 @@ mode-querybuilder.js
 snippets-querybuilder.js
 
 app.js
-services.js
+#services.js
 directives.js
 
 #base=js/controllers
@@ -12,3 +12,8 @@ directives.js
 controller-queryeditor.js
 controller-inputeditor.js
 controller-outputeditor.js
+
+#base=js/services
+
+service-crx.js
+service-debounce.js
