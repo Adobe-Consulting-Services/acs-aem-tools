@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>  
+  
+<taglib xmlns="http://java.sun.com/xml/ns.j2ee"  
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+        xsi:schemaLocation="http://java.sun.com.xml/ns/j2ee/web-jsptaglibrary_2_0.xsd" version="2.0">      
+    <description>AEM Helper Tag Library</description>
+    <tlib-version>1.0</tlib-version>
+    <short-name>aem</short-name>
+    <uri>http://www.adobe.com/taglibs/helper/1.0</uri>
+    <tag>
+        <description>
+            Includes a resource rendering into the current page.  This is 1:1 the same as the CQ include tag
+            except that anything defined in the body is interpreted as the default node values if the node
+            at the specified path does not exist.
+        </description>
+        <name>include</name>
+        <tag-class>
+            com.adobe.acs.tools.jstl.IncludeTag
+        </tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <description>
+                Whether to flush the output before including the target
+            </description>
+            <name>flush</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>boolean</type>
+        </attribute>
+        <attribute>
+            <description>
+                The path to the resource object to include in the current
+                request processing. If this path is relative it is
+                appended to the path of the current resource whose
+                script is including the given resource. Either resource
+                or path must be specified. If both are specified, the
+                resource takes precedences.
+            </description>
+            <name>path</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>
+                The resource type of a resource to include. If the resource
+                to be included is specified with the path attribute,
+                which cannot be resolved to a resource, the tag may
+                create a synthetic resource object out of the path and
+                this resource type. If the resource type is set the path
+                must be the exact path to a resource object. That is,
+                adding parameters, selectors and extensions to the path
+                is not supported if the resource type is set.
+            </description>
+            <name>resourceType</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>
+                The jsp script to include.
+            </description>
+            <name>script</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>
+                Controls if the component hierarchy should be ignored for script
+                resolution. If true, only the search paths are respected.
+            </description>
+            <name>ignoreComponentHierarchy</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>
+                If true, attributes and sub-nodes will be created if they do
+                not exist, existing values are not overwritten but missing attributes and
+                child nodes will be recreated if missing.  
+                If false, defaults are processed in a fail-fast mode
+                whereby the process stops completely 
+                if there is already a target node in JCR.  The default is faluse
+            </description>
+            <name>merge</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <tag>
+        <description>
+            Cache the body in a memory-backed hashmap.  If the cache is expired
+            then execute the JSP body and cache/output the result
+        </description>
+        <name>cache</name>
+        <tag-class>
+            com.adobe.acs.tools.jstl.CacheTag
+        </tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <description>
+                Unique cache key to use for content
+            </description>
+            <name>key</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>
+                Duration that cache entry remains valid in milliseconds.  Default/max duration
+                is 10 minutes (600000 ms)
+            </description>
+            <name>ttl</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <function>
+        <name>generateId</name>
+        <function-class>com.adobe.acs.tools.jstl.JSTLHelper</function-class>
+        <function-signature>int generateId()</function-signature>
+    </function>
+    <function>
+        <name>hasNode</name>
+        <function-class>com.adobe.acs.tools.jstl.JSTLHelper</function-class>
+        <function-signature>boolean hasNode(javax.jcr.Node, java.lang.String)</function-signature>
+    </function>
+    <function>
+        <name>getNode</name>
+        <function-class>com.adobe.acs.tools.jstl.JSTLHelper</function-class>
+        <function-signature>javax.jcr.Node getNode(javax.jcr.Node, java.lang.String)</function-signature>
+    </function>
+    <function>
+        <name>getNodeByPath</name>
+        <function-class>com.adobe.acs.tools.jstl.JSTLHelper</function-class>
+        <function-signature>javax.jcr.Node getNodeByPath(org.apache.sling.api.resource.ResourceResolver, java.lang.String)</function-signature>
+    </function>
+    <function>
+        <name>getPropertyString</name>
+        <function-class>com.adobe.acs.tools.jstl.JSTLHelper</function-class>
+        <function-signature>java.lang.String getPropertyString(javax.jcr.Node, java.lang.String)</function-signature>
+    </function>
+    <function>
+        <name>externalizeUrl</name>
+        <function-class>com.adobe.acs.tools.jstl.JSTLHelper</function-class>
+        <function-signature>java.lang.String externalizeUrl(org.apache.sling.api.resource.ResourceResolver, java.lang.String)</function-signature>
+    </function>
+    <function>
+        <name>nextDay</name>
+        <function-class>com.adobe.acs.tools.jstl.JSTLHelper</function-class>
+        <function-signature>java.util.Calendar nextDay(java.util.Calendar)</function-signature>
+    </function>
+    <function>
+        <name>addDays</name>
+        <function-class>com.adobe.acs.tools.jstl.JSTLHelper</function-class>
+        <function-signature>java.util.Calendar addDays(java.util.Calendar, java.lang.Integer)</function-signature>
+    </function>
+</taglib>
