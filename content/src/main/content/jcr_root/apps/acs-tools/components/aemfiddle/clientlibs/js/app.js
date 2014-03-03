@@ -40,7 +40,7 @@ aemFiddle.ace = {
                 bindKey: { win: 'Ctrl-K', mac: 'Command-K' },
                 exec: function (editor) {
                     var runURL = $('#app-data').data('run-url');
-                    angular.element($('body')).scope().app.run(runURL);
+                    angular.element($('#acs-tools-aemfiddle-app')).scope().app.run(runURL);
                  },
                 readOnly: true // false if this command should not apply in readOnly mode
             });
