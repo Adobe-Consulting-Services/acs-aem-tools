@@ -24,15 +24,8 @@
 
     'use strict';
 
-    ace.require("ace/ext/language_tools");
-
-    angular.module('qeApp', [
-        'ui.ace',
-        'qeControllers',
-        'qeServices',
-        'qeDirectives'
-    ]);
-
-    angular.bootstrap(document.querySelector('#qeApp'), ['qeApp']);
+    angular.module('qeControllers', []);
+    angular.module('qeServices', []);
+    angular.module('qeDirectives', []);
 
 }());

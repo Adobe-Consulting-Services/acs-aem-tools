@@ -1,11 +1,4 @@
-#base=js
-
-mode-querybuilder.js
-snippets-querybuilder.js
-
-app.js
-#services.js
-directives.js
+js/modules.js
 
 #base=js/controllers
 
@@ -17,3 +10,10 @@ controller-outputeditor.js
 
 service-crx.js
 service-debounce.js
+
+#base=js
+
+mode-querybuilder.js
+snippets-querybuilder.js
+directives.js
+app.js
