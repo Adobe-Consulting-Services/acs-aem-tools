@@ -98,7 +98,7 @@ public class TemplateThumbnailHealthCheck implements HealthCheck {
                 resultLog.debug("All templates have thumbnails.");
             }
         } catch (Exception e) {
-            log.error("Unable to list components", e);
+            log.error("Unable to list templates", e);
         } finally {
             if (resolver != null) {
                 resolver.close();
