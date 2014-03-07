@@ -1,3 +1,4 @@
 #base=.
 
 ace.js
+../ext-language_tools.js

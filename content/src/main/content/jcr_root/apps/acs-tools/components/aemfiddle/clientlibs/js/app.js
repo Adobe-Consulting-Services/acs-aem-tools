@@ -31,10 +31,12 @@ aemFiddle.ace = {
     input: {
         editor: ace.edit("ace-input"),
         init: function() {
+            ace.require("ace/ext/language_tools");
             aemFiddle.ace.input.editor.setTheme("ace/theme/vibrant_ink");
             aemFiddle.ace.input.editor.getSession().setMode("ace/mode/jsp");
             aemFiddle.ace.input.editor.setDisplayIndentGuides(true);
             aemFiddle.ace.input.editor.gotoLine(12);
+            aemFiddle.ace.input.editor.setOptions({ enableBasicAutocompletion: true });
             aemFiddle.ace.input.editor.commands.addCommand({
                 name: 'RunCodeCommand',
                 bindKey: { win: 'Ctrl-K', mac: 'Command-K' },
