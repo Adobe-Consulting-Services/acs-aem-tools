@@ -57,11 +57,16 @@ public class JspCodeServlet extends SlingAllMethodsServlet {
 
                     Resource fileResource = request.getResourceResolver().getResource(
                             "/var/classes/" + packageName.replace('.', '/') + "/" + fileName);
-                    InputStream instream = fileResource.adaptTo(InputStream.class);
+                    if (fileResource != null) {
+                        InputStream instream = fileResource.adaptTo(InputStream.class);
 
-                    result.put("success", true);
-                    result.put("lineNumber", Integer.parseInt(lineNumber));
-                    result.put("code", IOUtils.toString(instream, "UTF-8"));
+                        result.put("success", true);
+                        result.put("lineNumber", Integer.parseInt(lineNumber));
+                        result.put("code", IOUtils.toString(instream, "UTF-8"));
+                    } else {
+                        result.put("success", false);
+                        result.put("error", "Compiled JSP could not be found.");
+                    }
                 }
             } else {
                 result.put("success", false);
