@@ -92,6 +92,7 @@ header .drawer .action-icon-medium {
 
 header .drawer .divider {
     margin: 0 .5rem;
+    border-left: inherit;
 }
 
 header .drawer #popover-new {
@@ -114,6 +115,8 @@ header .drawer #popover-new {
 header .drawer #popover-new .popover {
     display: block;
     position: relative;
+    top: inherit;
+    left: inherit;
 }
 
 header .drawer #popover-new .popover.arrow-top:before {
