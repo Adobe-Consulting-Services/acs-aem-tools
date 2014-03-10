@@ -56,7 +56,7 @@ public class TemplateThumbnailHealthCheck implements HealthCheck {
 
     private static final Logger log = LoggerFactory.getLogger(TemplateThumbnailHealthCheck.class);
 
-    @Property(label = "Paths", description = "Root component paths", unbounded = PropertyUnbounded.ARRAY)
+    @Property(label = "Paths", description = "Root template paths, including trailing slash.", unbounded = PropertyUnbounded.ARRAY)
     private static final String PROP_PATHS = "paths";
 
     @Reference
