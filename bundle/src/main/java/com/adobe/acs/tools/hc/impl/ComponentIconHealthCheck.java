@@ -22,6 +22,7 @@ package com.adobe.acs.tools.hc.impl;
 import java.util.Collection;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.ConfigurationPolicy;
@@ -62,8 +63,10 @@ public class ComponentIconHealthCheck implements HealthCheck {
             unbounded = PropertyUnbounded.ARRAY, value = { FOUNDATION_PAGE_TYPE, CLOUD_SERVICE_CONFIG_PAGE_TYPE })
     private static final String PROP_PAGE_TYPES = "page.types";
 
-    @Property(label = "Paths", description = "Root component paths", unbounded = PropertyUnbounded.ARRAY)
+    @Property(label = "Paths", description = "Root component paths, including trailing slash.", unbounded = PropertyUnbounded.ARRAY)
     private static final String PROP_PATHS = "paths";
+
+    private static final String GROUP_HIDDEN = ".hidden";
 
     @Reference
     private ResourceResolverFactory rrFactory;
@@ -95,7 +98,7 @@ public class ComponentIconHealthCheck implements HealthCheck {
                 if (StringUtils.startsWithAny(path, paths)) {
                     String iconPath = component.getIconPath();
 
-                    if (component.isEditable() && !isPageType(component) && iconPath == null) {
+                    if (isDroppable(component) && !isPageType(component) && iconPath == null) {
                         componentsWithoutIcons++;
                         resultLog.warn("Component {} is editable, but doesn't have an icon.", path);
                     }
@@ -118,23 +121,17 @@ public class ComponentIconHealthCheck implements HealthCheck {
         return new Result(resultLog);
     }
 
+    private boolean isDroppable(Component component) {
+        return component.isEditable() && (!component.getComponentGroup().equals(GROUP_HIDDEN));
+    }
+
     private boolean isPageType(Component component) {
         if (component == null) {
             return false;
-        } else if (equalsAny(component.getResourceType(), pageTypes)) {
+        } else if (ArrayUtils.contains(pageTypes, component.getResourceType())) {
             return true;
         } else {
             return isPageType(component.getSuperComponent());
         }
     }
-
-    private static boolean equalsAny(String text, String[] arr) {
-        for (String string : arr) {
-            if (text.equals(string)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 }
