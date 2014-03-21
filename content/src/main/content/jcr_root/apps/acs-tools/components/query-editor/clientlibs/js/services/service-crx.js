@@ -43,6 +43,9 @@ angular.module('qeServices').
                     return $http.get('/crx/de/filesearch.jsp', {
                         params: { name: name }
                     });
+                },
+                predicates: function () {
+                    return $http.get('/bin/acs-tools/qe/predicates.json');
                 }
             };
         }

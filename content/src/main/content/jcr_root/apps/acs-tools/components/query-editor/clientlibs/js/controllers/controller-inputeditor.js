@@ -66,6 +66,24 @@ angular.module('qeControllers').
                         });
                     }
                 }
+                
+                function predicatesearch(callback) {
+                    if ($scope.predicates) {
+                        callback(null, $scope.predicates);
+                    } else {
+                        Crx.predicates().then(function (resp) {
+                            var items = [];
+                            angular.forEach(resp.data, function (value) {
+                                items.push({
+                                    value: value,
+                                    meta: 'predicate'
+                                });
+                            });
+                            $scope.predicates = items;
+                            callback(null, $scope.predicates);
+                        });
+                    }
+                }
 
                 langTools.addCompleter({
                     getCompletions: function (editor, session, pos, prefix, callback) {
@@ -75,6 +93,8 @@ angular.module('qeControllers').
                             filesearch(prefix, callback);
                         } else if (/type/.exec(line)) {
                             typesearch(prefix, callback);
+                        } else if (line === '') {
+                            predicatesearch(callback);
                         } else if (/^[^=]$/.exec(line)) {
                             callback(null, []);
                         }
