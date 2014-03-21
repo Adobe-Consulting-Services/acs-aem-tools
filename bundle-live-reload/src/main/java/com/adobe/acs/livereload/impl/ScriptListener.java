@@ -54,7 +54,7 @@ public final class ScriptListener implements EventHandler {
 
     private BundleContext bundleContext;
 
-    private ServiceRegistration extensionRegistration;
+    private ServiceRegistration scriptChangeListenerRegistration;
 
     @Reference
     private ScriptEngineManager scriptEngineManager;
@@ -72,7 +72,7 @@ public final class ScriptListener implements EventHandler {
             } catch (JSONException e) {
                 log.error("unable to reload from jsp", e);
             }
-        } else if (extensionRegistration != null) {
+        } else if (scriptChangeListenerRegistration != null) {
             registerOrUpdate(getProperties());
         }
     }
@@ -112,14 +112,14 @@ public final class ScriptListener implements EventHandler {
 
     private void registerOrUpdate(Dictionary<?, ?> properties) {
         if (properties == null) {
-            if (extensionRegistration != null) {
-                extensionRegistration.unregister();
-                extensionRegistration = null;
+            if (scriptChangeListenerRegistration != null) {
+                scriptChangeListenerRegistration.unregister();
+                scriptChangeListenerRegistration = null;
             }
-        } else if (extensionRegistration != null) {
-            extensionRegistration.setProperties(properties);
+        } else if (scriptChangeListenerRegistration != null) {
+            scriptChangeListenerRegistration.setProperties(properties);
         } else {
-            extensionRegistration = bundleContext.registerService(EventHandler.class.getName(), this, properties);
+            scriptChangeListenerRegistration = bundleContext.registerService(EventHandler.class.getName(), this, properties);
         }
     }
 
