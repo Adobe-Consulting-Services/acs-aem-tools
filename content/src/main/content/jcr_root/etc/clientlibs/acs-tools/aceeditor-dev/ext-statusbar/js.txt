@@ -1,1 +1,0 @@
-ext-statusbar.js

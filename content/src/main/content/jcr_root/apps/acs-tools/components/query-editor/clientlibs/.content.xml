@@ -2,4 +2,4 @@
 <jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
     jcr:primaryType="cq:ClientLibraryFolder"
     categories="[query-editor.app]"
-    dependencies="[coralui,acs-tools.ace.dev,acs-tools.ace.ext.language-tools.dev,acs-tools.ace.ext.statusbar.dev,acs-tools.angularjs,acs-tools.angularui]"/>
+    dependencies="[coralui,acs-tools.ace,acs-tools.angularjs,acs-tools.angularui.ace]"/>
