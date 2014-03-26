@@ -210,6 +210,9 @@ header .nav a:hover {
 .feature-doc code {
   whitespace: normal;
 }
+.feature-doc .content {
+  margin-top: 2em;
+}
 /* Inline Code */
 code {
   background-color: #f7f7f7;

@@ -5,6 +5,7 @@ description: Give Cmd-R a break
 date: 2013-12-04
 thumbnail: /images/aem-livereload/thumbnail.png
 categories: features
+initial-release: 0.0.2
 tags: updated
 ---
 

@@ -15,10 +15,12 @@ layout: base
                 </h1>
                 
                 {% if page.initial-release %}
-                Available since version {{page.initial-release}}
+                Available since version {{page.initial-release}}                
                 {% endif %}
                 
-                {{ content }}
+                <div class="content">
+                    {{ content }}
+                </div>
             </section>
         </div>
     </div>
