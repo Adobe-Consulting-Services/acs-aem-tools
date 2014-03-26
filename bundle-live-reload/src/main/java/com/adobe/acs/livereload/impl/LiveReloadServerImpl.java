@@ -63,9 +63,9 @@ public final class LiveReloadServerImpl implements LiveReloadServer {
     @Property(intValue = DEFAULT_PORT, label = "Port", description = "Web Socket Port")
     private static final String PROP_PORT = "port";
 
-    private static final String[] DEFAULT_PREFIXES = { "/cf", "/content", "/etc" };
+    private static final String[] DEFAULT_PREFIXES = { "/cf", "/content", "/etc", "/editor.html" };
 
-    @Property(value = { "/cf", "/content", "/etc" }, label = "Path Prefixes", description = "Path prefixes")
+    @Property(value = { "/cf", "/content", "/etc", "/editor.html" }, label = "Path Prefixes", description = "Path prefixes")
     private static final String PROP_PREFIXES = "prefixes";
 
     private int port;
