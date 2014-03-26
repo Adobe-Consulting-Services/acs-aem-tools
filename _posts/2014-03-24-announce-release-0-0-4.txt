@@ -1,7 +1,7 @@
 ---
 layout: feature
-title: Release 0.0.4 now available!
-description: New Query Editor Tool; Misc compatibility fixes.
+title: Release 0.0.6 now available!
+description: New Query Editor Tool; New Developer Health Checks; Misc AEM 6 compatibility fixes.
 date: 2014-03-24 10:00:00
 thumbnail: /images/default/thumbnail.png
 categories: news
