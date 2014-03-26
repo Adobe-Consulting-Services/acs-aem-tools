@@ -158,16 +158,17 @@ header {
 		}		
 	}
 }
+
 /* Feature Doc */
 
 .feature-doc {
 	margin-top: 2em;
 
+
 	h1 {
 		margin-top: 2em;
 
-		.new {
-			background-color: @color4;
+		.badge {
 			color: #FFF;
 			padding: .25em .5em;
 			border-radius: 5px;
@@ -176,7 +177,18 @@ header {
 			position: relative;
 			top: -.1em;		
 		}
+
+		.new {
+			background-color: @color4;
+			.badge
+		}
+
+		.updated {
+			background-color: @secondary-color;
+			.badge
+		}
 	}
+
 
 	h1, 
 	h2, 

@@ -148,8 +148,27 @@ header .nav a:hover {
 .feature-doc h1 {
   margin-top: 2em;
 }
+.feature-doc h1 .badge {
+  color: #FFF;
+  padding: .25em .5em;
+  border-radius: 5px;
+  margin-left: 10px;
+  font-size: .7em;
+  position: relative;
+  top: -0.1em;
+}
 .feature-doc h1 .new {
   background-color: #33b90a;
+  color: #FFF;
+  padding: .25em .5em;
+  border-radius: 5px;
+  margin-left: 10px;
+  font-size: .7em;
+  position: relative;
+  top: -0.1em;
+}
+.feature-doc h1 .updated {
+  background-color: #1876a8;
   color: #FFF;
   padding: .25em .5em;
   border-radius: 5px;
