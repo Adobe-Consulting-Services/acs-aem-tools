@@ -136,8 +136,7 @@ header {
 			margin-bottom: 4rem;
 		}
 
-		.new {
-			background-image: url('../images/new-light.png');
+		.banner {
 			background-color: transparent;
 			background-repeat: no-repeat;
 			background-position: top left;
@@ -147,9 +146,18 @@ header {
 			top: 0;
 			left: 0;
 		}
+
+		.new {
+			background-image: url('../images/new-banner.png');
+			.banner;
+		}
+
+		.updated {
+			background-image: url('../images/updated-banner.png');
+			.banner;
+		}		
 	}
 }
-
 /* Feature Doc */
 
 .feature-doc {
