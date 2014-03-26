@@ -25,6 +25,7 @@ Simply enter your [QueryBuilder](http://dev.day.com/docs/en/cq/current/dam/custo
 Querying can be set to "Auto Query" which will execute and display the results of the QueryBuilder query from the left pane and its input, or this can be disabled and manual execution of the query can be triggered via the "Run Query" button in the top right.
 
 ## Pro Tip
+* To activate code completion, press `Ctrl-Space`.
 * On a Mac, `Cmd-click` on a any `path` value in the results to jump to that result in CRXDE Lite.
 
 ![Query Editor - Cmd Click]({{ site.baseurl }}/images/query-editor/cmd-click.png)
