@@ -18,22 +18,23 @@
  * #L%
  */
 
-/*global angular: false, ace: false */
+.transition(@decl) {
+    -webkit-transition: @decl;
+    -moz-transition: @decl;
+    -ms-transition: @decl;
+    -o-transition: @decl;
+    transition: @decl;
+}
 
-(function () {
+.animation(@decl) {
+    -webkit-animation: @decl;
+    animation: @decl;
+}
 
-    'use strict';
-
-    ace.require("ace/ext/language_tools");
-
-    angular.module('qeApp', [
-        'ngAnimate',
-        'ui.ace',
-        'qeControllers',
-        'qeServices',
-        'qeDirectives'
-    ]);
-
-    angular.bootstrap(document.querySelector('#qeApp'), ['qeApp']);
-
-}());
+.transform(@decl) {
+    -webkit-transform: @decl;
+    -moz-transform: @decl;
+    -ms-transform: @decl;
+    -o-transform: @decl;
+    transform: @decl;
+}
