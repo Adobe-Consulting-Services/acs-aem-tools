@@ -139,7 +139,7 @@ public final class JavaScriptInjectionFilter implements Filter {
         if (!StringUtils.equalsIgnoreCase("get", slingRequest.getMethod())) {
             // Only inject on GET requests
             return false;
-        } else if (StringUtils.startsWithAny(resource.getPath(), prefixes)) {
+        } else if (!StringUtils.startsWithAny(resource.getPath(), prefixes)) {
             return false;
         } else if (StringUtils.equals(slingRequest.getHeader("X-Requested-With"), "XMLHttpRequest")) {
             // Do not inject into XHR requests
