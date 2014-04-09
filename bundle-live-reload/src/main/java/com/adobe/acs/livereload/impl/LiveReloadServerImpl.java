@@ -33,8 +33,12 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.servlet.Filter;
 
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -44,21 +48,30 @@ import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
 import org.apache.sling.commons.osgi.PropertiesUtil;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.adobe.acs.livereload.LiveReloadServer;
 
-@Component(immediate = true, metatype = true)
+@Component(immediate = true, metatype = true, label = "ACS AEM Tools - Live Reload Server",
+        description = "AEM Live Reload web socket server")
 @Service
 public final class LiveReloadServerImpl implements LiveReloadServer {
 
     private static final Logger log = LoggerFactory.getLogger(LiveReloadServerImpl.class);
 
+    private static final boolean DEFAULT_FILTER_ENABLED = false;
+
     private static final int DEFAULT_PORT = 35729;
     
     private static final int MAX_CONTENT_LENGTH = 65536;
+
+    @Property(label = "JS Injection Enabled?",
+            description = "Enable the injection of the JavaScript library into all HTML pages.",
+            boolValue = DEFAULT_FILTER_ENABLED)
+    private static final String PROP_FILTER_ENABLED = "prop.filter.enabled";
 
     @Property(intValue = DEFAULT_PORT, label = "Port", description = "Web Socket Port")
     private static final String PROP_PORT = "port";
@@ -69,6 +82,7 @@ public final class LiveReloadServerImpl implements LiveReloadServer {
     private static final String PROP_PREFIXES = "prefixes";
 
     private int port;
+    private static final int FILTER_ORDER = -3000;
 
     private boolean running;
 
@@ -85,13 +99,15 @@ public final class LiveReloadServerImpl implements LiveReloadServer {
     private NioEventLoopGroup workerGroup;
 
     private ContentPageMatcher matcher;
+    private ServiceRegistration filterReference;
 
     private String[] pathPrefixes;
 
     @Activate
     protected void activate(ComponentContext ctx) throws Exception {
-        this.port = PropertiesUtil.toInteger(ctx.getProperties().get(PROP_PORT), DEFAULT_PORT);
-        this.pathPrefixes = PropertiesUtil.toStringArray(ctx.getProperties().get(PROP_PREFIXES), DEFAULT_PREFIXES);
+        Dictionary<?, ?> props = ctx.getProperties();
+        this.port = PropertiesUtil.toInteger(props.get(PROP_PORT), DEFAULT_PORT);
+        this.pathPrefixes = PropertiesUtil.toStringArray(props.get(PROP_PREFIXES), DEFAULT_PREFIXES);
         this.broadcastGroup = new NioEventLoopGroup(1);
 
         this.group = new DefaultChannelGroup("live-reload", broadcastGroup.next());
@@ -101,10 +117,23 @@ public final class LiveReloadServerImpl implements LiveReloadServer {
 
         startServer();
         running = true;
+
+        if (PropertiesUtil.toBoolean(props.get(PROP_FILTER_ENABLED), DEFAULT_FILTER_ENABLED)) {
+            Dictionary<Object, Object> filterProps = new Hashtable<Object, Object>();
+            filterProps.put("sling.filter.scope", "request");
+            filterProps.put("filter.order", FILTER_ORDER);
+            filterReference = ctx.getBundleContext().registerService(Filter.class.getName(),
+                    new JavaScriptInjectionFilter(port, pathPrefixes), filterProps);
+        }
     }
 
     @Deactivate
     protected void deactivate() throws InterruptedException {
+        if (filterReference != null) {
+            filterReference.unregister();
+            filterReference = null;
+        }
+
         try {
             if (running) {
                 try {
