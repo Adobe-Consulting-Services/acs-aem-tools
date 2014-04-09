@@ -17,131 +17,126 @@
  * limitations under the License.
  * #L%
  */
+@import "mixins";
 
 #acs-tools-query-editor {
 
-  .page {
-      padding-bottom: 1.5rem;
-  }
-
-  .ace_editor {
-      margin: 0;
-      width: 50%;
-      height: 100%;
-      float: left;
-  }
-
-  .ace_editor .link {
-      border-bottom: 1px solid #6f0 !important;
-      position: relative;
-  }
-
-  /* Auto-query notification */
-  @auto-query-notification-width: 14em;
-
-  .auto-query-wrapper {
-    position: relative;
-    margin-right: 2em;
-    z-index: 20000;
-
-    .auto-query-warning {
-      color: #4B4B4B;
-      min-width: @auto-query-notification-width;
-      width: @auto-query-notification-width;
-      max-width: @auto-query-notification-width;
-      white-space: normal;
-      line-height: 1.4em;
-      padding: 1.5em;
-      position: absolute;
-      top: 20px;
-      left: (-1 * ((@auto-query-notification-width / 2) - 1));
-    }
-  }
-
-  /* Query run indicator */
-  .query-run-overlay-wrapper {
-    position: absolute;
-    top: 2.875rem;
-    right: 0;
-    bottom: 24px;
-    left: 50%;
-
-    z-index: 10000;
-
-    .query-run-overlay {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-
-      background-color: #000;
-      opacity: .75;
-      z-index: 10001;
+    .page {
+        padding-bottom: 1.5rem;
     }
 
-    .wait-indicator {
-      position: absolute;
-      top: 35%;
-      left: 48%;
-      opacity: 1;
-      z-index: 10002;
+    .ace_editor {
+        margin: 0;
+        width: 50%;
+        height: 100%;
+        float: left;
 
-
+        .link {
+            border-bottom: 1px solid #6f0 !important;
+            position: relative;
+        }
     }
-  }
 
+    /* Auto-query notification */
+    @auto-query-notification-width: 14em;
 
-  /* header */
+    .auto-query-wrapper {
+        position: relative;
+        margin-right: 2em;
+        z-index: 20000;
 
-  header > .drawer > button {
-      margin-top: 7px;
-  }
+        .auto-query-warning {
+            color: #4B4B4B;
+            min-width: @auto-query-notification-width;
+            width: @auto-query-notification-width;
+            max-width: @auto-query-notification-width;
+            white-space: normal;
+            line-height: 1.4em;
+            padding: 1.5em;
+            position: absolute;
+            top: 20px;
+            left: (-1 * ((@auto-query-notification-width / 2) - 1));
+        }
+    }
 
-  /* statusbar */
+    /* Query run indicator */
+    .query-run-overlay-wrapper {
+        position: absolute;
+        top: 2.875rem;
+        right: 0;
+        bottom: 24px;
+        left: 50%;
+        z-index: 10000;
+        background-color: rgba(0, 0, 0, 0.7);
+        opacity: 1;
+        .transition(all linear 0.2s;);
 
-  footer {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      line-height: 1.5rem;
-      background: #232323;
-      color: #e6e6e6;
-      box-sizing: border-box;
-      padding: 0 0.3rem;
-  }
+        .spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            text-align: center;
+            width: 2rem;
+            height: 2rem;
+            margin: -1rem 0 0 -1rem;
+        }
 
-  footer > * {
-      vertical-align: middle;
-      font-size: 0.75rem;
-  }
+        &.ng-hide {
+            opacity: 0;
+        }
 
-  footer > .status {
-      display: inline-block;
-  }
+        &.ng-hide-add,
+        &.ng-hide-remove {
+            display: block !important;
+        }
+    }
 
-  footer > .ace_status-indicator {
-      float: right;
-  }
+    /* header */
 
-  .loader {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 100%;
-      background-color: transparent;
-      border: 2px solid rgba(255, 255, 255, .2);
-      border-top-color: #fff;
-      -webkit-animation: rotate 0.5s infinite linear;
-  }
+    header > .drawer > button {
+        margin-top: 7px;
+    }
 
-  @-webkit-keyframes rotate {
-      from {
-          -webkit-transform: translate(2px, 2px) rotate(0deg);
-      }
-      to {
-          -webkit-transform: translate(2px, 2px) rotate(360deg);
-      }
-  }
+    /* statusbar */
+
+    footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        line-height: 1.5rem;
+        background: #232323;
+        color: #e6e6e6;
+        box-sizing: border-box;
+        padding: 0 0.3rem;
+
+        > * {
+            vertical-align: middle;
+            font-size: 0.75rem;
+        }
+
+        > .status {
+            display: inline-block;
+        }
+
+        > .ace_status-indicator {
+            float: right;
+        }
+    }
+
+    .loader {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 100%;
+        background-color: transparent;
+        border: 2px solid rgba(255, 255, 255, .2);
+        border-top-color: #fff;
+        .animation(rotate 0.5s infinite linear;);
+    }
+
+    @keyframes rotate {
+        from { .transform(translate(2px, 2px) rotate(0deg);); }
+        to { .transform(translate(2px, 2px) rotate(0deg);); }
+    }
 
 }

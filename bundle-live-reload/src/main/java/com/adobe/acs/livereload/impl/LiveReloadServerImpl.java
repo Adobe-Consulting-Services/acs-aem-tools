@@ -65,7 +65,7 @@ public final class LiveReloadServerImpl implements LiveReloadServer {
     private static final boolean DEFAULT_FILTER_ENABLED = false;
 
     private static final int DEFAULT_PORT = 35729;
-    
+
     private static final int MAX_CONTENT_LENGTH = 65536;
 
     @Property(label = "JS Injection Enabled?",
@@ -78,11 +78,13 @@ public final class LiveReloadServerImpl implements LiveReloadServer {
 
     private static final String[] DEFAULT_PREFIXES = { "/cf", "/content", "/etc", "/editor.html" };
 
-    @Property(value = { "/cf", "/content", "/etc", "/editor.html" }, label = "Path Prefixes", description = "Path prefixes")
+    @Property(value = { "/cf", "/content", "/etc", "/editor.html" }, label = "Path Prefixes",
+            description = "Path prefixes")
     private static final String PROP_PREFIXES = "prefixes";
 
-    private int port;
     private static final int FILTER_ORDER = -3000;
+
+    private int port;
 
     private boolean running;
 
@@ -99,6 +101,7 @@ public final class LiveReloadServerImpl implements LiveReloadServer {
     private NioEventLoopGroup workerGroup;
 
     private ContentPageMatcher matcher;
+
     private ServiceRegistration filterReference;
 
     private String[] pathPrefixes;
