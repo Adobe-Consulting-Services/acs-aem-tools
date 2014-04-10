@@ -14,6 +14,8 @@ initial-release: 0.0.2
 
 Install the ACS AEM Tools package via the AEM Package Manager and then open JSP Code Display from the AEM Tools console, or directly at [/etc/acs-tools/jsp-code-display.html](http://localhost:4502/etc/acs-tools/jsp-code-display.html)
 
+> To get to the AEM Tools console from the Touch UI, from the left rail navigation, select Tools > Operations > Configuration.
+
 ## Overview
 
 ![JSP Code Display]({{ site.baseurl }}/images/jsp-code-display/screenshot.png)

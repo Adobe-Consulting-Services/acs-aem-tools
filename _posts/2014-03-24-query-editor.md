@@ -18,6 +18,8 @@ QueryEditor is a WebUI that allows QueryBuilder queries to be written, executed 
 
 Install the ACS AEM Tools package via the AEM Package Manager and then open Query Editor from the AEM Tools console, or directly at [/etc/acs-tool/query-editor.html](http://localhost:4502/etc/acs-tools/query-editor.html)
 
+> To get to the AEM Tools console from the Touch UI, from the left rail navigation, select Tools > Operations > Configuration.
+
 ![Query Editor]({{ site.baseurl }}/images/query-editor/query-editor.png)
 
 Simply enter your [QueryBuilder](http://dev.day.com/docs/en/cq/current/dam/customizing_and_extendingcq5dam/query_builder.html) params in the left editor pane, and the results will display in the right pane.

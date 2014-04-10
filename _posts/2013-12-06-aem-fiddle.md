@@ -22,6 +22,8 @@ Most AEM IDE/development tooling requires the orchestration of scripts, resource
 
 Install the ACS AEM Tools package via the AEM Package Manager and then open AEM Fiddle from the AEM Tools console, or directly at [/etc/acs-tool/aem-fiddle.html](http://localhost:4502/etc/acs-tools/aem-fiddle.html)
 
+> To get to the AEM Tools console from the Touch UI, from the left rail navigation, select Tools > Operations > Configuration.
+
 ## Overview
 
 The term "fiddle" is used to describe the script entered into the Web UI (left side of screen) to be executed against AEM. 
