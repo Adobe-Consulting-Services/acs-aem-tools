@@ -62,7 +62,7 @@ public final class LiveReloadServerImpl implements LiveReloadServer {
 
     private static final Logger log = LoggerFactory.getLogger(LiveReloadServerImpl.class);
 
-    private static final boolean DEFAULT_FILTER_ENABLED = false;
+    private static final boolean DEFAULT_JS_FILTER_ENABLED = false;
 
     private static final int DEFAULT_PORT = 35729;
 
@@ -70,8 +70,8 @@ public final class LiveReloadServerImpl implements LiveReloadServer {
 
     @Property(label = "JS Injection Enabled?",
             description = "Enable the injection of the JavaScript library into all HTML pages.",
-            boolValue = DEFAULT_FILTER_ENABLED)
-    private static final String PROP_FILTER_ENABLED = "prop.filter.enabled";
+            boolValue = DEFAULT_JS_FILTER_ENABLED)
+    private static final String PROP_JS_FILTER_ENABLED = "js.filter.enabled";
 
     @Property(intValue = DEFAULT_PORT, label = "Port", description = "Web Socket Port")
     private static final String PROP_PORT = "port";
@@ -121,7 +121,7 @@ public final class LiveReloadServerImpl implements LiveReloadServer {
         startServer();
         running = true;
 
-        if (PropertiesUtil.toBoolean(props.get(PROP_FILTER_ENABLED), DEFAULT_FILTER_ENABLED)) {
+        if (PropertiesUtil.toBoolean(props.get(PROP_JS_FILTER_ENABLED), DEFAULT_JS_FILTER_ENABLED)) {
             Dictionary<Object, Object> filterProps = new Hashtable<Object, Object>();
             filterProps.put("sling.filter.scope", "request");
             filterProps.put("filter.order", FILTER_ORDER);
