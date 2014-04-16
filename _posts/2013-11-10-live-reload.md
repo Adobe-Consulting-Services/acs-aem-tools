@@ -44,6 +44,10 @@ This includes the necessary Netty OSGi bundles.
 
 ![Browser Plugin]({{ site.baseurl }}/images/aem-livereload/browser-plugin.png)
 
+Alternatively, instead of using the browser plugin, enable injection of the JavaScript using OSGi configuration of the Live Reload server component.
+
+![OSGi Configuration]({{ site.baseurl }}/images/aem-livereload/js-inject-config.png)
+
 ## How to Use
 
 1. After installation steps outlined above are complete, in your Web browser, navigate to the page you will be developing against; in this example: `http://localhost:4502/content/geometrixx/en/products.html`

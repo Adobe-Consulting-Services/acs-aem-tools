@@ -6,7 +6,6 @@ date: 2014-03-23 01:00:00
 thumbnail: /images/query-editor/thumbnail.png
 categories: features
 initial-release: 0.0.4
-tags: new
 ---
 
 QueryEditor is a WebUI that allows QueryBuilder queries to be written, executed and debugged in real time.  

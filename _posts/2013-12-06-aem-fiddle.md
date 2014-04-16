@@ -6,7 +6,6 @@ date: 2013-12-06 01:00:00
 thumbnail: /images/aem-fiddle/thumbnail.png
 categories: features
 initial-release: 0.0.2
-tags: updated
 ---
 
 The intent of AEM Fiddle is to provide an accessible, developer friendly environent for experimentation, POCs and other one-off tasks. AEM Fiddle is **not** intended to be used as a full fledged application development environment.

@@ -1,0 +1,8 @@
+---
+layout: feature
+title: Release 0.0.8 now available!
+description: New Feature - Live Reload now supports JavaScript injection to support mobile devices.
+date: 2014-04-16 10:00:00
+thumbnail: /images/default/thumbnail.png
+categories: news
+---
