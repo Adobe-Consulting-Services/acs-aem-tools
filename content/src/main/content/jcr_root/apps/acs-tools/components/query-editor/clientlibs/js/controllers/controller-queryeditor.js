@@ -18,16 +18,17 @@
  * #L%
  */
 
-/*global angular: false, ace: false */
+/*global angular: false, ace: false, $timeout: false */
 
 angular.module('qeControllers').
-    controller('QueryEditorCtrl', ['$scope', 'Crx', 'debounce',
-        function ($scope, Crx, debounce) {
+    controller('QueryEditorCtrl', ['$scope', 'Crx', 'debounce', '$timeout',
+        function ($scope, Crx, debounce, $timeout) {
             'use strict';
 
             $scope.running = true;
 
-            $scope.autoQuery = true;
+            $scope.autoQuery = false;
+            $scope.showAutoQueryWarning = false;
 
             $scope.status = {
                 requesting: false,
@@ -40,6 +41,22 @@ angular.module('qeControllers').
                 'orderby.sort=desc';
 
             $scope.json = '{}';
+
+
+            $scope.$watch('autoQuery', function(newValue, oldValue) {
+                var promise;
+
+                if(newValue) {
+                    $scope.showAutoQueryWarning = true;
+
+                    promise = $timeout(function() {
+                        $scope.showAutoQueryWarning = false;
+                    }, 6000);
+                } else {
+                    $timeout.cancel(promise);
+                    $scope.showAutoQueryWarning = false;
+                }
+            });
 
             function params(source) {
                 var o = {};

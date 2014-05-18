@@ -22,6 +22,7 @@
 <%
     final String faviconPath = resourceResolver.map(component.getPath() + "/clientlibs/images/favicon.png");
 %>
+
 <!doctype html>
 <html>
 <head>
@@ -33,15 +34,17 @@
     <link rel="shortcut icon" href="<%= faviconPath %>"/>
 
     <cq:includeClientLib css="query-editor.app"/>
+
 </head>
 
-<body>
+<body id="acs-tools-query-editor">
+
 <div id="qeApp" ng-controller="QueryEditorCtrl" ng-init="running = true; refresh()">
     <header class="top">
 
         <div class="logo">
             <a href="/"><i class="icon-marketingcloud medium"></i></a>
-            <span ng-hide="running" class="spinner icon-spinner spinner medium"></span>
+            <span ng-hide="running" class="spinner icon-spinner medium"></span>
         </div>
 
         <nav class="crumbs">
@@ -50,8 +53,20 @@
         </nav>
 
         <div class="drawer theme-dark">
-            <label><input type="checkbox" ng-model="autoQuery" ng-change="refresh()"><span>Auto Query</span></label>
-            &nbsp;
+
+            <span class="auto-query-wrapper">
+                <label>
+                    <input type="checkbox" ng-model="autoQuery" ng-change="refresh()"/>
+                    <span>Auto Query</span>
+                </label>
+                <div ng-show="showAutoQueryWarning"
+                     class="auto-query-warning tooltip notice arrow-top">
+
+                    Enabling Auto Query may result in long running queries that
+                    can cause unresponsiveness.
+                </div>
+            </span>
+
             <button class="primary" ng-click="query()" ng-disabled="autoQuery">
                 <span ng-show="!status.requesting">Run Query</span>
                 <span ng-show="status.requesting">Querying...</span>
@@ -63,28 +78,33 @@
     <div class="page" role="main">
         <div class="content">
 
-        <pre id="ace-input" ui-ace="{
-          mode: 'querybuilder',
-          theme: 'vibrant_ink',
-          onLoad: initEditor,
-          onChange: $parent.refresh
-        }" ng-model="$parent.source" ng-controller="QueryInputCtrl"></pre>
+            <pre id="ace-input" ui-ace="{
+              mode: 'querybuilder',
+              theme: 'vibrant_ink',
+              onLoad: initEditor,
+              onChange: $parent.refresh
+            }" ng-model="$parent.source" ng-controller="QueryInputCtrl"></pre>
 
-        <pre id="ace-output" ui-ace="{
-          mode: 'json',
-          theme: 'vibrant_ink',
-          onLoad: initEditor
-        }" readonly="true" ng-model="$parent.json" ng-controller="QueryOutputCtrl"></pre>
+            <pre id="ace-output" ui-ace="{
+              mode: 'json',
+              theme: 'vibrant_ink',
+              onLoad: initEditor
+            }" readonly="true" ng-model="$parent.json" ng-controller="QueryOutputCtrl"></pre>
 
         </div>
+    </div>
+
+    <div ng-show="status.requesting" class="query-run-overlay-wrapper">
+        <div class="spinner large"></div>
     </div>
 
     <footer ui-ace-statusbar="#ace-input">
         <span ng-show="status.requesting" class="loader"></span>
         <span ng-hide="status.requesting">Query took {{status.duration / 1000 | number}} seconds</span>
     </footer>
-
 </div>
+
 <cq:includeClientLib js="query-editor.app"/>
+
 </body>
 </html>
