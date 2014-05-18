@@ -170,6 +170,11 @@
             <version>1.6.0</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.adobe.granite</groupId>
+            <artifactId>com.adobe.granite.ui.commons</artifactId>
+            <version>5.5.76</version>
+        </dependency>
     </dependencies>
 
     <profiles>
