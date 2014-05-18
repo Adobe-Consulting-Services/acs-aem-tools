@@ -18,11 +18,17 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @SlingServlet(
         label = "ACS AEM Tools - ClientLibrary Optimizer Servlett",
@@ -36,19 +42,17 @@ import java.util.Map;
 public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
     private static final Logger log = LoggerFactory.getLogger(ClientLibOptimizerServlet.class);
 
-    private static final LibraryType DEFAULT_PARAM_LIBRARY_TYPE_VALUE = LibraryType.JS;
-
     private static final String PARAM_LIBRARY_TYPE_CSS = "css";
-    private static final String PARAM_LIBRARY_TYPE_JS = "js";
-    private static final String PARAM_CATEGORIES = "categories";
 
+    private static final String PARAM_LIBRARY_TYPE_JS = "js";
+
+    private static final String PARAM_CATEGORIES = "categories";
 
     @Reference
     private HtmlLibraryManager htmlLibraryManager;
 
-
     @Override
-    protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response)
+    protected final void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response)
             throws ServletException, IOException {
 
         final Map<LibraryType, Boolean> types = new HashMap<LibraryType, Boolean>();
@@ -65,11 +69,11 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
         }
     }
 
-    private LinkedHashSet<String> getCategoriesParam(final SlingHttpServletRequest request) {
+    private Set<String> getCategoriesParam(final SlingHttpServletRequest request) {
         final LinkedHashSet<String> categories = new LinkedHashSet<String>();
-
         final RequestParameter requestParameter = request.getRequestParameter(PARAM_CATEGORIES);
-        if(requestParameter != null) {
+
+        if (requestParameter != null) {
             final String[] segments = StringUtils.split(requestParameter.getString(), ",");
 
             for (final String segment : segments) {
@@ -85,14 +89,14 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
     private boolean hasLibraryTypeParam(final SlingHttpServletRequest request, final String paramLibraryType) {
         final RequestParameter requestParameter = request.getRequestParameter(paramLibraryType);
 
-        if(requestParameter != null) {
-           return Boolean.parseBoolean(requestParameter.getString());
+        if (requestParameter != null) {
+            return Boolean.parseBoolean(requestParameter.getString());
         }
         return false;
     }
 
 
-    private void writeJsonResponse(final LinkedHashSet<String> categories,
+    private void writeJsonResponse(final Set<String> categories,
                                    final SlingHttpServletResponse response) throws JSONException, IOException {
 
         final JSONObject jsonObject = new JSONObject();
@@ -103,41 +107,118 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
     }
 
 
-    private LinkedHashSet<String> getCategories(LinkedHashSet<String> categories, Map<LibraryType, Boolean> types) {
-        final int originalSize = categories.size();
+    private Set<String> getCategories(Set<String> originalCategories, Map<LibraryType, Boolean> types) {
+        final int originalSize = originalCategories.size();
 
-        final Collection<ClientLibrary> clientLibraries = new LinkedHashSet<ClientLibrary>();
+        LinkedHashSet<String> categories = new LinkedHashSet<String>();
+        final Collection<String> paths = new HashSet<String>();
 
         /* JS */
-        if(types.get(LibraryType.JS)) {
+        if (types.get(LibraryType.JS)) {
+
             final Collection<ClientLibrary> jsClientLibraries = htmlLibraryManager.getLibraries(
-                    categories.toArray(new String[originalSize]),
+                    originalCategories.toArray(new String[0]),
                     LibraryType.JS,
                     true,
                     true);
-            clientLibraries.addAll(jsClientLibraries);
+
+            log.debug("Adding [ {} ] JS ClientLibs for [ {} ]", jsClientLibraries.size(), originalCategories);
+
+            for (final ClientLibrary clientLibrary : jsClientLibraries) {
+                paths.add(clientLibrary.getPath());
+            }
         }
 
         /* CSS */
-        if(types.get(LibraryType.CSS)) {
+        if (types.get(LibraryType.CSS)) {
+
             final Collection<ClientLibrary> cssClientLibraries = htmlLibraryManager.getLibraries(
-                    categories.toArray(new String[originalSize]),
+                    originalCategories.toArray(new String[0]),
                     LibraryType.CSS,
                     true,
                     true);
-            clientLibraries.addAll(cssClientLibraries);
+
+            log.debug("Adding [ {} ] CSS ClientLibs for [ {} ]", cssClientLibraries.size(), originalCategories);
+
+            for (final ClientLibrary clientLibrary : cssClientLibraries) {
+                paths.add(clientLibrary.getPath());
+            }
         }
+
+
+        // Get all the Transitive Dependencies
+        final Set<String> dependencyPaths = new LinkedHashSet<String>();
+        for (final String path : paths) {
+            final ClientLibrary clientLibrary = htmlLibraryManager.getLibraries().get(path);
+            final Collection<? extends ClientLibrary> dependencies = clientLibrary.getDependencies(true).values();
+
+            for (ClientLibrary dependency : dependencies) {
+                dependencyPaths.add(dependency.getPath());
+            }
+        }
+        paths.addAll(dependencyPaths);
 
         /* Get categories for Client Libraries */
-        for(final ClientLibrary clientLibrary : clientLibraries) {
-            categories.addAll(Arrays.asList(clientLibrary.getCategories()));
+
+        /* Sort the paths */
+        final List<String> sortedPaths = new ArrayList<String>(paths);
+        Collections.sort(sortedPaths, new ClientLibraryComparator());
+
+        /* Convert to Categories */
+        for (final String path : sortedPaths) {
+            final ClientLibrary clientLibrary = htmlLibraryManager.getLibraries().get(path);
+
+            // Use the first Category ?
+
+            categories.addAll(Arrays.asList(clientLibrary.getCategories()[0]));
         }
 
-        if(originalSize != categories.size()) {
-            log.info("Category Size changed from [ {} ] to [ {} ]", originalSize, categories.size());
-            categories = getCategories(categories, types);
+        if (originalSize != categories.size()) {
+            log.info("Category Size changed from [ {} ] to [ {} ]", originalSize, originalCategories.size());
+            return this.getCategories(categories, types);
+        } else {
+            return categories;
+        }
+    }
+
+    /**
+     * Comparator for ClientLibrary Paths.
+     */
+    public class ClientLibraryComparator implements Comparator<String> {
+        @Override
+        public final int compare(final String p1, final String p2) {
+            final ClientLibrary cl1 = htmlLibraryManager.getLibraries().get(p1);
+            final ClientLibrary cl2 = htmlLibraryManager.getLibraries().get(p2);
+
+            if (this.isUsedBy(cl1, cl2)) {
+                return -1;
+            }
+
+            if (this.isUsedBy(cl2, cl1)) {
+                return 1;
+            }
+
+            return 0;
         }
 
-        return categories;
+
+        private boolean isUsedBy(ClientLibrary used, ClientLibrary by) {
+            final Set<String> paths = new HashSet<String>();
+
+            for (ClientLibrary dependency : by.getDependencies(true).values()) {
+                paths.add(dependency.getPath());
+            }
+
+            for (ClientLibrary embedJS : by.getEmbedded(LibraryType.JS).values()) {
+                paths.add(embedJS.getPath());
+            }
+
+            for (ClientLibrary embedCSS : by.getEmbedded(LibraryType.CSS).values()) {
+                paths.add(embedCSS.getPath());
+            }
+
+            return paths.contains(used.getPath());
+        }
     }
 }
+
