@@ -3,6 +3,6 @@
     jcr:primaryType="cq:Page">
     <jcr:content
         jcr:primaryType="cq:PageContent"
-        jcr:title="ClientLibs Optimizer"
+        jcr:title="Client Library Optimizer"
         sling:resourceType="acs-tools/components/clientlibs-optimizer"/>
 </jcr:root>

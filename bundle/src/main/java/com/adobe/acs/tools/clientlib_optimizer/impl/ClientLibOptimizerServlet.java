@@ -20,7 +20,9 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 
 @SlingServlet(
         label = "ACS AEM Tools - ClientLibrary Optimizer Servlett",
@@ -36,7 +38,8 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
 
     private static final LibraryType DEFAULT_PARAM_LIBRARY_TYPE_VALUE = LibraryType.JS;
 
-    private static final String PARAM_LIBRARY_TYPE = "type";
+    private static final String PARAM_LIBRARY_TYPE_CSS = "css";
+    private static final String PARAM_LIBRARY_TYPE_JS = "js";
     private static final String PARAM_CATEGORIES = "categories";
 
 
@@ -48,12 +51,15 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response)
             throws ServletException, IOException {
 
-        final LibraryType type = this.getLibraryTypeParam(request);
+        final Map<LibraryType, Boolean> types = new HashMap<LibraryType, Boolean>();
+        types.put(LibraryType.JS, this.hasLibraryTypeParam(request, PARAM_LIBRARY_TYPE_JS));
+        types.put(LibraryType.CSS, this.hasLibraryTypeParam(request, PARAM_LIBRARY_TYPE_CSS));
 
-        final LinkedHashSet<String> categories = this.getCategories(this.getCategoriesParam(request), type);
+
+        final LinkedHashSet<String> categories = this.getCategories(this.getCategoriesParam(request), types);
 
         try {
-            this.writeJsonResponse(categories, type, response);
+            this.writeJsonResponse(categories, response);
         } catch (JSONException e) {
             throw new ServletException("Error constructing valid JSON response.");
         }
@@ -76,52 +82,60 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
         return categories;
     }
 
-    private LibraryType getLibraryTypeParam(final SlingHttpServletRequest request) {
-        final RequestParameter requestParameter = request.getRequestParameter(PARAM_LIBRARY_TYPE);
+    private boolean hasLibraryTypeParam(final SlingHttpServletRequest request, final String paramLibraryType) {
+        final RequestParameter requestParameter = request.getRequestParameter(paramLibraryType);
 
         if(requestParameter != null) {
-            final String type = StringUtils.stripToNull(requestParameter.getString());
-
-            if (type != null) {
-                final LibraryType libraryType = LibraryType.valueOf(type);
-
-                if (libraryType != null) {
-                    return libraryType;
-                }
-            }
+           return Boolean.parseBoolean(requestParameter.getString());
         }
-        return DEFAULT_PARAM_LIBRARY_TYPE_VALUE;
+        return false;
     }
 
 
-    private void writeJsonResponse(final LinkedHashSet<String> categories, final LibraryType type,
+    private void writeJsonResponse(final LinkedHashSet<String> categories,
                                    final SlingHttpServletResponse response) throws JSONException, IOException {
 
         final JSONObject jsonObject = new JSONObject();
 
-        jsonObject.put("type", type.toString());
         jsonObject.put("categories", new JSONArray(categories));
 
         response.getWriter().print(jsonObject.toString());
     }
 
 
-    private LinkedHashSet<String> getCategories(LinkedHashSet<String> categories, LibraryType type) {
+    private LinkedHashSet<String> getCategories(LinkedHashSet<String> categories, Map<LibraryType, Boolean> types) {
         final int originalSize = categories.size();
 
-        final Collection<ClientLibrary> clientLibraries = htmlLibraryManager.getLibraries(
-                categories.toArray(new String[originalSize]),
-                type,
-                true,
-                true);
+        final Collection<ClientLibrary> clientLibraries = new LinkedHashSet<ClientLibrary>();
 
+        /* JS */
+        if(types.get(LibraryType.JS)) {
+            final Collection<ClientLibrary> jsClientLibraries = htmlLibraryManager.getLibraries(
+                    categories.toArray(new String[originalSize]),
+                    LibraryType.JS,
+                    true,
+                    true);
+            clientLibraries.addAll(jsClientLibraries);
+        }
+
+        /* CSS */
+        if(types.get(LibraryType.CSS)) {
+            final Collection<ClientLibrary> cssClientLibraries = htmlLibraryManager.getLibraries(
+                    categories.toArray(new String[originalSize]),
+                    LibraryType.CSS,
+                    true,
+                    true);
+            clientLibraries.addAll(cssClientLibraries);
+        }
+
+        /* Get categories for Client Libraries */
         for(final ClientLibrary clientLibrary : clientLibraries) {
             categories.addAll(Arrays.asList(clientLibrary.getCategories()));
         }
 
         if(originalSize != categories.size()) {
             log.info("Category Size changed from [ {} ] to [ {} ]", originalSize, categories.size());
-            categories = getCategories(categories, type);
+            categories = getCategories(categories, types);
         }
 
         return categories;

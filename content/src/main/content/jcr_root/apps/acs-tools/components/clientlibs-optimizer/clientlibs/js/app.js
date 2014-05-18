@@ -24,42 +24,88 @@
 var clientLibsOptimizerApp = angular.module('clientLibsOptimizerApp',[]);
 
 clientLibsOptimizerApp.controller('MainCtrl', function($scope, $http) {
-    $scope.uri = '';
 
     $scope.app = {
-        running: false
+        uri: '',
+        formErrors: {
+            categories: false,
+            types: false
+        }
     };
 
     $scope.form = {
         categories: '',
-        type: 'JS'
+        js: true,
+        css: true
     };
 
     $scope.result = {
         erring: false,
-        type: '',
         categories: ''
     };
 
+    $scope.$watch('form.categories', function(newValue, oldValue) {
+        if(newValue && newValue.indexOf('"') >= 0) {
+            $scope.form.categories = $scope.form.categories.replace(/\"/g, '');
+        }
+    });
+
+
     $scope.optimize = function() {
-        $scope.running = true;
+        if(!$scope.validate()) {
+            $scope.result = {};
+            return;
+        }
 
         $http({
             method: 'GET',
-            url: $scope.uri,
+            url: $scope.app.uri,
             params: $scope.form
         }).
         success(function(data, status, headers, config) {
-            $scope.running = false;
-            $scope.result.type = data.type.toLowerCase() || 'js';
             $scope.result.categories = data.categories.join() || '';
             $scope.result.erring = false;
         }).
         error(function(data, status, headers, config) {
-            $scope.running = false;
             $scope.result.erring = true;
         });
+
+        $scope.app.formErrors = {
+            categories: false,
+            types: false
+        };
     };
 
+    /* Validators */
 
+    $scope.validate = function() {
+       var validCategories = $scope.validateCategories(),
+           validTypes = $scope.validateTypes();
+
+        return validCategories && validTypes;
+    };
+
+    $scope.validateCategories = function() {
+        /* Categories */
+        if(!$scope.form.categories || $scope.form.categories.length === 0) {
+            // Categories are not valid
+            $scope.app.formErrors.categories = true;
+        } else {
+            // Categories are valid
+            $scope.app.formErrors.categories = false;
+        }
+
+        return !$scope.app.formErrors.categories;
+    };
+
+    $scope.validateTypes = function() {
+        /* Types */
+        if(!$scope.form.css && !$scope.form.js) {
+            $scope.app.formErrors.types = true;
+        } else {
+            $scope.app.formErrors.types = false;
+        }
+
+        return !$scope.app.formErrors.types;
+    };
 });

@@ -35,7 +35,7 @@
         <cq:includeClientLib css="acs-tools.clientlibs-optimizer.app"/>
     </head>
 
-    <body id="acs-tools-clientlib-optimizer-app">
+    <body id="acs-tools-clientlibs-optimizer-app">
 
         <header class="top">
 
@@ -51,17 +51,14 @@
 
         <div class="page" role="main"
              ng-controller="MainCtrl"
-             ng-init="uri = '${resourcePath}.optimize.json';">
+             ng-init="app.uri = '${resourcePath}.optimize.json';">
 
                 <div class="content">
                     <div class="content-container">
 
                         <h1>Client Library Optimizer</h1>
 
-                        <p>The Client Library Optimizer provides a list of client library categories to
-                            embed into a "wrapping" clientlib create a single HTTP-request-able file.</p>
-
-                        <p>This tool works by identiyfing all dependency categories, allowing them to be embedeed.</p>
+                        <p>Find all transitive dependencies for a set of Client Library categories.</p>
 
                         <form ng-submit="optimize()">
 
@@ -70,21 +67,38 @@
 
                                 <div class="selector">
                                     <label><input
-                                            ng-model="form.type"
-                                            value="JS"
-                                            type="radio" name="type" checked><span>JavaScript</span></label>
+                                            ng-model="form.js"
+                                            ng-change="validateTypes()"
+                                            ng-class="{ error : app.formErrors.types }"
+                                            type="checkbox" name="js"><span>JavaScript</span></label>
                                     <label><input
-                                            ng-model="form.type"
-                                            value="CSS"
-                                            type="radio" name="type"><span>CSS</span></label>
+                                            ng-model="form.css"
+                                            ng-change="validateTypes()"
+                                            ng-class="{ error : app.formErrors.types }"
+                                            type="checkbox" name="css"><span>CSS</span></label>
                                 </div>
+
+                                <span   ng-show="app.formErrors.types"
+                                        class="form-error" data-init="quicktip" data-quicktip-arrow="left"
+                                        data-quicktip-type="error">Select at least one Library Type</span>
+
                             </div>
 
                             <div class="form-row">
                                 <h4>Categories</h4>
 
-                                <input  ng-model="form.categories"
-                                        type="text" placeholder="Comma delimited list of categories">
+                                <span>
+                                    <input  ng-model="form.categories"
+                                            ng-blur="validateCategories()"
+                                            ng-class="{ error : app.formErrors.categories }"
+                                            type="text" placeholder="Comma-delimited list of categories">
+                                </span>
+
+                                <%-- Cannot use pure CoralUI display as it destorys the span after first use --%>
+                                <span   ng-show="app.formErrors.categories"
+                                        class="form-error" data-init="quicktip" data-quicktip-arrow="right"
+                                        data-quicktip-type="error">Enter at least one category</span>
+
                             </div>
 
                             <div class="form-row">
@@ -123,7 +137,8 @@
 
         <%-- Register angular app; Decreases chances of collisions w other angular apps on the page (ex. via injection) --%>
         <script type="text/javascript">
-            angular.bootstrap(document.getElementById('acs-tools-clientlib-optimizer-app'), ['clientLibsOptimizerApp']);
+            angular.bootstrap(document.getElementById('acs-tools-clientlibs-optimizer-app'),
+                    ['clientLibsOptimizerApp']);
         </script>
     </body>
 </html>
