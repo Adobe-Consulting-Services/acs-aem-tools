@@ -60,7 +60,7 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
         types.put(LibraryType.CSS, this.hasLibraryTypeParam(request, PARAM_LIBRARY_TYPE_CSS));
 
 
-        final LinkedHashSet<String> categories = this.getCategories(this.getCategoriesParam(request), types);
+        final Set<String> categories = this.getCategories(this.getCategoriesParam(request), types);
 
         try {
             this.writeJsonResponse(categories, response);
@@ -161,8 +161,13 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
         /* Get categories for Client Libraries */
 
         /* Sort the paths */
-        final List<String> sortedPaths = new ArrayList<String>(paths);
+        List<String> sortedPaths = new ArrayList<String>(paths);
+
+        log.error(">>>>> Pre-sort: {}", sortedPaths);
+
         Collections.sort(sortedPaths, new ClientLibraryComparator());
+
+        log.error(">>>>> Post-sort: {}", sortedPaths);
 
         /* Convert to Categories */
         for (final String path : sortedPaths) {
@@ -173,12 +178,15 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
             categories.addAll(Arrays.asList(clientLibrary.getCategories()[0]));
         }
 
+        /*
         if (originalSize != categories.size()) {
             log.info("Category Size changed from [ {} ] to [ {} ]", originalSize, originalCategories.size());
             return this.getCategories(categories, types);
         } else {
             return categories;
         }
+        */
+        return categories;
     }
 
     /**
@@ -191,14 +199,25 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
             final ClientLibrary cl2 = htmlLibraryManager.getLibraries().get(p2);
 
             if (this.isUsedBy(cl1, cl2)) {
+                log.debug("{} < {}", cl1.getPath(), cl2.getPath());
                 return -1;
             }
 
             if (this.isUsedBy(cl2, cl1)) {
+                log.debug("{} > {}", cl1.getPath(), cl2.getPath());
                 return 1;
             }
 
-            return 0;
+            int d1 = cl1.getDependencies(true).size();
+            int d2 = cl2.getDependencies(true).size();
+
+            if (d1 < d2) {
+                return -1;
+            } else if (d2 > d1) {
+                return 1;
+            } else {
+                return 0;
+            }
         }
 
 
@@ -217,6 +236,8 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
                 paths.add(embedCSS.getPath());
             }
 
+            log.debug("{} ...", used.getPath());
+            log.debug("{} => {} ", by.getPath(), paths);
             return paths.contains(used.getPath());
         }
     }
