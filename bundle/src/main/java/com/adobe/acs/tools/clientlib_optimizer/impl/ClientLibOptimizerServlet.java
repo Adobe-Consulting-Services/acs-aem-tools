@@ -3,6 +3,7 @@ package com.adobe.acs.tools.clientlib_optimizer.impl;
 import com.day.cq.widget.ClientLibrary;
 import com.day.cq.widget.HtmlLibraryManager;
 import com.day.cq.widget.LibraryType;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
@@ -108,8 +109,6 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
 
 
     private Set<String> getCategories(Set<String> originalCategories, Map<LibraryType, Boolean> types) {
-        final int originalSize = originalCategories.size();
-
         LinkedHashSet<String> categories = new LinkedHashSet<String>();
         final Collection<String> paths = new HashSet<String>();
 
@@ -147,6 +146,7 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
 
 
         // Get all the Transitive Dependencies
+        /*
         final Set<String> dependencyPaths = new LinkedHashSet<String>();
         for (final String path : paths) {
             final ClientLibrary clientLibrary = htmlLibraryManager.getLibraries().get(path);
@@ -157,17 +157,15 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
             }
         }
         paths.addAll(dependencyPaths);
+        */
 
         /* Get categories for Client Libraries */
 
         /* Sort the paths */
         List<String> sortedPaths = new ArrayList<String>(paths);
 
-        log.error(">>>>> Pre-sort: {}", sortedPaths);
-
+        //sortedPaths = bubblesort(sortedPaths.toArray(new String[sortedPaths.size()]));
         Collections.sort(sortedPaths, new ClientLibraryComparator());
-
-        log.error(">>>>> Post-sort: {}", sortedPaths);
 
         /* Convert to Categories */
         for (final String path : sortedPaths) {
@@ -178,16 +176,29 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
             categories.addAll(Arrays.asList(clientLibrary.getCategories()[0]));
         }
 
-        /*
-        if (originalSize != categories.size()) {
-            log.info("Category Size changed from [ {} ] to [ {} ]", originalSize, originalCategories.size());
-            return this.getCategories(categories, types);
-        } else {
-            return categories;
-        }
-        */
         return categories;
     }
+
+    /*
+    private List<String> bubblesort(String[] a) {
+        Comparator<String> c = new ClientLibraryComparator();
+
+        for (int i  = a.length - 1; i > 1; i--) {
+            for (int j = 0; j <= i - 1; j++) {
+
+                log.debug(a[j] + " vs " + a[j + 1] + " => " + c.compare(a[j], a[j + 1]));
+
+                if (c.compare(a[j], a[j + 1]) == 1) {
+                    String tmp = a[j];
+                    a[j] = a[j + 1];
+                    a[ j + 1] = tmp;
+                }
+            }
+        }
+
+        return Arrays.asList(a);
+    }
+    */
 
     /**
      * Comparator for ClientLibrary Paths.
@@ -199,21 +210,20 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
             final ClientLibrary cl2 = htmlLibraryManager.getLibraries().get(p2);
 
             if (this.isUsedBy(cl1, cl2)) {
-                log.debug("{} < {}", cl1.getPath(), cl2.getPath());
                 return -1;
             }
 
             if (this.isUsedBy(cl2, cl1)) {
-                log.debug("{} > {}", cl1.getPath(), cl2.getPath());
                 return 1;
             }
 
             int d1 = cl1.getDependencies(true).size();
             int d2 = cl2.getDependencies(true).size();
+            log.debug(cl1.getPath() + " [ " + d1 + " ] vs " + cl2.getPath() + " [ " + d2 + " ]");
 
             if (d1 < d2) {
                 return -1;
-            } else if (d2 > d1) {
+            } else if (d1 > d2) {
                 return 1;
             } else {
                 return 0;
@@ -236,9 +246,7 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
                 paths.add(embedCSS.getPath());
             }
 
-            log.debug("{} ...", used.getPath());
-            log.debug("{} => {} ", by.getPath(), paths);
-            return paths.contains(used.getPath());
+            return ArrayUtils.contains(paths.toArray(new String[paths.size()]), used.getPath());
         }
     }
 }
