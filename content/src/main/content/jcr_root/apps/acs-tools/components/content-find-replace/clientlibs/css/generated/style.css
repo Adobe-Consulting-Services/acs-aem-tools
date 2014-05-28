@@ -1,0 +1,11 @@
+.content {
+  margin-left: 10%;
+  margin-right: 10%;
+}
+.content input.field {
+  width: 100%;
+}
+.content #editor {
+  width: 100%;
+  height: 100%;
+}
