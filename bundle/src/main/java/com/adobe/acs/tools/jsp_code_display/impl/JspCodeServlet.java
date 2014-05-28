@@ -21,6 +21,7 @@ package com.adobe.acs.tools.jsp_code_display.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,6 +33,7 @@ import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
@@ -55,13 +57,36 @@ public class JspCodeServlet extends SlingAllMethodsServlet {
                     String fileName = matcher.group(4);
                     String lineNumber = matcher.group(5);
 
-                    Resource fileResource = request.getResourceResolver().getResource(
-                            "/var/classes/" + packageName.replace('.', '/') + "/" + fileName);
-                    InputStream instream = fileResource.adaptTo(InputStream.class);
+                    String sourceFilePath = "/" + packageName.replace('.', '/') + "/" + fileName;
 
-                    result.put("success", true);
-                    result.put("lineNumber", Integer.parseInt(lineNumber));
-                    result.put("code", IOUtils.toString(instream, "UTF-8"));
+                    ResourceResolver resourceResolver = request.getResourceResolver();
+
+                    Resource classesRoot = resourceResolver.getResource("/var/classes");
+                    Resource fileResource = null;
+                    if (classesRoot != null) {
+                        if (classesRoot.getChild("org") != null) {
+                            // assume this is 5.6.1 or before
+                            fileResource = resourceResolver.getResource(classesRoot.getPath() + sourceFilePath);
+                        } else {
+                            // assume this is 6.0, so take the first child node and try underneath that
+                            Iterator<Resource> roots = classesRoot.listChildren();
+                            if (roots.hasNext()) {
+                                fileResource = resourceResolver.getResource(roots.next().getPath()
+                                        + sourceFilePath);
+                            }
+                        }
+                    }
+
+                    if (fileResource != null) {
+                        InputStream instream = fileResource.adaptTo(InputStream.class);
+
+                        result.put("success", true);
+                        result.put("lineNumber", Integer.parseInt(lineNumber));
+                        result.put("code", IOUtils.toString(instream, "UTF-8"));
+                    } else {
+                        result.put("success", false);
+                        result.put("error", "Compiled JSP could not be found.");
+                    }
                 }
             } else {
                 result.put("success", false);

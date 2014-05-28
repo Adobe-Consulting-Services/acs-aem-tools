@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
-    <filter root="/apps/acs-tools" />
+    <filter root="/apps/acs-tools">
+        <exclude pattern="/apps/acs-tools/components/query-editor/clientlibs/css/generated" />
+    </filter>
     <filter root="/etc/acs-tools"/>
     <filter root="/etc/clientlibs/acs-tools"/>
+    <filter root="/apps/cq/core/content/nav/tools/acs-tools"/>
 </workspaceFilter>

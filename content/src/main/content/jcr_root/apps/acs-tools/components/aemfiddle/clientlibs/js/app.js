@@ -31,16 +31,18 @@ aemFiddle.ace = {
     input: {
         editor: ace.edit("ace-input"),
         init: function() {
+            ace.require("ace/ext/language_tools");
             aemFiddle.ace.input.editor.setTheme("ace/theme/vibrant_ink");
             aemFiddle.ace.input.editor.getSession().setMode("ace/mode/jsp");
             aemFiddle.ace.input.editor.setDisplayIndentGuides(true);
             aemFiddle.ace.input.editor.gotoLine(12);
+            aemFiddle.ace.input.editor.setOptions({ enableBasicAutocompletion: true });
             aemFiddle.ace.input.editor.commands.addCommand({
                 name: 'RunCodeCommand',
                 bindKey: { win: 'Ctrl-K', mac: 'Command-K' },
                 exec: function (editor) {
                     var runURL = $('#app-data').data('run-url');
-                    angular.element($('body')).scope().app.run(runURL);
+                    angular.element($('#acs-tools-aemfiddle-app')).scope().app.run(runURL);
                  },
                 readOnly: true // false if this command should not apply in readOnly mode
             });

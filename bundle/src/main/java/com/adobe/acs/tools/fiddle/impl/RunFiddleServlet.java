@@ -19,13 +19,6 @@
  */
 package com.adobe.acs.tools.fiddle.impl;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingConstants;
@@ -38,7 +31,11 @@ import org.apache.sling.api.wrappers.SlingHttpServletRequestWrapper;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 
-import com.day.cq.wcm.api.WCMMode;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 
 @SuppressWarnings("serial")
 @SlingServlet(resourceTypes = "acs-tools/components/aemfiddle", selectors = "run", methods = "POST")
@@ -66,6 +63,9 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
         final RequestDispatcherOptions options = new RequestDispatcherOptions();
         options.setForceResourceType(Constants.PSEDUO_COMPONENT_PATH);
         options.setReplaceSelectors("");
+
+        // Suppress ACS AEM Commons - Component Error Handler from capturing errors
+        request.setAttribute("com.adobe.acs.commons.wcm.component-error-handler.suppress", true);
 
         RequestDispatcher dispatcher = request.getRequestDispatcher(resource, options);
         GetRequest getRequest = new GetRequest(request);

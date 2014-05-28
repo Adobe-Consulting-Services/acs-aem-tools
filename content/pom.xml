@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.adobe.acs</groupId>
         <artifactId>acs-aem-tools</artifactId>
-        <version>0.0.3-SNAPSHOT</version>
+        <version>0.0.11-SNAPSHOT</version>
     </parent>
 
     <!-- ====================================================================== -->
@@ -47,7 +47,7 @@
                 <artifactId>content-package-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
-                    <group>day_internal/consulting</group>
+                    <group>adobe/consulting</group>
                     <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
                     <embeddeds>
                         <embedded>
@@ -75,7 +75,9 @@
                     <predefinedVars>jQuery,window,$</predefinedVars>
                     <excludes>
                         <exclude>**/etc/clientlibs/acs-tools/aceeditor/**/*.js</exclude>
+                        <exclude>**/etc/clientlibs/acs-tools/aceeditor-dev/**/*.js</exclude>
                         <exclude>**/etc/clientlibs/acs-tools/angularjs/**/*.js</exclude>
+                        <exclude>**/etc/clientlibs/acs-tools/angularui/**/*.js</exclude>
                     </excludes>
                 </configuration>
             </plugin>
