@@ -40,7 +40,9 @@ contentFindReplace.controller('MainCtrl', function($scope, $http) {
         !$scope.search_string || !$scope.search_element
         ){
 			$scope.error = true;
+            $scope.success = false;
             $scope.errorMessage = "All fields are mandatory";
+            $scope.running = false;
         }else{
         $http({
             method: 'POST',
