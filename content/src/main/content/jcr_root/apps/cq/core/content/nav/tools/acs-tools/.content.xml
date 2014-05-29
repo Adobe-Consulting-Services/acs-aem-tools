@@ -6,4 +6,5 @@
     <aem-fiddle/>
     <query-editor/>
     <jsp-code-display/>
+    <content-find-replace/>
 </jcr:root>

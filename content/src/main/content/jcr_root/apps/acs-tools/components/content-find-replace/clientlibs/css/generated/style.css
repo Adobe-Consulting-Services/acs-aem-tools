@@ -2,7 +2,7 @@
  * #%L
  * ACS AEM Tools Package
  * %%
- * Copyright (C) 2014 Adobe
+ * Copyright (C) 2013 - 2014 Adobe
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,14 @@
  * limitations under the License.
  * #L%
  */
-
-/*global angular: false, ace: false */
-
-ace.define('ace/snippets/querybuilder', ['require', 'exports', 'module' ], function (require, exports, module) {
-
-    exports.snippetText = "";
-    exports.scope = "querybuilder";
-
-});
+.content {
+  margin-left: 10%;
+  margin-right: 10%;
+}
+.content input.field {
+  width: 100%;
+}
+.content #editor {
+  width: 100%;
+  height: 100%;
+}
