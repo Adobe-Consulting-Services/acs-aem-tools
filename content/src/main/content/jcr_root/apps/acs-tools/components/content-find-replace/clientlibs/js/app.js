@@ -20,10 +20,10 @@
 
 /*global angular: false, ace: false */
 
-var jspCodeDisplay = angular.module('contentFindReplace', []);
+var contentFindReplace = angular.module('contentFindReplace', []);
 
 
-jspCodeDisplay.controller('MainCtrl', function($scope, $http) {
+contentFindReplace.controller('MainCtrl', function($scope, $http) {
     $scope.search_path = '';
     $scope.update_references ='dryrun';
     $scope.search_type ='static';
@@ -36,7 +36,9 @@ jspCodeDisplay.controller('MainCtrl', function($scope, $http) {
     $scope.submitSNP = function() {
         $scope.error = false;
         $scope.running = true;
-        if($scope.search_path=="" || $scope.search_component == null || $scope.search_string == null || $scope.search_element == null ){
+        if(	$scope.search_path === '' || !$scope.search_component  ||
+        !$scope.search_string || !$scope.search_element
+        ){
 			$scope.error = true;
             $scope.errorMessage = "All fields are mandatory";
         }else{
@@ -45,7 +47,7 @@ jspCodeDisplay.controller('MainCtrl', function($scope, $http) {
             url: $('body').data("post-url"),
             data: $.param({ search_element : $scope.search_element,
                             search_path : $scope.search_path,
-                          	search_string : $scope.search_string,
+                            search_string : $scope.search_string,
 							replace_string : $scope.replace_string,
 							search_component : $scope.search_component,
 							search_type : $scope.search_type,
@@ -67,7 +69,7 @@ jspCodeDisplay.controller('MainCtrl', function($scope, $http) {
             $scope.error = true;
             $scope.errorMessage = status;
         });
-    	}
+        }
     };
 });
 
