@@ -20,14 +20,11 @@
 package com.adobe.acs.tools.content_find_replace.impl;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -36,30 +33,12 @@ import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
 import javax.jcr.Node;
-import com.day.cq.wcm.api.Page;
-import com.day.cq.wcm.api.PageManager;
-import org.apache.sling.api.resource.Resource;
-import com.day.cq.wcm.commons.WCMUtils;
-import com.day.cq.wcm.api.NameConstants;
-import com.day.cq.wcm.api.designer.Designer;
-import com.day.cq.wcm.api.designer.Design;
-import com.day.cq.wcm.api.designer.Style;
-import org.apache.sling.api.resource.ValueMap;
-import com.day.cq.wcm.api.components.ComponentContext;
-import com.day.cq.wcm.api.components.EditContext;
-import java.util.Date;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.text.SimpleDateFormat;
-import java.text.FieldPosition;
-import java.text.ParsePosition;
 import java.util.Iterator;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 import javax.jcr.Property;
-import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.Session;
 import javax.jcr.PropertyIterator;
@@ -71,7 +50,6 @@ import org.apache.felix.scr.annotations.Reference;
 
 import com.day.jcr.vault.packaging.JcrPackage;
 import com.day.jcr.vault.packaging.JcrPackageDefinition;
-import com.day.jcr.vault.packaging.Packaging;
 
 @SuppressWarnings("serial")
 @SlingServlet(resourceTypes = "acs-tools/components/content-find-replace", extensions = "json", methods = "POST",
@@ -96,14 +74,14 @@ public class FindReplaceServlet extends SlingAllMethodsServlet {
 	String searchElement= request.getParameter("search_element");
 	String updateReferences = request.getParameter("update_references") ;
 	String query = "/jcr:root" + pathToSearch + "//element(*, " + searchElement +")[@sling:resourceType = '" + searchComponent + "'] ";
-	StringBuffer sb = new StringBuffer();
+	//StringBuffer sb = new StringBuffer();
 	boolean updateRefs = false;
 	int save = 1000;
 	int updateCounter = 0;
 	int updateTracker = 0;
 	int totalprocessed = 0;
 	final Set<Resource> packageResources = new HashSet<Resource>();
-	String finalMessage = "";
+	StringBuffer finalMessage = new StringBuffer();
 	String errorMessage = "";
 
 	if(updateReferences.equalsIgnoreCase("replace")){
@@ -118,7 +96,6 @@ public class FindReplaceServlet extends SlingAllMethodsServlet {
 	while(iter.hasNext()) {
   		Resource curRes = iter.next();
   		Node n = curRes.adaptTo(Node.class);
-  		Property p = null;
   		try
   		{
    			if(!n.isNodeType("cq:Page")) {
@@ -184,16 +161,16 @@ public class FindReplaceServlet extends SlingAllMethodsServlet {
 	updateTracker = updateCounter + updateTracker;
 	if(updateRefs && updateCounter>0) ((Session)resourceResolver.adaptTo(Session.class)).save();
 
-	finalMessage = "Completed the action "+updateReferences+". \n" ;
-	finalMessage = finalMessage + "Found "+ updateTracker+ " occurrance of nodes out of "+totalprocessed+" nodes." + "\n";
+	finalMessage.append("Completed the action "+updateReferences+". \n") ;
+	finalMessage.append( "Found "+ updateTracker+ " occurrance of nodes out of "+totalprocessed+" nodes." + "\n");
 
 	if(updateReferences.equalsIgnoreCase("package") && !packageResources.isEmpty()){
 		final Map<String, String> packageDefinitionProperties = new HashMap<String, String>();
     	// Package Description
 		packageDefinitionProperties.put(JcrPackageDefinition.PN_DESCRIPTION,"Backup content package");
 		final JcrPackage jcrPackage = packageHelper.createPackage(packageResources,request.getResourceResolver().adaptTo(Session.class),"backup","content replace","1",PackageHelper.ConflictResolution.IncrementVersion,packageDefinitionProperties);
-		finalMessage = finalMessage + "A package has been created at: "+ jcrPackage.getNode() +". Go to the CRX Package manager to build and download this package before doing the replace." +"\n" ;		
-		finalMessage = finalMessage + "Json is "+ packageHelper.getSuccessJSON(jcrPackage) ;
+		finalMessage.append( "A package has been created at: "+ jcrPackage.getNode() +". Go to the CRX Package manager to build and download this package before doing the replace." +"\n") ;		
+		finalMessage.append( "Json is "+ packageHelper.getSuccessJSON(jcrPackage)) ;
 	}
 	    result.put("success", true);
 
@@ -203,12 +180,12 @@ public class FindReplaceServlet extends SlingAllMethodsServlet {
 		result.put("success", false);
     	result.put("error", errorMessage);
 	}
-    finalMessage = finalMessage+ "The affected nodes are \n";
+    finalMessage.append( "The affected nodes are \n");
     for(Resource i : packageResources)
-    	finalMessage = finalMessage + i.getPath()+"\n";
+    	finalMessage.append(i.getPath()+"\n");
 
 
-    result.put("successMessage",finalMessage );//updateReferences+sb.toString()
+    result.put("successMessage",finalMessage.toString() );//updateReferences+sb.toString()
 
     result.put("error", errorMessage);
 
