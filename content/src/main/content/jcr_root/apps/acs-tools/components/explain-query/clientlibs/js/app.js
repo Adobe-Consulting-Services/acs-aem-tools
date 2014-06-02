@@ -62,11 +62,11 @@ explainQueryApp.controller('MainCtrl', function($scope, $http, $timeout) {
         }).
         success(function(data, status, headers, config) {
             $scope.result = data || {};
-            $scope.addNotification('success', 'Success', 'Review your query explanation');
+            $scope.addNotification('success', 'SUCCESS', 'Review your query explanation');
 
         }).
         error(function(data, status, headers, config) {
-            $scope.addNotification('error', 'Error', 'Check your query and try again.');
+            $scope.addNotification('error', 'ERROR', 'Check your query and try again.');
         });
     };
 
@@ -105,7 +105,7 @@ explainQueryApp.controller('MainCtrl', function($scope, $http, $timeout) {
             $scope.queries.popular = data.popularQueries || [];
         }).
         error(function(data, status, headers, config) {
-            $scope.addNotification('error', 'Error', 'Could not retrieve Slow and Popular Queries.');
+            $scope.addNotification('error', 'ERROR', 'Could not retrieve Slow and Popular Queries.');
         });
     };
 });
