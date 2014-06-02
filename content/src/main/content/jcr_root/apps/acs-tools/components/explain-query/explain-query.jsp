@@ -1,0 +1,199 @@
+<%--
+  #%L
+  ACS AEM Tools Package
+  %%
+  Copyright (C) 2014 Adobe
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  --%>
+<%@include file="/libs/foundation/global.jsp" %><%
+    //pageContext.setAttribute("favicon", component.getPath() + "/clientlibs/images/favicon.png");
+    pageContext.setAttribute("pagePath", resourceResolver.map(currentPage.getPath()));
+    pageContext.setAttribute("resourcePath", resourceResolver.map(resource.getPath()));
+
+%><!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+        <title>Explain Query | ACS AEM Tools</title>
+
+        <link rel="shortcut icon" href="${favicon}"/>
+
+        <cq:includeClientLib css="acs-tools.explain-query.app"/>
+    </head>
+
+    <body id="acs-tools-explain-query-app">
+
+        <header class="top">
+
+            <div class="logo">
+                <a href="/"><i class="icon-marketingcloud medium"></i></a>
+            </div>
+
+            <nav class="crumbs">
+                <a href="/miscadmin">Tools</a>
+                <a href="${pagePath}.html">Explain Query</a>
+            </nav>
+        </header>
+
+        <div class="page" role="main"
+             ng-controller="MainCtrl"
+             ng-init="app.uri = '${resourcePath}.explain.json'; init();">
+
+                <div class="content">
+                    <div class="content-container">
+
+                        <h1>Explain Query</h1>
+
+                        <p>Find the query plan used for executing any Query</p>
+
+                        <div ng-show="notifications.length > 0">
+                            <div ng-repeat="notification in notifications">
+                                <div class="alert {{ notification.type }}">
+                                    <button class="close" data-dismiss="alert">&times;</button>
+                                    <strong>{{ notification.title }}</strong><div>{{ notification.message }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <form ng-submit="explain()">
+
+                            <div class="form-row">
+                                <h4>Language</h4>
+
+                                <div class="selector">
+                                    <select
+                                            ng-model="form.language"
+                                            required="true"
+                                            ng-required="true">
+                                        <%--<option value="xpath">xpath</option>--%>
+                                        <option value="sql">sql</option>
+                                        <option value="JCR-SQL2">JCR-SQL2</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <h4>Query</h4>
+
+                                <span>
+                                    <textarea
+                                            ng-model="form.statement"
+                                            rows="4"
+                                            cols="20"
+                                            required="true"
+                                            ng-required="true"
+                                            placeholder="Query statement; must match the selected Language above"></textarea>
+                                </span>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-left-cell">&nbsp;</div>
+                                <button class="primary">Explain</button>
+                            </div>
+                        </form>
+
+                        <div class="section result"
+                                ng-show="result.plan">
+                            <h2>Query Explanation</h2>
+
+                            <p>{{ result.plan }}</p>
+                        </div>
+
+
+                        <%-- Slow Queries --%>
+                        <div class="section" ng-show="queries.slow.length > 0">
+
+                            <h2>Slow Queries</h2>
+
+                            <table class="data">
+                                <thead>
+                                    <tr>
+                                        <th>Duration (ms)</th>
+                                        <th>Occurrence Count</th>
+                                        <th>Language</th>
+                                        <th>Statement</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr ng-repeat="query in queries.slow"
+                                        ng-click="load(query)">
+                                        <td class="num">
+                                            {{ query.duration }}
+                                        </td>
+                                        <td class="num">
+                                            {{ query.occurrenceCount }}
+                                        </td>
+                                        <td>
+                                            {{ query.language }}
+                                        </td>
+                                        <td>
+                                            {{ query.statement }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <%-- Popular Queries --%>
+                        <div class="section" ng-show="queries.popular.length > 0">
+
+                            <h2>Popular Queries</h2>
+
+                            <table class="data">
+                                <thead>
+                                    <tr>
+                                        <th>Duration (ms)</th>
+                                        <th>Occurrence Count</th>
+                                        <th>Language</th>
+                                        <th>Statement</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="query in queries.popular"
+                                        ng-click="load(query)">
+                                        <td class="num">
+                                            {{ query.duration }}
+                                        </td>
+                                        <td class="num">
+                                            {{ query.occurrenceCount }}
+                                        </td>
+                                        <td>
+                                            {{ query.language }}
+                                        </td>
+                                        <td>
+                                            {{ query.statement }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        <cq:includeClientLib js="acs-tools.explain-query.app"/>
+
+        <%-- Register angular app; Decreases chances of collisions w other angular apps on the page (ex. via injection) --%>
+        <script type="text/javascript">
+            angular.bootstrap(document.getElementById('acs-tools-explain-query-app'),
+                    ['explainQueryApp']);
+        </script>
+    </body>
+</html>
