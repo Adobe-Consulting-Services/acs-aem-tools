@@ -72,10 +72,10 @@ explainQueryApp.controller('MainCtrl', function($scope, $http, $timeout) {
 
 
     $scope.addNotification = function (type, title, message) {
-        var timeout = 20000;
+        var timeout = 10000;
 
         if(type === 'success')  {
-            timeout = 10000;
+            timeout = timeout / 2;
         }
 
         $scope.notifications.unshift({
