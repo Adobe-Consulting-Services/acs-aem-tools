@@ -41,11 +41,7 @@ explainQueryApp.controller('MainCtrl', function($scope, $http, $timeout) {
         language: ''
     };
 
-    $scope.result = {
-        statement: '',
-        language: '',
-        plan: ''
-    };
+    $scope.result = { };
 
     $scope.load = function(query) {
         $scope.form.language = query.language;

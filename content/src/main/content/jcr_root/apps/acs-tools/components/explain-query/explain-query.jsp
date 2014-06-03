@@ -80,7 +80,7 @@
                                             ng-model="form.language"
                                             required="true"
                                             ng-required="true">
-                                        <%--<option value="xpath">xpath</option>--%>
+                                        <option value="xpath">xpath</option>
                                         <option value="sql">sql</option>
                                         <option value="JCR-SQL2">JCR-SQL2</option>
                                     </select>
@@ -108,10 +108,12 @@
                         </form>
 
                         <div class="section result"
-                                ng-show="result.plan">
+                                ng-show="result.explain">
                             <h2>Query Explanation</h2>
 
-                            <p>{{ result.plan }}</p>
+                            <h4>Uses property index: {{ result.explain.propertyIndex }}</h4>
+
+                            <p>{{ result.explain.plan }}</p>
                         </div>
 
 
