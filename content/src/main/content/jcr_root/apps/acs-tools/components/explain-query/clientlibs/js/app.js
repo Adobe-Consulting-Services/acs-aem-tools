@@ -66,7 +66,6 @@ explainQueryApp.controller('MainCtrl', function($scope, $http, $timeout) {
         });
     };
 
-
     $scope.addNotification = function (type, title, message) {
         var timeout = 10000;
 
@@ -86,10 +85,8 @@ explainQueryApp.controller('MainCtrl', function($scope, $http, $timeout) {
     };
 
     /*
-    * Init
-    *
-    * Loads the Slow and Popular Queries
-    */
+     * Loads the Slow and Popular Queries
+     */
     $scope.init = function() {
         $http({
             method: 'GET',

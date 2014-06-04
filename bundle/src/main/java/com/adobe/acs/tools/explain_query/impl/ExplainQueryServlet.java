@@ -18,7 +18,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.query.*;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
+import javax.jcr.query.Row;
+import javax.jcr.query.RowIterator;
 import javax.management.openmbean.CompositeData;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -28,10 +32,10 @@ import java.util.Collection;
 @SlingServlet(
         label = "ACS AEM Tools - Explain Query Servlet",
         description = "End-point for getting query explanations.",
-        methods = { "GET", "POST" },
-        resourceTypes = { "acs-tools/components/explain-query" },
-        selectors = { "explain" },
-        extensions = { "json" }
+        methods = {"GET", "POST"},
+        resourceTypes = {"acs-tools/components/explain-query"},
+        selectors = {"explain"},
+        extensions = {"json"}
 )
 public class ExplainQueryServlet extends SlingAllMethodsServlet {
     private static final Logger log = LoggerFactory.getLogger(ExplainQueryServlet.class);
@@ -40,7 +44,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
     private static final String SQL2 = "JCR-SQL2";
     private static final String XPATH = "xpath";
 
-    private static final String[] LANGUAGES = new String[] {SQL, SQL2, XPATH};
+    private static final String[] LANGUAGES = new String[]{SQL, SQL2, XPATH};
 
     @Reference
     private QueryStatManagerMBean queryStatManagerMBean;
@@ -60,6 +64,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
                             .getSlowQueries().values())
             );
         } catch (JSONException e) {
+            log.error("Unable to serial Slow Queries into JSON: {}", e.getMessage());
             e.printStackTrace();
         }
 
@@ -67,7 +72,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
             json.put("popularQueries", this.compositeQueryDataToJSON((Collection<CompositeData>) queryStatManagerMBean
                     .getPopularQueries().values()));
         } catch (JSONException e) {
-            e.printStackTrace();
+            log.error("Unable to serial Popular Queries into JSON: {}", e.getMessage());
         }
 
         response.setContentType("application/json");

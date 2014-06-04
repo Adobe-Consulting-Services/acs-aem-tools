@@ -18,7 +18,7 @@
   #L%
   --%>
 <%@include file="/libs/foundation/global.jsp" %><%
-    //pageContext.setAttribute("favicon", component.getPath() + "/clientlibs/images/favicon.png");
+
     pageContext.setAttribute("pagePath", resourceResolver.map(currentPage.getPath()));
     pageContext.setAttribute("resourcePath", resourceResolver.map(resource.getPath()));
 
@@ -69,15 +69,13 @@
                             </div>
                         </div>
 
-
                         <form ng-submit="explain()">
 
                             <div class="form-row">
                                 <h4>Language</h4>
 
                                 <div class="selector">
-                                    <select
-                                            ng-model="form.language"
+                                    <select ng-model="form.language"
                                             required="true"
                                             ng-required="true">
                                         <option value="xpath">xpath</option>
@@ -111,16 +109,15 @@
                                 ng-show="result.explain">
                             <h2>Query Explanation</h2>
 
-                            <h4>Uses property index: {{ result.explain.propertyIndex }}</h4>
-
                             <p>{{ result.explain.plan }}</p>
                         </div>
-
 
                         <%-- Slow Queries --%>
                         <div class="section" ng-show="queries.slow.length > 0">
 
                             <h2>Slow Queries</h2>
+
+                            <p>Click on a query below to load into explanation form above</p>
 
                             <table class="data">
                                 <thead>
@@ -156,6 +153,8 @@
                         <div class="section" ng-show="queries.popular.length > 0">
 
                             <h2>Popular Queries</h2>
+
+                            <p>Click on a query below to load into explanation form above</p>
 
                             <table class="data">
                                 <thead>
