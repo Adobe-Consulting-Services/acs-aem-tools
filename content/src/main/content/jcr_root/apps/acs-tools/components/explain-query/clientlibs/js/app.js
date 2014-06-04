@@ -38,7 +38,7 @@ explainQueryApp.controller('MainCtrl', function($scope, $http, $timeout) {
 
     $scope.form = {
         statement: '',
-        language: ''
+        language: 'JCR-SQL2'
     };
 
     $scope.result = { };

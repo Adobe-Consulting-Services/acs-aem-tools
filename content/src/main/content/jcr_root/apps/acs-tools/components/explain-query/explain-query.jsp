@@ -18,45 +18,51 @@
   #L%
   --%>
 <%@include file="/libs/foundation/global.jsp" %><%
+%><%@page session="false"
+          import="com.adobe.acs.tools.util.AEMCapabilityHelper" %><%
 
+    final com.adobe.acs.tools.util.AEMCapabilityHelper aemCapabilityHelper = sling.getService(com.adobe.acs.tools.util.AEMCapabilityHelper.class);
+
+    pageContext.setAttribute("isSupported", aemCapabilityHelper.isOak());
     pageContext.setAttribute("pagePath", resourceResolver.map(currentPage.getPath()));
     pageContext.setAttribute("resourcePath", resourceResolver.map(resource.getPath()));
 
 %><!doctype html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-        <title>Explain Query | ACS AEM Tools</title>
+    <title>Explain Query | ACS AEM Tools</title>
 
-        <link rel="shortcut icon" href="${favicon}"/>
+    <cq:includeClientLib css="acs-tools.explain-query.app"/>
+</head>
 
-        <cq:includeClientLib css="acs-tools.explain-query.app"/>
-    </head>
+<body id="acs-tools-explain-query-app">
 
-    <body id="acs-tools-explain-query-app">
+    <header class="top">
 
-        <header class="top">
+        <div class="logo">
+            <a href="/"><i class="icon-marketingcloud medium"></i></a>
+        </div>
 
-            <div class="logo">
-                <a href="/"><i class="icon-marketingcloud medium"></i></a>
-            </div>
+        <nav class="crumbs">
+            <a href="/miscadmin">Tools</a>
+            <a href="${pagePath}.html">Explain Query</a>
+        </nav>
+    </header>
 
-            <nav class="crumbs">
-                <a href="/miscadmin">Tools</a>
-                <a href="${pagePath}.html">Explain Query</a>
-            </nav>
-        </header>
+    <div class="page" role="main"
+         ng-controller="MainCtrl"
+         ng-init="app.uri = '${resourcePath}.explain.json'; init();">
 
-        <div class="page" role="main"
-             ng-controller="MainCtrl"
-             ng-init="app.uri = '${resourcePath}.explain.json'; init();">
+        <div class="content">
+            <div class="content-container">
 
-                <div class="content">
-                    <div class="content-container">
+                <h1>Explain Query</h1>
 
-                        <h1>Explain Query</h1>
+                <c:choose>
+                    <c:when test="${isSupported}">
 
                         <p>Find the query plan used for executing any Query</p>
 
@@ -64,7 +70,9 @@
                             <div ng-repeat="notification in notifications">
                                 <div class="alert {{ notification.type }}">
                                     <button class="close" data-dismiss="alert">&times;</button>
-                                    <strong>{{ notification.title }}</strong><div>{{ notification.message }}</div>
+                                    <strong>{{ notification.title }}</strong>
+
+                                    <div>{{ notification.message }}</div>
                                 </div>
                             </div>
                         </div>
@@ -76,7 +84,6 @@
 
                                 <div class="selector">
                                     <select ng-model="form.language"
-                                            required="true"
                                             ng-required="true">
                                         <option value="xpath">xpath</option>
                                         <option value="sql">sql</option>
@@ -93,7 +100,6 @@
                                             ng-model="form.statement"
                                             rows="4"
                                             cols="20"
-                                            required="true"
                                             ng-required="true"
                                             placeholder="Query statement; must match the selected Language above"></textarea>
                                 </span>
@@ -106,7 +112,7 @@
                         </form>
 
                         <div class="section result"
-                                ng-show="result.explain">
+                             ng-show="result.explain">
                             <h2>Query Explanation</h2>
 
                             <p>{{ result.explain.plan }}</p>
@@ -185,16 +191,30 @@
                             </table>
                         </div>
 
-                    </div>
-                </div>
+                        <cq:includeClientLib js="acs-tools.explain-query.app"/>
+
+                        <%-- Register angular app; Decreases chances of collisions w other angular apps on the page (ex. via injection) --%>
+                        <script type="text/javascript">
+                            angular.bootstrap(document.getElementById('acs-tools-explain-query-app'),
+                                    ['explainQueryApp']);
+                        </script>
+
+                    </c:when>
+                    <c:otherwise>
+
+                        <div class="alert notice large">
+                            <strong>Incompatible version of AEM</strong>
+
+                            <div>Explain Query is only supported on AEM installs running Apache Jackrabbit Oak based
+                                repositories.
+                            </div>
+                        </div>
+
+                    </c:otherwise>
+                </c:choose>
+
             </div>
-
-        <cq:includeClientLib js="acs-tools.explain-query.app"/>
-
-        <%-- Register angular app; Decreases chances of collisions w other angular apps on the page (ex. via injection) --%>
-        <script type="text/javascript">
-            angular.bootstrap(document.getElementById('acs-tools-explain-query-app'),
-                    ['explainQueryApp']);
-        </script>
-    </body>
+        </div>
+    </div>
+</body>
 </html>

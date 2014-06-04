@@ -52,7 +52,6 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
     @Reference
     private SlingRepository slingRepository;
 
-
     @Override
     protected final void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response)
             throws ServletException, IOException {
