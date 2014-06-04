@@ -32,10 +32,10 @@ import java.util.Collection;
 @SlingServlet(
         label = "ACS AEM Tools - Explain Query Servlet",
         description = "End-point for getting query explanations.",
-        methods = {"GET", "POST"},
-        resourceTypes = {"acs-tools/components/explain-query"},
-        selectors = {"explain"},
-        extensions = {"json"}
+        methods = { "GET", "POST" },
+        resourceTypes = { "acs-tools/components/explain-query" },
+        selectors = { "explain" },
+        extensions = { "json" }
 )
 public class ExplainQueryServlet extends SlingAllMethodsServlet {
     private static final Logger log = LoggerFactory.getLogger(ExplainQueryServlet.class);
@@ -112,7 +112,8 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         }
     }
 
-    private JSONObject explainQuery(final QueryManager queryManager, final String statement, final String language) throws RepositoryException, JSONException {
+    private JSONObject explainQuery(final QueryManager queryManager, final String statement,
+                                    final String language) throws RepositoryException, JSONException {
         final Query query = queryManager.createQuery("explain " + statement, language);
 
         final QueryResult queryResult = query.execute();
