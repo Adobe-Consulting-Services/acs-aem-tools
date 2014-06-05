@@ -5,4 +5,5 @@
     <aem-fiddle/>
     <jsp-code-display/>
     <query-editor/>
+    <explain-query/>
 </jcr:root>
