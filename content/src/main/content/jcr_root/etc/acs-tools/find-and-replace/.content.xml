@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:lastModified="{Date}2014-06-26T21:14:19.578+01:00"
+        cq:lastModifiedBy="admin"
+        jcr:primaryType="nt:unstructured"
+        jcr:title="Find and replace"
+        sling:resourceType="acs-tools/components/find-and-replace"
+        search_component="foundation/components/text"
+        search_element="nt:unstructured"
+        search_path="/content/geometrixx"
+        search_string="tester123"
+        update_references="dryrun"/>
+</jcr:root>

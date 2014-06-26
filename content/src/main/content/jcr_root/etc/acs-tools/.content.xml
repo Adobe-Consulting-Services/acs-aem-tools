@@ -5,5 +5,5 @@
     <aem-fiddle/>
     <jsp-code-display/>
     <query-editor/>
-    <content-find-replace/>
+    <find-and-replace/>
 </jcr:root>
