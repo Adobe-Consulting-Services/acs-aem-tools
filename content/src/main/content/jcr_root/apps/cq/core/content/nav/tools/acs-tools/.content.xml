@@ -7,4 +7,5 @@
     <query-editor/>
     <explain-query/>
     <jsp-code-display/>
+    <test-page-generator/>
 </jcr:root>
