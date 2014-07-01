@@ -22,6 +22,7 @@
 
     pageContext.setAttribute("pagePath", resourceResolver.map(currentPage.getPath()));
     pageContext.setAttribute("resourcePath", resourceResolver.map(resource.getPath()));
+    pageContext.setAttribute("favicon", resourceResolver.map(component.getPath() + "/clientlibs/images/favicon.ico"));
 
 %><!doctype html>
 <html>
@@ -30,6 +31,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
     <title>Test Page Generator | ACS AEM Tools</title>
+    <link rel="shortcut icon" href="${favicon}"/>
 
     <cq:includeClientLib css="acs-tools.test-page-generator.app"/>
 </head>
