@@ -30,8 +30,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Parameters {
@@ -78,8 +80,15 @@ public class Parameters {
 
                 if (StringUtils.isNotBlank(name)) {
                     if (isMulti) {
-                        String[] values = StringUtils.split(item.optString("value", ""), ",");
-                        properties.put(name, values);
+                        final List<String> values = new ArrayList<String>();
+                        for (String value : StringUtils.split(item.optString("value", ""), ",")) {
+                            final String tmp = StringUtils.stripToNull(value);
+                            if (tmp != null) {
+                                values.add(value);
+                            }
+                        }
+
+                        properties.put(name, values.toArray(new String[values.size()]));
                     } else {
                         String value = item.optString("value", "");
                         properties.put(name, value);

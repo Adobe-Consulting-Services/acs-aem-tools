@@ -27,6 +27,8 @@ import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
 import com.day.cq.wcm.api.Template;
 import com.day.cq.wcm.api.WCMException;
+import org.apache.commons.lang.StringUtils;
+import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -41,8 +43,14 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @SlingServlet(
         label = "ACS AEM Tools - Test Page Generator",
@@ -54,6 +62,9 @@ import java.io.IOException;
 )
 public class TestPageGeneratorServlet extends SlingAllMethodsServlet {
     private static final Logger log = LoggerFactory.getLogger(TestPageGeneratorServlet.class);
+
+    @Reference
+    private ScriptEngineManager scriptEngineManager;
 
     private static final int MILLIS_IN_SECONDS = 1000;
 
@@ -85,6 +96,8 @@ public class TestPageGeneratorServlet extends SlingAllMethodsServlet {
 
     private JSONObject generatePages(ResourceResolver resourceResolver, Parameters parameters) throws IOException,
             WCMException, RepositoryException, JSONException {
+
+        final ScriptEngine scriptEngine = scriptEngineManager.getEngineByExtension("ecma");
 
         final JSONObject jsonResponse = new JSONObject();
 
@@ -118,9 +131,11 @@ public class TestPageGeneratorServlet extends SlingAllMethodsServlet {
                     parameters.getTemplate(),
                     TITLE_PREFIX + (i + 1));
 
-            final ModifiableValueMap mvp = page.getContentResource().adaptTo(ModifiableValueMap.class);
+            final ModifiableValueMap properties = page.getContentResource().adaptTo(ModifiableValueMap.class);
 
-            mvp.putAll(parameters.getProperties());
+            for (Map.Entry<String, Object> entry : parameters.getProperties().entrySet()) {
+                properties.put(entry.getKey(), this.eval(scriptEngine, entry.getValue()));
+            }
 
             bucketCount++;
 
@@ -304,5 +319,45 @@ public class TestPageGeneratorServlet extends SlingAllMethodsServlet {
 
             return resourceResolver.getResource(pageNode.getPath()).adaptTo(Page.class);
         }
+    }
+
+
+    private Object eval(final ScriptEngine scriptEngine, final Object value) {
+
+        if (scriptEngine == null) {
+            log.warn("ScriptEngine is null; cannot evaluate");
+            return value;
+        } else if (value instanceof String[]) {
+            final List<String> scripts = new ArrayList<String>();
+            final String[] values = (String[]) value;
+
+            for (final String val : values) {
+                scripts.add(String.valueOf(this.eval(scriptEngine, val)));
+            }
+
+            return scripts.toArray(new String[scripts.size()]);
+        } else if (!(value instanceof String)) {
+            return value;
+        }
+
+        final String stringValue = StringUtils.stripToEmpty((String) value);
+
+        String script;
+        if (StringUtils.startsWith(stringValue, "{{")
+                && StringUtils.endsWith(stringValue, "}}")) {
+
+            script = StringUtils.removeStart(stringValue, "{{");
+            script = StringUtils.removeEnd(script, "}}");
+            script = StringUtils.stripToEmpty(script);
+
+            try {
+                return scriptEngine.eval(script);
+            } catch (ScriptException e) {
+                log.error("Could not evaluation the test page property ecma [ {} ]", script);
+                e.printStackTrace();
+            }
+        }
+
+        return value;
     }
 }
