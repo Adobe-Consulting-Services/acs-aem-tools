@@ -89,7 +89,7 @@
             </ul>
             <div ng-hide="data.myfiddles.list.length > 0">
                 <br/><br/>
-                <div class="greyText" style="text-align:center">No Saved Fiddles Found</div>
+                <div class="greyText" style="text-align:center">No Saved Fiddles</div>
 
             </div>
         </section>
