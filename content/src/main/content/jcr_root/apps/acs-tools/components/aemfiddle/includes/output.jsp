@@ -26,27 +26,25 @@
 
     <%-- Output Toolbar and Status --%>
     <nav class="toolbar">
-        <div class="left icongroup">
+        <div class="icongroup">
             <a  ng-click="ui.toggleOutput()"
                 class="toggle-output-icon icon-reply"
                 href="#toggle-output"
                 title="Toggle Output/HTML">Toggle Output/HTML</a>
-
-            <span class="divider"></span>
-
-            <span class="output-status">
-                <span ng-show="data.ui.output.hasData">
-                    Executed at
-                    [ {{data.result.executedAt | date:'h:mm:ss a'}} ]
-                    against
-                    [ {{data.result.resource}} ]
-                </span>
-
-                <span ng-hide="data.ui.output.hasData">
-                    <-- Click to toggle HTML source/normal output!
-                </span>
-            </span>
         </div>
+        <span class="output-status">
+
+            <span ng-show="data.ui.output.hasData">
+                Executed at
+                [ {{data.result.executedAt | date:'h:mm:ss a'}} ]
+                against
+                [ {{data.result.resource}} ]
+            </span>
+
+            <span ng-hide="data.ui.output.hasData">
+                <-- Click to toggle HTML source/normal output!
+            </span>
+        </span>
     </nav>
 
     <%-- Code Output --%>

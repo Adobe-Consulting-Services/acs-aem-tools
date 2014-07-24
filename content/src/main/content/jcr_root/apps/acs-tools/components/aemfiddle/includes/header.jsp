@@ -43,13 +43,13 @@
         <input ng-model="data.src.resource"
                type="text"
                placeholder="Absolute resource path"
-               class="resource"/>
+               class="resource header-item"/>
 
         <span class="divider"></span>
 
         <%-- Run Code Button --%>
         <button ng-click="app.run('<%= runURL %>')"
-                class="primary run-code-button">
+                class="primary run-code-button header-item">
             <span ng-hide="data.app.running">Run Code</span>
             <span ng-show="data.app.running">Running Code...</span>
         </button>
@@ -58,9 +58,10 @@
 
         <!-- New -->
         <a ng-click="ui.toggleNewPopover()"
-           class="icon-add-circle medium action-icon-medium">New {{data.ui.newPopover.visible}}</a>
+           class="icon-add-circle medium action-icon-medium header-item">New Fiddle</a>
 
-        <div id="popover-new" ng-show="data.ui.newPopover.visible">
+        <div id="popover-new"
+             ng-show="data.ui.newPopover.visible">
             <div class="popover arrow-top">
                 <ul>
                     <li ng-repeat="option in data.ui.scriptExtOptions">
@@ -76,6 +77,6 @@
 
         <%-- Rail Toggle Button --%>
         <a ng-click="ui.toggleRail()"
-              class="toggle-rail-button medium icon-navigation action-icon-medium">Show/Hide MyFiddles</a>
+              class="toggle-rail-button medium icon-navigation action-icon-medium header-item">Show/Hide MyFiddles</a>
     </div>
 </header>

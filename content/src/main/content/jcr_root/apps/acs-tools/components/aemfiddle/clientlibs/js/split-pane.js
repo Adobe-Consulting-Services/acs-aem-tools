@@ -25,11 +25,6 @@ $(function () {
         $right = $('#right-pane'),
         $window = $(window);
 
-    function resizeOutputHeader() {
-        var width = $right.width() - 100;
-        $('.output-status').css('width', width + 'px');
-    }
-
     function reset() {
         var maxWidth = $window.width() - MIN_WIDTH;
 
@@ -37,14 +32,23 @@ $(function () {
         $left.resizable("option", "minWidth", MIN_WIDTH);
 
         $left.css('height', $right.height()).css('bottom', 0);
-
-        resizeOutputHeader();
     }
 
     function resize(event, ui) {
         if($right.data('hidden')) { return; }
 
-        var percent = (ui.size.width / $window.width()) * 100;
+        var $rail = $('.rail:visible'),
+            windowWidth = $window.width(),
+            percent;
+
+        if($rail) {
+            if($rail.css('position') === 'relative') {
+                $rail.width();
+                windowWidth = windowWidth - $rail.width();
+            }
+        }
+
+        percent = (ui.size.width / windowWidth) * 100;
 
         $left.css('right', (100 - percent) + '%');
         $right.css('left', percent + '%');
@@ -52,18 +56,27 @@ $(function () {
         /* Widths */
         $left.data('width', 100 - percent);
         $right.data('width', percent);
-
-        resizeOutputHeader();
     }
 
     function stop(event, ui) {
-        var leftPercent, rightPercent;
+        var $rail = $('.rail:visible'),
+            windowWidth = $window.width(),
+            leftPercent,
+            rightPercent;
+
         if($right.data('hidden')) { return; }
 
-        leftPercent = ((ui.size.width / $window.width())) * 100 ;
+        if($rail) {
+            if($rail.css('position') === 'relative') {
+                $rail.width();
+                windowWidth = windowWidth - $rail.width();
+            }
+        }
+
+        leftPercent = ((ui.size.width / windowWidth)) * 100 ;
         $left.css('right', (100 - leftPercent) + '%');
 
-        rightPercent = ($left.width() / $window.width()) * 100;
+        rightPercent = ($left.width() / windowWidth) * 100;
         $right.css('left', rightPercent + '%');
 
         /* Widths */

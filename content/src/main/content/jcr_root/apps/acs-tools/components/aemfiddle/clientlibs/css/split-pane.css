@@ -44,7 +44,7 @@
     top: 0;
     bottom: 0;
     /* Push handle outside editor for Ace scrollbar */
-    right: -6px;
+    right: -2px;
     background-color: #4097DC;
 }
 
