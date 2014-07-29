@@ -1,9 +1,15 @@
 #acs-tools-explain-query-app {
 
   .content-container {
-    width: 960px;
-    margin: 0 auto;
+    top: 0;
+    padding-top: 2em;
+
+    .content-container-inner {
+      width: 960px;
+      margin: 0 auto;
+    }
   }
+
 
   .section {
     margin: 2em 0;
@@ -52,7 +58,7 @@
       }
 
       select {
-        font-size: 20px;
+        font-size: 16px;
         margin-top: 8px;
       }
 
@@ -74,6 +80,21 @@
 
     h2 {
       margin-bottom: .5em;
+    }
+  }
+
+  table.data {
+    tr td {
+      vertical-align: top;
+    }
+
+    tr td div {
+      max-height: 5em;
+      overflow-y: hidden;
+    }
+
+    tr.expanded td div {
+      max-height: initial;
     }
   }
 }
