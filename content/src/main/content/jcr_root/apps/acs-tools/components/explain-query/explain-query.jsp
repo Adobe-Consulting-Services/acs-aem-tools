@@ -58,161 +58,181 @@
 
         <div class="content">
             <div class="content-container">
+                <div class="content-container-inner">
 
-                <h1>Explain Query</h1>
+                    <h1>Explain Query</h1>
 
-                <c:choose>
-                    <c:when test="${isSupported}">
+                    <c:choose>
+                        <c:when test="${isSupported}">
 
-                        <p>Find the query plan used for executing any Query</p>
+                            <p>Find the query plan used for executing any Query</p>
 
-                        <div ng-show="notifications.length > 0">
-                            <div ng-repeat="notification in notifications">
-                                <div class="alert {{ notification.type }}">
-                                    <button class="close" data-dismiss="alert">&times;</button>
-                                    <strong>{{ notification.title }}</strong>
+                            <div ng-show="notifications.length > 0">
+                                <div ng-repeat="notification in notifications">
+                                    <div class="alert {{ notification.type }}">
+                                        <button class="close" data-dismiss="alert">&times;</button>
+                                        <strong>{{ notification.title }}</strong>
 
-                                    <div>{{ notification.message }}</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <form ng-submit="explain()">
-
-                            <div class="form-row">
-                                <h4>Language</h4>
-
-                                <div class="selector">
-                                    <select ng-model="form.language"
-                                            ng-required="true">
-                                        <option value="xpath">xpath</option>
-                                        <option value="sql">sql</option>
-                                        <option value="JCR-SQL2">JCR-SQL2</option>
-                                    </select>
+                                        <div>{{ notification.message }}</div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="form-row">
-                                <h4>Query</h4>
+                            <form ng-submit="explain()">
 
-                                <span>
-                                    <textarea
-                                            ng-model="form.statement"
-                                            rows="4"
-                                            cols="20"
-                                            ng-required="true"
-                                            placeholder="Query statement; must match the selected Language above"></textarea>
-                                </span>
+                                <div class="form-row">
+                                    <h4>Language</h4>
+
+                                    <div class="selector">
+                                        <select ng-model="form.language"
+                                                ng-required="true">
+                                            <option value="xpath">xpath</option>
+                                            <option value="sql">sql</option>
+                                            <option value="JCR-SQL2">JCR-SQL2</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <h4>Query</h4>
+
+                                    <span>
+                                        <textarea
+                                                ng-model="form.statement"
+                                                rows="4"
+                                                cols="20"
+                                                ng-required="true"
+                                                placeholder="Query statement; must match the selected Language above"></textarea>
+                                    </span>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-left-cell">&nbsp;</div>
+                                    <button class="primary">Explain</button>
+                                </div>
+                            </form>
+
+                            <div class="section result"
+                                 ng-show="result.explain">
+                                <h2>Query Explanation</h2>
+
+                                <p>{{ result.explain.plan }}</p>
                             </div>
 
-                            <div class="form-row">
-                                <div class="form-left-cell">&nbsp;</div>
-                                <button class="primary">Explain</button>
+                            <%-- Slow Queries --%>
+                            <div class="section" ng-show="queries.slow.length > 0">
+
+                                <h2>Slow Queries</h2>
+
+                                <p>Click on a query below to load into explanation form above</p>
+
+                                <table class="data">
+                                    <thead>
+                                        <tr>
+                                            <th>Duration (ms)</th>
+                                            <th>Occurrence Count</th>
+                                            <th>Language</th>
+                                            <th>Statement</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr ng-repeat="query in queries.slow"
+                                            ng-class="{ expanded : query.expanded }">
+                                            <td class="num"
+                                                ng-click="load(query)">
+                                                <div>{{ query.duration }}</div>
+                                            </td>
+                                            <td class="num"
+                                                ng-click="load(query)">
+                                                <div>{{ query.occurrenceCount }}</div>
+                                            </td>
+                                            <td ng-click="load(query)">
+                                                <div>{{ query.language }}</div>
+                                            </td>
+                                            <td ng-click="load(query)">
+                                                <div>{{ query.statement }}</div>
+                                            </td>
+                                            <td>
+                                                <a href="#"
+                                                   ng-click="query.expanded = !query.expanded"
+                                                   ng-class="query.expanded ? 'icon-treecollapse' : 'icon-treeexpand'">
+                                                   </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
-                        </form>
 
-                        <div class="section result"
-                             ng-show="result.explain">
-                            <h2>Query Explanation</h2>
+                            <%-- Popular Queries --%>
+                            <div class="section" ng-show="queries.popular.length > 0">
 
-                            <p>{{ result.explain.plan }}</p>
-                        </div>
+                                <h2>Popular Queries</h2>
 
-                        <%-- Slow Queries --%>
-                        <div class="section" ng-show="queries.slow.length > 0">
+                                <p>Click on a query below to load into explanation form above</p>
 
-                            <h2>Slow Queries</h2>
-
-                            <p>Click on a query below to load into explanation form above</p>
-
-                            <table class="data">
-                                <thead>
-                                    <tr>
-                                        <th>Duration (ms)</th>
-                                        <th>Occurrence Count</th>
-                                        <th>Language</th>
-                                        <th>Statement</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-                                    <tr ng-repeat="query in queries.slow"
-                                        ng-click="load(query)">
-                                        <td class="num">
-                                            {{ query.duration }}
-                                        </td>
-                                        <td class="num">
-                                            {{ query.occurrenceCount }}
-                                        </td>
-                                        <td>
-                                            {{ query.language }}
-                                        </td>
-                                        <td>
-                                            {{ query.statement }}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <%-- Popular Queries --%>
-                        <div class="section" ng-show="queries.popular.length > 0">
-
-                            <h2>Popular Queries</h2>
-
-                            <p>Click on a query below to load into explanation form above</p>
-
-                            <table class="data">
-                                <thead>
-                                    <tr>
-                                        <th>Duration (ms)</th>
-                                        <th>Occurrence Count</th>
-                                        <th>Language</th>
-                                        <th>Statement</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr ng-repeat="query in queries.popular"
-                                        ng-click="load(query)">
-                                        <td class="num">
-                                            {{ query.duration }}
-                                        </td>
-                                        <td class="num">
-                                            {{ query.occurrenceCount }}
-                                        </td>
-                                        <td>
-                                            {{ query.language }}
-                                        </td>
-                                        <td>
-                                            {{ query.statement }}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <cq:includeClientLib js="acs-tools.explain-query.app"/>
-
-                        <%-- Register angular app; Decreases chances of collisions w other angular apps on the page (ex. via injection) --%>
-                        <script type="text/javascript">
-                            angular.bootstrap(document.getElementById('acs-tools-explain-query-app'),
-                                    ['explainQueryApp']);
-                        </script>
-
-                    </c:when>
-                    <c:otherwise>
-
-                        <div class="alert notice large">
-                            <strong>Incompatible version of AEM</strong>
-
-                            <div>Explain Query is only supported on AEM installs running Apache Jackrabbit Oak based
-                                repositories.
+                                <table class="data">
+                                    <thead>
+                                        <tr>
+                                            <th>Duration (ms)</th>
+                                            <th>Occurrence Count</th>
+                                            <th>Language</th>
+                                            <th>Statement</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="query in queries.popular"
+                                            ng-class="{ expanded : query.expanded }">
+                                            <td class="num"
+                                                ng-click="load(query)">
+                                                <div>{{ query.duration }}</div>
+                                            </td>
+                                            <td class="num"
+                                                ng-click="load(query)">
+                                                <div>{{ query.occurrenceCount }}</div>
+                                            </td>
+                                            <td ng-click="load(query)">
+                                                <div>{{ query.language }}</div>
+                                            </td>
+                                            <td ng-click="load(query)">
+                                                <div>{{ query.statement }}</div>
+                                            </td>
+                                            <td>
+                                                <a href="#"
+                                                   ng-click="query.expanded = !query.expanded"
+                                                   ng-class="query.expanded ? 'icon-treecollapse' : 'icon-treeexpand'">
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
 
-                    </c:otherwise>
-                </c:choose>
+                            <cq:includeClientLib js="acs-tools.explain-query.app"/>
 
+                            <%-- Register angular app; Decreases chances of collisions w other angular apps on the page (ex. via injection) --%>
+                            <script type="text/javascript">
+                                angular.bootstrap(document.getElementById('acs-tools-explain-query-app'),
+                                        ['explainQueryApp']);
+                            </script>
+
+                        </c:when>
+                        <c:otherwise>
+
+                            <div class="alert notice large">
+                                <strong>Incompatible version of AEM</strong>
+
+                                <div>Explain Query is only supported on AEM installs running Apache Jackrabbit Oak based
+                                    repositories.
+                                </div>
+                            </div>
+
+                        </c:otherwise>
+                    </c:choose>
+
+                </div>
             </div>
         </div>
     </div>
