@@ -60,7 +60,7 @@ angular.module('qeControllers').
 
             function params(source) {
                 var o = {};
-                source.replace(/^\s*(\S*)\s*=\s*(\S+(.*\S+|\S*))\s*$/gm, function ($0, $1, $2) {
+                source.replace(/^\s*(\S*)\s*=\s*(\S+([\w\W]*\S+|\S*))\s*$/gm, function ($0, $1, $2) {
                     o[$1] = $2;
                 });
                 return o;
