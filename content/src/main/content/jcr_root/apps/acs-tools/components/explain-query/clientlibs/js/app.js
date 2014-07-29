@@ -37,7 +37,8 @@ explainQueryApp.controller('MainCtrl', function($scope, $http, $timeout) {
 
     $scope.form = {
         statement: '',
-        language: 'JCR-SQL2'
+        language: 'JCR-SQL2',
+        executionTime: false
     };
 
     $scope.result = { };
@@ -52,7 +53,9 @@ explainQueryApp.controller('MainCtrl', function($scope, $http, $timeout) {
         $http({
             method: 'POST',
             url: $scope.app.uri,
-            data: 'statement=' + encodeURIComponent($scope.form.statement) + '&language=' + encodeURIComponent($scope.form.language),
+            data: 'statement=' + encodeURIComponent($scope.form.statement)
+                + '&language=' + encodeURIComponent($scope.form.language)
+                + '&executionTime=' + encodeURIComponent($scope.form.executionTime),
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).
         success(function(data, status, headers, config) {
