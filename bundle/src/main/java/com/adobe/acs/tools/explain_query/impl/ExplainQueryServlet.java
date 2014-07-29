@@ -118,6 +118,12 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
 
             json.put("explain", explainQuery(queryManager, statement, language));
 
+            if(request.getParameter("executionTime") != null
+                    && StringUtils.equals("true", request.getParameter("executionTime"))) {
+
+                json.put("executionTime", exceutionTime(queryManager, statement, language));
+            }
+
             response.setContentType("application/json");
             response.getWriter().print(json.toString());
 
@@ -147,6 +153,16 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
 
         return json;
     }
+
+    private long exceutionTime(final QueryManager queryManager, final String statement,
+                                    final String language) throws RepositoryException {
+        final Query query = queryManager.createQuery(statement, language);
+
+        final long start = System.currentTimeMillis();
+        query.execute();
+        return System.currentTimeMillis() - start;
+    }
+
 
     private JSONArray compositeQueryDataToJSON(Collection<CompositeData> queries) throws JSONException {
         final JSONArray jsonArray = new JSONArray();

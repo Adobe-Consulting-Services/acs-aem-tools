@@ -107,6 +107,18 @@
                                 </div>
 
                                 <div class="form-row">
+                                    <h4>Include execution time</h4>
+
+                                    <span>
+                                        <label><input
+                                                ng-model="form.executionTime"
+                                                type="checkbox"><span>
+                                            Run query and report execution time.
+                                            Long running queries will delay reporting the explanation.</span></label>
+                                    </span>
+                                </div>
+
+                                <div class="form-row">
                                     <div class="form-left-cell">&nbsp;</div>
                                     <button class="primary">Explain</button>
                                 </div>
@@ -115,6 +127,11 @@
                             <div class="section result"
                                  ng-show="result.explain">
                                 <h2>Query Explanation</h2>
+
+                                <div ng-show="result.executionTime >= 0">
+                                    Query executed in {{ result.executionTime }} ms
+                                </div>
+
 
                                 <p>{{ result.explain.plan }}</p>
                             </div>
