@@ -45,6 +45,7 @@ import javax.jcr.query.RowIterator;
 import javax.management.openmbean.CompositeData;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.Collection;
 
@@ -71,6 +72,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
     @Reference
     private SlingRepository slingRepository;
 
+    @SuppressWarnings("unchecked")
     @Override
     protected final void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response)
             throws ServletException, IOException {
@@ -83,7 +85,6 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
             );
         } catch (JSONException e) {
             log.error("Unable to serial Slow Queries into JSON: {}", e.getMessage());
-            e.printStackTrace();
         }
 
         try {
