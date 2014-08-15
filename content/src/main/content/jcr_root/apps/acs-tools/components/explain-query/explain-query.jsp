@@ -128,6 +128,11 @@
                                  ng-show="result.explain">
                                 <h2>Query Explanation</h2>
 
+                                <div class="call-out warning" ng-show="result.explain.slow">
+                                    Warning! This query has characteristics that may cause performance issues when
+                                    executed against large repositories.
+                                </div>
+
                                 <div class="call-out" ng-show="result.timing">
                                     Total query execution: {{ result.timing.totalTime }} ms
 
@@ -147,6 +152,10 @@
 
                                     <div ng-show="result.explain.traversal">
                                         Traversal query
+                                    </div>
+
+                                    <div ng-show="result.explain.aggregate">
+                                        Full-text index used
                                     </div>
                                 </div>
 

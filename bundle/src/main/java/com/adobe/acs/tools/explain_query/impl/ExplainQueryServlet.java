@@ -70,6 +70,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
     private static final String[] LANGUAGES = new String[]{ SQL, SQL2, XPATH };
 
     private static final Pattern PROPERTY_INDEX_PATTERN = Pattern.compile("\\/\\*\\sproperty\\s([^\\s=]+)[=\\s]");
+    private static final Pattern FILTER_PATTERN = Pattern.compile("\\[[^\\s]+\\]\\sas\\s\\[[^\\s]+\\]\\s\\/\\*\\sFilter\\(");
 
     @Reference
     private QueryStatManagerMBean queryStatManagerMBean;
@@ -153,25 +154,42 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         final String plan = firstRow.getValue("plan").getString();
         json.put("plan", plan);
 
-        if (StringUtils.contains(plan, " /* property ")) {
-            final JSONArray jsonArray = new JSONArray();
-            final Matcher matcher = PROPERTY_INDEX_PATTERN.matcher(plan);
-            while (matcher.find()) {
-                final String match = matcher.group(1);
-                if (StringUtils.isNotBlank(match)) {
-                    jsonArray.put(StringUtils.stripToEmpty(match));
-                }
-            }
 
-            if (jsonArray.length() > 0) {
-                json.put("propertyIndexes", jsonArray);
+
+        final JSONArray propertyIndexes = new JSONArray();
+
+        final Matcher propertyMatcher = PROPERTY_INDEX_PATTERN.matcher(plan);
+        /* Property Index */
+        while (propertyMatcher.find()) {
+            final String match = propertyMatcher.group(1);
+            if (StringUtils.isNotBlank(match)) {
+                propertyIndexes.put(StringUtils.stripToEmpty(match));
             }
+        }
+
+        if (propertyIndexes.length() > 0) {
+            json.put("propertyIndexes", propertyIndexes);
+        }
+
+        final Matcher filterMatcher = FILTER_PATTERN.matcher(plan);
+        if(filterMatcher.find()) {
+            /* Filter (nodeType index) */
+
+            propertyIndexes.put("nodeType");
+            json.put("propertyIndexes", propertyIndexes);
+            json.put("slow", true);
         }
 
         if (StringUtils.contains(plan, " /* traverse ")) {
+            /* Traversal */
             json.put("traversal", true);
+            json.put("slow", true);
         }
 
+        if (StringUtils.contains(plan, " /* aggregate ")) {
+            /* Aggregate - Fulltext */
+            json.put("aggregate", true);
+        }
 
         return json;
     }
