@@ -69,7 +69,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
 
     private static final String[] LANGUAGES = new String[]{ SQL, SQL2, XPATH };
 
-    private static final Pattern PROPERTY_INDEX_PATTERN = Pattern.compile("\\/\\*\\sproperty\\s([^\\s=]+)([=\\s])");
+    private static final Pattern PROPERTY_INDEX_PATTERN = Pattern.compile("\\/\\*\\sproperty\\s([^\\s=]+)[=\\s]");
 
     @Reference
     private QueryStatManagerMBean queryStatManagerMBean;
@@ -154,12 +154,17 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         json.put("plan", plan);
 
         if (StringUtils.contains(plan, " /* property ")) {
+            final JSONArray jsonArray = new JSONArray();
             final Matcher matcher = PROPERTY_INDEX_PATTERN.matcher(plan);
-            if(matcher.find()) {
+            while (matcher.find()) {
                 final String match = matcher.group(1);
                 if (StringUtils.isNotBlank(match)) {
-                    json.put("propertyIndex", StringUtils.stripToEmpty(match));
+                    jsonArray.put(StringUtils.stripToEmpty(match));
                 }
+            }
+
+            if (jsonArray.length() > 0) {
+                json.put("propertyIndexes", jsonArray);
             }
         }
 
@@ -168,12 +173,11 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         }
 
 
-
         return json;
     }
 
     private JSONObject executionTimes(final QueryManager queryManager, final String statement,
-                               final String language) throws RepositoryException, JSONException {
+                                      final String language) throws RepositoryException, JSONException {
         final JSONObject json = new JSONObject();
 
         final Query query = queryManager.createQuery(statement, language);

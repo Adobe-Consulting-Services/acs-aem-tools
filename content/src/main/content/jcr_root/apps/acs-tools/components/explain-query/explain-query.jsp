@@ -138,9 +138,11 @@
                                 </div>
 
                                 <div class="call-out"
-                                    ng-show="result.explain.propertyIndex || result.explain.traversal">
-                                    <div ng-show="result.explain.propertyIndex">
-                                        Property Index used: {{ result.explain.propertyIndex }}
+                                    ng-show="result.explain.propertyIndexes || result.explain.traversal">
+                                    <div ng-show="result.explain.propertyIndexes">
+                                        Property Index(es) used:
+                                        <span
+                                                ng-repeat="propertyIndex in result.explain.propertyIndexes">{{propertyIndex}}{{$last ? '' : ', '}}</span>
                                     </div>
 
                                     <div ng-show="result.explain.traversal">
