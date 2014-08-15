@@ -128,12 +128,27 @@
                                  ng-show="result.explain">
                                 <h2>Query Explanation</h2>
 
-                                <div ng-show="result.executionTime >= 0">
-                                    Query executed in {{ result.executionTime }} ms
+                                <div class="call-out" ng-show="result.timing">
+                                    Total query execution: {{ result.timing.totalTime }} ms
+
+                                    <ul>
+                                        <li>query.execute(): {{ result.timing.executeTime }} ms</li>
+                                        <li>queryResult.getNodes(): {{ result.timing.getNodesTime }} ms</li>
+                                    </ul>
                                 </div>
 
+                                <div class="call-out"
+                                    ng-show="result.explain.propertyIndex || result.explain.traversal">
+                                    <div ng-show="result.explain.propertyIndex">
+                                        Property Index used: {{ result.explain.propertyIndex }}
+                                    </div>
 
-                                <p>{{ result.explain.plan }}</p>
+                                    <div ng-show="result.explain.traversal">
+                                        Traversal query
+                                    </div>
+                                </div>
+
+                                <div class="call-out">{{ result.explain.plan }}</div>
                             </div>
 
                             <%-- Slow Queries --%>
