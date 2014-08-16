@@ -145,7 +145,7 @@
                                 <div class="call-out"
                                     ng-show="result.explain.propertyIndexes || result.explain.traversal">
                                     <div ng-show="result.explain.propertyIndexes">
-                                        Property Index(es) used:
+                                        Oak indexes used:
                                         <span
                                                 ng-repeat="propertyIndex in result.explain.propertyIndexes">{{propertyIndex}}{{$last ? '' : ', '}}</span>
                                     </div>
