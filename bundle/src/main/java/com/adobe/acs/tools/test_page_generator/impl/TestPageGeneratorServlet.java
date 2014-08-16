@@ -78,24 +78,54 @@ public class TestPageGeneratorServlet extends SlingAllMethodsServlet {
     protected final void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response)
             throws ServletException, IOException {
 
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
         try {
             final JSONObject json = this.generatePages(request.getResourceResolver(), new Parameters(request));
             response.getWriter().write(json.toString(2));
         } catch (JSONException e) {
             log.error(e.getMessage());
-            response.sendError(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            this.sendJSONError(response,
+                    "Form errors",
                     "Could not understand provided parameters");
         } catch (RepositoryException e) {
             log.error("Could not perform interim Save due to: {}", e.getMessage());
-            response.sendError(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            this.sendJSONError(response,
+                    "Repository error",
+                    e.getMessage());
         } catch (WCMException e) {
             log.error("Could not create Page due to: {}", e.getMessage());
-            response.sendError(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            this.sendJSONError(response,
+                    "WCM Page creation error",
+                    e.getMessage());
+        } catch(IllegalArgumentException e) {
+            log.error("Could not store JavaScript eval result into repository: {}", e.getMessage());
+            this.sendJSONError(response,
+                    "JavaScript-based property evaluation error",
+                    e.getMessage());
+        }
+    }
+
+    private void sendJSONError(SlingHttpServletResponse response, String title, String message) throws IOException {
+        final JSONObject json = new JSONObject();
+
+        response.sendError(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+        try {
+            json.put("title", title);
+            json.put("message", message);
+            response.getWriter().write(json.toString(2));
+        } catch (JSONException e) {
+            String fallbackJSON = "{ \"title\": \"Error creating error response. "
+                    + "Please review AEM error logs.\" }";
+
+            response.getWriter().write(fallbackJSON);
         }
     }
 
     private JSONObject generatePages(ResourceResolver resourceResolver, Parameters parameters) throws IOException,
-            WCMException, RepositoryException, JSONException {
+            WCMException, RepositoryException, JSONException, IllegalArgumentException {
 
         final ScriptEngine scriptEngine = scriptEngineManager.getEngineByExtension("ecma");
 
@@ -115,6 +145,7 @@ public class TestPageGeneratorServlet extends SlingAllMethodsServlet {
         int bucketCount = 0;
 
         long start = System.currentTimeMillis();
+
 
         while (i++ < pageCount) {
             depthTracker = this.updateDepthTracker(depthTracker, bucketCount, bucketSize);

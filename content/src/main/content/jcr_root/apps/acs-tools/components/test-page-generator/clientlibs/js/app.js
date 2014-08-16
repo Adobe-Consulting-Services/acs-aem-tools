@@ -45,7 +45,15 @@ angular.module('testPageGeneratorApp',[]).controller('MainCtrl', function($scope
         properties.splice(index, 1);
     };
 
-    $scope.generatePages = function() {
+    $scope.generatePages = function(isValid) {
+
+        if(!isValid) {
+            this.addNotification('error',
+            "Error",
+            "Form is invalid. Please correct and resubmit.");
+            return;
+        }
+
         $scope.results = {};
         $scope.app.running = true;
 
