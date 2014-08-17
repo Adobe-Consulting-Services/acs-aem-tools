@@ -63,9 +63,9 @@
         <span>
             <input type="text"
                    name="bucketSize"
-                   ng-pattern="/^\d*$/"
+                   ng-pattern="/(^[2-9]\d*)|(^[1-9]\d+)/"
                    ng-model="form.bucketSize"
-                   placeholder="Number of pages to generate per folder [ Default: 100 ]"/>
+                   placeholder="Number of pages to generate per folder. Must be greater than 1. [ Default: 100 ]"/>
         </span>
     </div>
 
@@ -132,11 +132,12 @@
                 turning the resulting segments into a String Array.
             </p>
             <p>
-                JavaScript can be used to generate values for property values.
-                Place any JavaScript between {{ }} to be evaluated. Node return values cannot be
-                JavaScript objects and should be Strings or Numbers.
+                JavaScript evaluated server-side can be used to generate values for property values.
+                Place JavaScript between {{ }} to be evaluated.
                 <br/>
-                Example: {{ (new Date()).getTime() }}
+                JavaScript expressions should evaluate to Strings or Numbers and not Objects.
+                <br/>
+                Example: {{ new Date().getTime() }}
             </p>
         </div>
     </div>

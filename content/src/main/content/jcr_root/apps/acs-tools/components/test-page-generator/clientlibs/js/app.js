@@ -68,13 +68,14 @@ angular.module('testPageGeneratorApp',[]).controller('MainCtrl', function($scope
             $scope.app.running = false;
         }).
         error(function(data, status, headers, config) {
-            $scope.addNotification('error', 'ERROR', 'Check your params and your error logs and try again.');
+            $scope.addNotification('error', 'ERROR',
+                    data.title + '. ' +  data.message);
             $scope.app.running = false;
         });
     };
 
     $scope.addNotification = function (type, title, message) {
-        var timeout = 10000;
+        var timeout = 40000;
 
         if(type === 'success')  {
             timeout = timeout / 2;

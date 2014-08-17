@@ -53,7 +53,7 @@
             <li>Bucket size: {{ results.bucketSize }}</li>
             <li>Save threshold: {{ results.saveThreshold }}</li>
             <li>Total pages created: {{ results.count }}</li>
-            <li>Total time: {{ results.totalTime }} s </li>
+            <li>Total time: {{ results.totalTime }} seconds </li>
         </ul>
 
         <a x-cq-linkchecker="skip"

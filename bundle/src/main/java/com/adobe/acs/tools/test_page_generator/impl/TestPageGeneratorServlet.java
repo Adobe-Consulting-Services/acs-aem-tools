@@ -99,7 +99,7 @@ public class TestPageGeneratorServlet extends SlingAllMethodsServlet {
             this.sendJSONError(response,
                     "WCM Page creation error",
                     e.getMessage());
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             log.error("Could not store JavaScript eval result into repository: {}", e.getMessage());
             this.sendJSONError(response,
                     "JavaScript-based property evaluation error",
@@ -107,25 +107,8 @@ public class TestPageGeneratorServlet extends SlingAllMethodsServlet {
         }
     }
 
-    private void sendJSONError(SlingHttpServletResponse response, String title, String message) throws IOException {
-        final JSONObject json = new JSONObject();
-
-        response.sendError(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
-        try {
-            json.put("title", title);
-            json.put("message", message);
-            response.getWriter().write(json.toString(2));
-        } catch (JSONException e) {
-            String fallbackJSON = "{ \"title\": \"Error creating error response. "
-                    + "Please review AEM error logs.\" }";
-
-            response.getWriter().write(fallbackJSON);
-        }
-    }
-
     private JSONObject generatePages(ResourceResolver resourceResolver, Parameters parameters) throws IOException,
-            WCMException, RepositoryException, JSONException, IllegalArgumentException {
+            WCMException, RepositoryException, JSONException {
 
         final ScriptEngine scriptEngine = scriptEngineManager.getEngineByExtension("ecma");
 
@@ -189,6 +172,23 @@ public class TestPageGeneratorServlet extends SlingAllMethodsServlet {
         jsonResponse.put("success", true);
 
         return jsonResponse;
+    }
+
+    private void sendJSONError(SlingHttpServletResponse response, String title, String message) throws IOException {
+        final JSONObject json = new JSONObject();
+
+        response.setStatus(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+        try {
+            json.put("title", title);
+            json.put("message", message);
+            response.getWriter().write(json.toString());
+        } catch (JSONException e) {
+            String fallbackJSON = "{ \"title\": \"Error creating error response. "
+                    + "Please review AEM error logs.\" }";
+
+            response.getWriter().write(fallbackJSON);
+        }
     }
 
     /**
@@ -385,7 +385,6 @@ public class TestPageGeneratorServlet extends SlingAllMethodsServlet {
                 return scriptEngine.eval(script);
             } catch (ScriptException e) {
                 log.error("Could not evaluation the test page property ecma [ {} ]", script);
-                e.printStackTrace();
             }
         }
 
