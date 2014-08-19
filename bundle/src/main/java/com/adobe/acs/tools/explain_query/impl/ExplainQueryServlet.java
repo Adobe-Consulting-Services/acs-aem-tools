@@ -48,6 +48,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SlingServlet(
         label = "ACS AEM Tools - Explain Query Servlet",
@@ -61,10 +63,15 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
     private static final Logger log = LoggerFactory.getLogger(ExplainQueryServlet.class);
 
     private static final String SQL = "sql";
+
     private static final String SQL2 = "JCR-SQL2";
+
     private static final String XPATH = "xpath";
 
-    private static final String[] LANGUAGES = new String[]{SQL, SQL2, XPATH};
+    private static final String[] LANGUAGES = new String[]{ SQL, SQL2, XPATH };
+
+    private static final Pattern PROPERTY_INDEX_PATTERN = Pattern.compile("\\/\\*\\sproperty\\s([^\\s=]+)[=\\s]");
+    private static final Pattern FILTER_PATTERN = Pattern.compile("\\[[^\\s]+\\]\\sas\\s\\[[^\\s]+\\]\\s\\/\\*\\sFilter\\(");
 
     @Reference
     private QueryStatManagerMBean queryStatManagerMBean;
@@ -119,10 +126,9 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
 
             json.put("explain", explainQuery(queryManager, statement, language));
 
-            if(request.getParameter("executionTime") != null
+            if (request.getParameter("executionTime") != null
                     && StringUtils.equals("true", request.getParameter("executionTime"))) {
-
-                json.put("executionTime", exceutionTime(queryManager, statement, language));
+                json.put("timing", this.executionTimes(queryManager, statement, language));
             }
 
             response.setContentType("application/json");
@@ -139,6 +145,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
 
     private JSONObject explainQuery(final QueryManager queryManager, final String statement,
                                     final String language) throws RepositoryException, JSONException {
+        final JSONObject json = new JSONObject();
         final Query query = queryManager.createQuery("explain " + statement, language);
 
         final QueryResult queryResult = query.execute();
@@ -146,22 +153,67 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         final Row firstRow = rows.nextRow();
 
         final String plan = firstRow.getValue("plan").getString();
-        final boolean propertyIndex = StringUtils.contains(plan, " /* property ");
-
-        final JSONObject json = new JSONObject();
         json.put("plan", plan);
-        json.put("propertyIndex", propertyIndex);
+
+
+
+        final JSONArray propertyIndexes = new JSONArray();
+
+        final Matcher propertyMatcher = PROPERTY_INDEX_PATTERN.matcher(plan);
+        /* Property Index */
+        while (propertyMatcher.find()) {
+            final String match = propertyMatcher.group(1);
+            if (StringUtils.isNotBlank(match)) {
+                propertyIndexes.put(StringUtils.stripToEmpty(match));
+            }
+        }
+
+        if (propertyIndexes.length() > 0) {
+            json.put("propertyIndexes", propertyIndexes);
+        }
+
+        final Matcher filterMatcher = FILTER_PATTERN.matcher(plan);
+        if(filterMatcher.find()) {
+            /* Filter (nodeType index) */
+
+            propertyIndexes.put("nodeType");
+            json.put("propertyIndexes", propertyIndexes);
+            json.put("slow", true);
+        }
+
+        if (StringUtils.contains(plan, " /* traverse ")) {
+            /* Traversal */
+            json.put("traversal", true);
+            json.put("slow", true);
+        }
+
+        if (StringUtils.contains(plan, " /* aggregate ")) {
+            /* Aggregate - Fulltext */
+            json.put("aggregate", true);
+        }
 
         return json;
     }
 
-    private long exceutionTime(final QueryManager queryManager, final String statement,
-                                    final String language) throws RepositoryException {
+    private JSONObject executionTimes(final QueryManager queryManager, final String statement,
+                                      final String language) throws RepositoryException, JSONException {
+        final JSONObject json = new JSONObject();
+
         final Query query = queryManager.createQuery(statement, language);
 
-        final long start = System.currentTimeMillis();
-        query.execute();
-        return System.currentTimeMillis() - start;
+        long start = System.currentTimeMillis();
+        final QueryResult queryResult = query.execute();
+        long executionTime = System.currentTimeMillis() - start;
+
+        start = System.currentTimeMillis();
+        queryResult.getNodes();
+        long getNodesTime = System.currentTimeMillis() - start;
+
+        json.put("executeTime", executionTime);
+        json.put("getNodesTime", getNodesTime);
+        json.put("totalTime", executionTime + getNodesTime);
+
+        return json;
     }
 
 

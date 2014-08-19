@@ -128,12 +128,38 @@
                                  ng-show="result.explain">
                                 <h2>Query Explanation</h2>
 
-                                <div ng-show="result.executionTime >= 0">
-                                    Query executed in {{ result.executionTime }} ms
+                                <div class="call-out warning" ng-show="result.explain.slow">
+                                    Warning! This query has characteristics that may cause performance issues when
+                                    executed against large repositories.
                                 </div>
 
+                                <div class="call-out" ng-show="result.timing">
+                                    Total query execution: {{ result.timing.totalTime }} ms
 
-                                <p>{{ result.explain.plan }}</p>
+                                    <ul>
+                                        <li>query.execute(): {{ result.timing.executeTime }} ms</li>
+                                        <li>queryResult.getNodes(): {{ result.timing.getNodesTime }} ms</li>
+                                    </ul>
+                                </div>
+
+                                <div class="call-out"
+                                    ng-show="result.explain.propertyIndexes || result.explain.traversal">
+                                    <div ng-show="result.explain.propertyIndexes">
+                                        Oak indexes used:
+                                        <span
+                                                ng-repeat="propertyIndex in result.explain.propertyIndexes">{{propertyIndex}}{{$last ? '' : ', '}}</span>
+                                    </div>
+
+                                    <div ng-show="result.explain.traversal">
+                                        Traversal query
+                                    </div>
+
+                                    <div ng-show="result.explain.aggregate">
+                                        Full-text index used
+                                    </div>
+                                </div>
+
+                                <div class="call-out">{{ result.explain.plan }}</div>
                             </div>
 
                             <%-- Slow Queries --%>
