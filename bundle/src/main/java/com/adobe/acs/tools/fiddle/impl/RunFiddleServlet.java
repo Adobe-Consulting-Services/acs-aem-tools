@@ -26,20 +26,32 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.request.RequestDispatcherOptions;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.api.wrappers.SlingHttpServletRequestWrapper;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 
 @SuppressWarnings("serial")
 @SlingServlet(resourceTypes = "acs-tools/components/aemfiddle", selectors = "run", methods = "POST")
 public class RunFiddleServlet extends SlingAllMethodsServlet {
+    private static final Logger log = LoggerFactory.getLogger(RunFiddleServlet.class);
+
+    private static final String VAR_CLASSES = "/var/classes";
+
+    private static final String COMPILED_JSP = "org/apache/jsp/apps/acs_002dtools/components/aemfiddle";
 
     @Reference
     private EventAdmin eventAdmin;
@@ -47,6 +59,11 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
     @Override
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response)
             throws ServletException, IOException {
+
+        // Clear any previously compiled fiddle scripts as they have a tendency to execute on first executions
+        this.clearCompiledFiddle(request.getResourceResolver());
+
+
         final Resource resource = getResource(request);
 
         final String data = request.getParameter("scriptdata");
@@ -85,7 +102,45 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
                 return request.getResource();
             }
         }
+    }
 
+    private void clearCompiledFiddle(final ResourceResolver resourceResolver) {
+        final Resource varClasses = resourceResolver.getResource(VAR_CLASSES);
+        final Session session = resourceResolver.adaptTo(Session.class);
+
+        if (varClasses != null) {
+            /* /var/classes structure builds out under a UUID that is different between AEM instances */
+            final Iterator<Resource> iterator = varClasses.listChildren();
+
+            boolean dirty = false;
+            while (iterator.hasNext()) {
+                final Resource varClass = iterator.next();
+                final Resource fiddleResource = varClass.getChild(COMPILED_JSP);
+
+                if (fiddleResource != null) {
+                    final Node node = fiddleResource.adaptTo(Node.class);
+
+                    if (node != null) {
+                        try {
+                            /* Removed the aemfiddle folder that contains the script */
+                            node.remove();
+                            dirty = true;
+                        } catch (RepositoryException e) {
+                            log.error("Could not remove compiled AEM Fiddle scripts: {}", e.getMessage());
+                        }
+                    }
+                }
+            }
+
+            /* Only save if something was removed */
+            if (dirty) {
+                try {
+                    session.save();
+                } catch (RepositoryException e) {
+                    log.error("Could not save removal of compiled AEM Fiddle scripts: {}", e.getMessage());
+                }
+            }
+        }
     }
 
     private static class GetRequest extends SlingHttpServletRequestWrapper {
@@ -98,7 +153,6 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
         public String getMethod() {
             return "GET";
         }
-
     }
 
 }
