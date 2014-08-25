@@ -112,7 +112,6 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
             /* /var/classes structure builds out under a UUID that is different between AEM instances */
             final Iterator<Resource> iterator = varClasses.listChildren();
 
-            boolean dirty = false;
             while (iterator.hasNext()) {
                 final Resource varClass = iterator.next();
                 final Resource fiddleResource = varClass.getChild(COMPILED_JSP);
@@ -124,7 +123,6 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
                         try {
                             /* Removed the aemfiddle folder that contains the script */
                             node.remove();
-                            dirty = true;
                         } catch (RepositoryException e) {
                             log.error("Could not remove compiled AEM Fiddle scripts: {}", e.getMessage());
                         }
@@ -132,13 +130,13 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
                 }
             }
 
-            /* Only save if something was removed */
-            if (dirty) {
-                try {
+            try {
+                /* Only save if something was removed */
+                if (session.hasPendingChanges()) {
                     session.save();
-                } catch (RepositoryException e) {
-                    log.error("Could not save removal of compiled AEM Fiddle scripts: {}", e.getMessage());
                 }
+            } catch (RepositoryException e) {
+                log.error("Could not save removal of compiled AEM Fiddle scripts: {}", e.getMessage());
             }
         }
     }
