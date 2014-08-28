@@ -78,6 +78,7 @@
                         <exclude>**/etc/clientlibs/acs-tools/aceeditor-dev/**/*.js</exclude>
                         <exclude>**/etc/clientlibs/acs-tools/angularjs/**/*.js</exclude>
                         <exclude>**/etc/clientlibs/acs-tools/angularui/**/*.js</exclude>
+                        <exclude>**/etc/clientlibs/acs-tools/vendor/**/*.js</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -91,6 +92,7 @@
                           <exclude>**/aemfiddle/code-templates/**</exclude>
                           <exclude>**/angularjs/*.js</exclude>
                           <exclude>**/aceeditor/**</exclude>
+                          <exclude>**/vendor/**</exclude>
                       </excludes>
                   </configuration>
               </plugin>
