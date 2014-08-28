@@ -21,7 +21,7 @@
 /*global JSON: false, angular: false */
 
 
-angular.module('testPageGeneratorApp',[]).controller('MainCtrl', function($scope, $http, $timeout) {
+angular.module('testPageGeneratorApp',[]).controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope, $http, $timeout) {
 
     $scope.app = {
         uri: ''
@@ -91,4 +91,4 @@ angular.module('testPageGeneratorApp',[]).controller('MainCtrl', function($scope
             $scope.notifications.shift();
         }, timeout);
     };
-});
+}]);

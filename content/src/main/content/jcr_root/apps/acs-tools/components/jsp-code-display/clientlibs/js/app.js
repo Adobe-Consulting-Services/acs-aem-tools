@@ -33,7 +33,7 @@ var jspCodeDisplay = angular.module('jspCodeDisplay', []);
 }());
 
 
-jspCodeDisplay.controller('MainCtrl', function($scope, $http) {
+jspCodeDisplay.controller('MainCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.line = '';
     $scope.running = false;
     $scope.error = false;
@@ -62,7 +62,7 @@ jspCodeDisplay.controller('MainCtrl', function($scope, $http) {
             $scope.errorMessage = status;
         });
     };
-});
+}]);
 
 
 $(function() {

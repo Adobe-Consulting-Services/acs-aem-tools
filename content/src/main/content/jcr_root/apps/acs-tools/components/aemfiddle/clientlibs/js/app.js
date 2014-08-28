@@ -19,10 +19,10 @@
  */
 
 /*global angular: false, ace: false */
-var aemFiddle = angular.module('aemFiddle',['ngSanitize']).config(function($sceProvider) {
+var aemFiddle = angular.module('aemFiddle',['ngSanitize']).config(['$sceProvider', function($sceProvider) {
     // Completely disable SCE.
     $sceProvider.enabled(false);
-});
+}]);
 
 
 /* ACE Editors */
