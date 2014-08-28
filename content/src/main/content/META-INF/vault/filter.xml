@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
     <filter root="/apps/acs-tools">
-        <exclude pattern="/apps/acs-tools/components/query-editor/clientlibs/css/generated" />
-        <exclude pattern="/apps/acs-tools/components/test-page-generator/clientlibs/css/generated" />
+        <exclude pattern=".*/clientlibs/css/generated" />
     </filter>
     <filter root="/etc/acs-tools"/>
     <filter root="/etc/clientlibs/acs-tools"/>
