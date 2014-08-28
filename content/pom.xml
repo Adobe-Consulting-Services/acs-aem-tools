@@ -74,10 +74,6 @@
                     <failOnIssues>true</failOnIssues>
                     <predefinedVars>jQuery,window,$</predefinedVars>
                     <excludes>
-                        <exclude>**/etc/clientlibs/acs-tools/aceeditor/**/*.js</exclude>
-                        <exclude>**/etc/clientlibs/acs-tools/aceeditor-dev/**/*.js</exclude>
-                        <exclude>**/etc/clientlibs/acs-tools/angularjs/**/*.js</exclude>
-                        <exclude>**/etc/clientlibs/acs-tools/angularui/**/*.js</exclude>
                         <exclude>**/etc/clientlibs/acs-tools/vendor/**/*.js</exclude>
                     </excludes>
                 </configuration>
