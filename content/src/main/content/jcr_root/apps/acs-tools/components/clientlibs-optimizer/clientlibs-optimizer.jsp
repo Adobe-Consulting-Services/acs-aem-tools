@@ -59,6 +59,7 @@
                         <h1>Client Library Optimizer</h1>
 
                         <p>Find all transitive dependencies for a set of Client Library categories.</p>
+                        <p>The following link gives an overview over the dependencies of currently installed client libraries: <a href="/libs/granite/ui/content/dumplibs.html">/libs/granite/ui/content/dumplibs.html</a></p>
 
                         <form ng-submit="optimize()">
 

@@ -6,4 +6,5 @@
     <aem-fiddle/>
     <query-editor/>
     <jsp-code-display/>
+    <clientlibs-optimizer/>
 </jcr:root>

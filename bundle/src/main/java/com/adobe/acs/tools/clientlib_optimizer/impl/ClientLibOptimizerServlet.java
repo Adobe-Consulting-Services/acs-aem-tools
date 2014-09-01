@@ -3,6 +3,7 @@ package com.adobe.acs.tools.clientlib_optimizer.impl;
 import com.day.cq.widget.ClientLibrary;
 import com.day.cq.widget.HtmlLibraryManager;
 import com.day.cq.widget.LibraryType;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.felix.scr.annotations.Reference;
@@ -18,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,7 +63,7 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
         types.put(LibraryType.CSS, this.hasLibraryTypeParam(request, PARAM_LIBRARY_TYPE_CSS));
 
 
-        final Set<String> categories = this.getCategories(this.getCategoriesParam(request), types);
+        final List<String> categories = this.getCategories(this.getCategoriesParam(request), types);
 
         try {
             this.writeJsonResponse(categories, response);
@@ -97,7 +99,7 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
     }
 
 
-    private void writeJsonResponse(final Set<String> categories,
+    private void writeJsonResponse(final List<String> categories,
                                    final SlingHttpServletResponse response) throws JSONException, IOException {
 
         final JSONObject jsonObject = new JSONObject();
@@ -106,148 +108,46 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
 
         response.getWriter().print(jsonObject.toString());
     }
+                         
+    private List<String> getSortedDependentCategories(Set<String> originalCategories, LibraryType type, List<String> existingCategories) {
+    	final Collection<ClientLibrary> libraries = htmlLibraryManager.getLibraries(
+    			originalCategories.toArray(new String[0]),
+                type,
+                true,
+                false);
+        
+    	return getSortedDependentCategories(libraries, originalCategories, type, existingCategories);
+    }
+    
+    static List<String> getSortedDependentCategories(Collection<ClientLibrary> libraries, Set<String> requestedCategories, LibraryType type, List<String> existingCategories) {
+    	// sort libraries by path name
+    	List<ClientLibrary> sortedLibraries = new ArrayList<ClientLibrary>(libraries);
+    	Collections.sort(sortedLibraries, new ClientLibraryPathComparator());
+    	 
+    	for (ClientLibrary library : libraries) {
+    		int index = existingCategories.isEmpty() ? 0 : existingCategories.size();
+    		ClientLibraryDependency dependency = new ClientLibraryDependency(null, library, requestedCategories, false, type);
+    		
+    		// don't give out all categories but only the requested ones and all dependent ones!
+    		existingCategories = dependency.buildDependencyTree(existingCategories, index);
+    	}
+    	return existingCategories;
+    }
 
+   // see  https://github.com/Adobe-Consulting-Services/acs-aem-tools/pull/47 for a discussion around that
+    // https://github.com/Adobe-Consulting-Services/acs-aem-tools/issues/12
+    private List<String> getCategories(Set<String> originalCategories, Map<LibraryType, Boolean> types) {
 
-    private Set<String> getCategories(Set<String> originalCategories, Map<LibraryType, Boolean> types) {
-        LinkedHashSet<String> categories = new LinkedHashSet<String>();
-        final Collection<String> paths = new HashSet<String>();
-
+        List<String> categories = new ArrayList<String>();
+        
         /* JS */
         if (types.get(LibraryType.JS)) {
-
-            final Collection<ClientLibrary> jsClientLibraries = htmlLibraryManager.getLibraries(
-                    originalCategories.toArray(new String[0]),
-                    LibraryType.JS,
-                    true,
-                    true);
-
-            log.debug("Adding [ {} ] JS ClientLibs for [ {} ]", jsClientLibraries.size(), originalCategories);
-
-            for (final ClientLibrary clientLibrary : jsClientLibraries) {
-                paths.add(clientLibrary.getPath());
-            }
-        }
-
-        /* CSS */
+        	categories = getSortedDependentCategories(originalCategories, LibraryType.JS, categories);
+        } 
         if (types.get(LibraryType.CSS)) {
-
-            final Collection<ClientLibrary> cssClientLibraries = htmlLibraryManager.getLibraries(
-                    originalCategories.toArray(new String[0]),
-                    LibraryType.CSS,
-                    true,
-                    true);
-
-            log.debug("Adding [ {} ] CSS ClientLibs for [ {} ]", cssClientLibraries.size(), originalCategories);
-
-            for (final ClientLibrary clientLibrary : cssClientLibraries) {
-                paths.add(clientLibrary.getPath());
-            }
-        }
-
-
-        // Get all the Transitive Dependencies
-        /*
-        final Set<String> dependencyPaths = new LinkedHashSet<String>();
-        for (final String path : paths) {
-            final ClientLibrary clientLibrary = htmlLibraryManager.getLibraries().get(path);
-            final Collection<? extends ClientLibrary> dependencies = clientLibrary.getDependencies(true).values();
-
-            for (ClientLibrary dependency : dependencies) {
-                dependencyPaths.add(dependency.getPath());
-            }
-        }
-        paths.addAll(dependencyPaths);
-        */
-
-        /* Get categories for Client Libraries */
-
-        /* Sort the paths */
-        List<String> sortedPaths = new ArrayList<String>(paths);
-
-        //sortedPaths = bubblesort(sortedPaths.toArray(new String[sortedPaths.size()]));
-        Collections.sort(sortedPaths, new ClientLibraryComparator());
-
-        /* Convert to Categories */
-        for (final String path : sortedPaths) {
-            final ClientLibrary clientLibrary = htmlLibraryManager.getLibraries().get(path);
-
-            // Use the first Category ?
-
-            categories.addAll(Arrays.asList(clientLibrary.getCategories()[0]));
-        }
-
-        return categories;
-    }
-
-    /*
-    private List<String> bubblesort(String[] a) {
-        Comparator<String> c = new ClientLibraryComparator();
-
-        for (int i  = a.length - 1; i > 1; i--) {
-            for (int j = 0; j <= i - 1; j++) {
-
-                log.debug(a[j] + " vs " + a[j + 1] + " => " + c.compare(a[j], a[j + 1]));
-
-                if (c.compare(a[j], a[j + 1]) == 1) {
-                    String tmp = a[j];
-                    a[j] = a[j + 1];
-                    a[ j + 1] = tmp;
-                }
-            }
-        }
-
-        return Arrays.asList(a);
-    }
-    */
-
-    /**
-     * Comparator for ClientLibrary Paths.
-     */
-    public class ClientLibraryComparator implements Comparator<String> {
-        @Override
-        public final int compare(final String p1, final String p2) {
-            final ClientLibrary cl1 = htmlLibraryManager.getLibraries().get(p1);
-            final ClientLibrary cl2 = htmlLibraryManager.getLibraries().get(p2);
-
-            if (this.isUsedBy(cl1, cl2)) {
-                return -1;
-            }
-
-            if (this.isUsedBy(cl2, cl1)) {
-                return 1;
-            }
-
-            int d1 = cl1.getDependencies(true).size();
-            int d2 = cl2.getDependencies(true).size();
-            log.debug(cl1.getPath() + " [ " + d1 + " ] vs " + cl2.getPath() + " [ " + d2 + " ]");
-
-            if (d1 < d2) {
-                return -1;
-            } else if (d1 > d2) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
-
-
-        private boolean isUsedBy(ClientLibrary used, ClientLibrary by) {
-            final Set<String> paths = new HashSet<String>();
-
-            for (ClientLibrary dependency : by.getDependencies(true).values()) {
-                paths.add(dependency.getPath());
-            }
-
-            for (ClientLibrary embedJS : by.getEmbedded(LibraryType.JS).values()) {
-                paths.add(embedJS.getPath());
-            }
-
-            for (ClientLibrary embedCSS : by.getEmbedded(LibraryType.CSS).values()) {
-                paths.add(embedCSS.getPath());
-            }
-
-            return ArrayUtils.contains(paths.toArray(new String[paths.size()]), used.getPath());
-        }
+        	categories = getSortedDependentCategories(originalCategories, LibraryType.CSS, categories);
+        } 
+		return categories;
     }
 }
 
