@@ -1,1 +1,4 @@
 language: java
+notifications:
+  slack:
+    secure: LeRk5YjMCgZY2bjp0h5ZOMsSBDETaYemcz3GGUPCN1COh/sH/l22FUzE/wj8dSGUXB2Ape/eFoWU5B0SjlT4mpU/VRTwe2gC7+TTBf3a/1ra3XjqcsjCnQirSmlDJCAgVwWDC0PQ3TS4Skahb9sO5igYPfRIj1pypoukaBrNQH8=
