@@ -18,7 +18,7 @@
  * #L%
  */
 
-/*global angular: false, ace: false, $timeout: false */
+/*global angular: false, ace: false, $timeout: false, _: false */
 
 angular.module('qeControllers').
     controller('QueryEditorCtrl', ['$scope', 'Crx', 'debounce', '$timeout',
@@ -61,7 +61,7 @@ angular.module('qeControllers').
             function params(source) {
                 var o = {}; 
                 _.each(source.split(/\s/), function(line) {
-                    line.replace(/(.*?)=(.*)/, function($0, $1, $2) {
+                    line.replace(/([\w\W]*?)=([\w\W]*)/, function($0, $1, $2) {
                         o[$1] = $2;
                     });
                 });
