@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:description="Write QueryBuilder queries with ease"
+    jcr:primaryType="nt:unstructured"
+    jcr:title="Client Libraries Optimizer"
+    href="/etc/acs-tools/clientlibs-optimizer.html"
+    target="_blank"/>

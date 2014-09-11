@@ -4,8 +4,9 @@
     jcr:title="ACS AEM Tools"
     id="acs-tools">
     <aem-fiddle/>
-    <query-editor/>
+    <clientlibs-optimizer/>
     <explain-query/>
     <jsp-code-display/>
+    <query-editor/>
     <test-page-generator/>
 </jcr:root>
