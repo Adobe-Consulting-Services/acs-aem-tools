@@ -56,10 +56,13 @@
                 <div class="content">
                     <div class="content-container">
 
+                        <cq:include script="includes/notifications.jsp"/>
+
                         <h1>Client Library Optimizer</h1>
 
                         <p>Find all transitive dependencies for a set of Client Library categories.</p>
                         <p>The following link gives an overview over the dependencies of currently installed client libraries: <a href="/libs/granite/ui/content/dumplibs.html">/libs/granite/ui/content/dumplibs.html</a></p>
+
 
                         <form ng-submit="optimize()">
 
@@ -108,14 +111,7 @@
                             </div>
                         </form>
 
-                        <div class="error" ng-show="result.erring">
-                            <h2>An error occurred.</h2>
-                            <p>Please report the issue at the <a
-                                    href="https://github.com/Adobe-Consulting-Services/acs-aem-tools/issues/new"
-                                    target="_blank">ACS AEM Tools Issues</a> site.</p>
-                        </div>
-
-                        <div class="results" ng-show="result.categories && !result.erring">
+                        <div class="results" ng-show="result.categories">
                             <h2>Optimized Client Library Definition</h2>
 
                             <section class="well">

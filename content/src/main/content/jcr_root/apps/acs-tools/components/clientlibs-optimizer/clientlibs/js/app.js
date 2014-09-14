@@ -23,7 +23,7 @@
 
 var clientLibsOptimizerApp = angular.module('clientLibsOptimizerApp',[]);
 
-clientLibsOptimizerApp.controller('MainCtrl', function($scope, $http) {
+clientLibsOptimizerApp.controller('MainCtrl', function($scope, $http, $timeout) {
 
     $scope.app = {
         uri: '',
@@ -40,9 +40,10 @@ clientLibsOptimizerApp.controller('MainCtrl', function($scope, $http) {
     };
 
     $scope.result = {
-        erring: false,
         categories: ''
     };
+
+    $scope.notifications = [];
 
     $scope.$watch('form.categories', function(newValue, oldValue) {
         if(newValue && newValue.indexOf('"') >= 0) {
@@ -57,6 +58,8 @@ clientLibsOptimizerApp.controller('MainCtrl', function($scope, $http) {
             return;
         }
 
+        $scope.form.ck = new Date().getTime();
+
         $http({
             method: 'GET',
             url: $scope.app.uri,
@@ -64,10 +67,20 @@ clientLibsOptimizerApp.controller('MainCtrl', function($scope, $http) {
         }).
         success(function(data, status, headers, config) {
             $scope.result.categories = data.categories.join() || '';
-            $scope.result.erring = false;
+
+            if ($scope.result.categories) {
+                $scope.addNotification('success',
+                    'Success! Review the optimized client library definition below');
+
+            } else {
+                $scope.addNotification('notice',
+                    'No client libraries could be found. '
+                     + 'Verify the provided client libraries exist on this AEM instance.');
+            }
         }).
         error(function(data, status, headers, config) {
-            $scope.result.erring = true;
+            $scope.addNotification('error',
+                    + 'Error. Ensure no cyclic dependencies in the provided client libraries.');
         });
 
         $scope.app.formErrors = {
@@ -77,7 +90,6 @@ clientLibsOptimizerApp.controller('MainCtrl', function($scope, $http) {
     };
 
     /* Validators */
-
     $scope.validate = function() {
        var validCategories = $scope.validateCategories(),
            validTypes = $scope.validateTypes();
@@ -108,4 +120,23 @@ clientLibsOptimizerApp.controller('MainCtrl', function($scope, $http) {
 
         return !$scope.app.formErrors.types;
     };
+
+    $scope.addNotification = function (type, title, message) {
+        var timeout = 30000;
+
+        if(type === 'success')  {
+            timeout = timeout / 2;
+        }
+
+        $scope.notifications.push({
+            type: type,
+            title: title,
+            message: message
+        });
+
+        $timeout(function() {
+            $scope.notifications.shift();
+        }, timeout);
+    };
 });
+
