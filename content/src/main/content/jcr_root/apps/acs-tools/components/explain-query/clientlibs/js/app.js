@@ -25,7 +25,8 @@ var explainQueryApp = angular.module('explainQueryApp',[]);
 explainQueryApp.controller('MainCtrl', function($scope, $http, $timeout) {
 
     $scope.app = {
-        uri: ''
+        uri: '',
+        running: false
     };
 
     $scope.notifications = [];
@@ -49,6 +50,7 @@ explainQueryApp.controller('MainCtrl', function($scope, $http, $timeout) {
     };
 
     $scope.explain = function() {
+        $scope.app.running = true;
 
         $http({
             method: 'POST',
@@ -60,12 +62,15 @@ explainQueryApp.controller('MainCtrl', function($scope, $http, $timeout) {
         }).
         success(function(data, status, headers, config) {
             $scope.result = data || {};
+            $scope.app.running = false;
             $scope.addNotification('success', 'SUCCESS', 'Review your query explanation');
 
         }).
         error(function(data, status, headers, config) {
+            $scope.app.running = false;
             $scope.addNotification('error', 'ERROR', 'Check your query and try again.');
         });
+
     };
 
     $scope.addNotification = function (type, title, message) {
