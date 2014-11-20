@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -71,7 +71,7 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
 
         InMemoryScript script = InMemoryScript.set(ext, data);
 
-        // doing this as a synchronous event so we ensure that 
+        // doing this as a synchronous event so we ensure that
         // the JSP has been invalidated
         Map<String, String> props = Collections.singletonMap(
                 SlingConstants.PROPERTY_PATH, script.getPath());
@@ -106,37 +106,33 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
 
     private void clearCompiledFiddle(final ResourceResolver resourceResolver) {
         final Resource varClasses = resourceResolver.getResource(VAR_CLASSES);
-        final Session session = resourceResolver.adaptTo(Session.class);
 
         if (varClasses != null) {
-            /* /var/classes structure builds out under a UUID that is different between AEM instances */
+            /* AEM 5.6.x does not have the /var/classes/UUID */
+            this.removeResource(varClasses.getChild(COMPILED_JSP));
+
+            /* /var/classes structure builds out under a UUID that is different between AEM6 instances */
             final Iterator<Resource> iterator = varClasses.listChildren();
 
             while (iterator.hasNext()) {
                 final Resource varClass = iterator.next();
-                final Resource fiddleResource = varClass.getChild(COMPILED_JSP);
-
-                if (fiddleResource != null) {
-                    final Node node = fiddleResource.adaptTo(Node.class);
-
-                    if (node != null) {
-                        try {
-                            /* Removed the aemfiddle folder that contains the script */
-                            node.remove();
-                        } catch (RepositoryException e) {
-                            log.error("Could not remove compiled AEM Fiddle scripts: {}", e.getMessage());
-                        }
-                    }
-                }
+                this.removeResource(varClass.getChild(COMPILED_JSP));
             }
+        }
+    }
 
-            try {
-                /* Only save if something was removed */
-                if (session.hasPendingChanges()) {
-                    session.save();
+    private void removeResource(final Resource resource) {
+        if (resource != null) {
+            final Node node = resource.adaptTo(Node.class);
+
+            if (node != null) {
+                try {
+                    log.trace("Removing AEM Fiddle compiled scripts at: {}", node.getPath());
+                    node.remove();
+                    node.getSession().save();
+                } catch (RepositoryException e) {
+                    log.error("Could not remove compiled AEM Fiddle scripts: {}", e);
                 }
-            } catch (RepositoryException e) {
-                log.error("Could not save removal of compiled AEM Fiddle scripts: {}", e.getMessage());
             }
         }
     }
