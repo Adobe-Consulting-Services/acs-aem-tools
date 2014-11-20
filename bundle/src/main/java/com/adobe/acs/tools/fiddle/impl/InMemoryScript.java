@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.jackrabbit.util.Text;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.SyntheticResource;
@@ -102,6 +103,11 @@ public class InMemoryScript {
                 return null;
             }
         }
+        
+        @Override
+        public Resource getParent() {
+            return new ScriptParentResource(this);
+        }
     }
 
     private class ScriptPropertiesResource extends SyntheticResource {
@@ -124,5 +130,26 @@ public class InMemoryScript {
         }
 
     }
+
+    public class ScriptParentResource extends SyntheticResource {
+
+        private ScriptResource scriptResource;
+
+        public ScriptParentResource(ScriptResource scriptResource) {
+            super(scriptResource.getResourceResolver(), Text.getAbsoluteParent(scriptResource.getPath(), 1), null);
+            this.scriptResource = scriptResource;
+        }
+        
+        @Override
+        public Resource getChild(String relPath) {
+            if (relPath.equals(scriptResource.getName())) {
+                return scriptResource;
+            } else {
+                return null;
+            }
+        }
+
+    }
+
 
 }
