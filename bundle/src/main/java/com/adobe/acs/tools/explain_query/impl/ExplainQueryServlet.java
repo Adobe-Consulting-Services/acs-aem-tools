@@ -19,8 +19,20 @@
  */
 package com.adobe.acs.tools.explain_query.impl;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.PatternLayout;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.LoggingEvent;
+import ch.qos.logback.classic.turbo.TurboFilter;
+import ch.qos.logback.core.Layout;
+import ch.qos.logback.core.spi.FilterReply;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.felix.scr.annotations.Activate;
+import org.apache.felix.scr.annotations.Deactivate;
+import org.apache.felix.scr.annotations.Property;
+import org.apache.felix.scr.annotations.PropertyUnbounded;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.jackrabbit.api.jmx.QueryStatManagerMBean;
@@ -31,9 +43,14 @@ import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.commons.json.JSONArray;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
+import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.apache.sling.jcr.api.SlingRepository;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+import org.slf4j.Marker;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -47,7 +64,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,7 +80,8 @@ import java.util.regex.Pattern;
         methods = { "GET", "POST" },
         resourceTypes = { "acs-tools/components/explain-query" },
         selectors = { "explain" },
-        extensions = { "json" }
+        extensions = { "json" },
+        metatype = true
 )
 public class ExplainQueryServlet extends SlingAllMethodsServlet {
     private static final Logger log = LoggerFactory.getLogger(ExplainQueryServlet.class);
@@ -73,11 +97,33 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
     private static final Pattern PROPERTY_INDEX_PATTERN = Pattern.compile("\\/\\*\\sproperty\\s([^\\s=]+)[=\\s]");
     private static final Pattern FILTER_PATTERN = Pattern.compile("\\[[^\\s]+\\]\\sas\\s\\[[^\\s]+\\]\\s\\/\\*\\sFilter\\(");
 
+    @Property(label = "Query Logger Names",
+            description = "Logger names from which logs need to be collected while a query is executed",
+            unbounded = PropertyUnbounded.ARRAY,
+            value = {
+                    "org.apache.jackrabbit.oak.query",
+                    "org.apache.jackrabbit.oak.plugins.index"
+            }
+    )
+    private static final String PROP_LOGGER_NAMES = "loggerNames";
+
+    private static final String DEFAULT_PATTERN = "\"%d{dd.MM.yyyy HH:mm:ss.SSS} *%level* %logger %msg%n";
+
+    @Property(label = "Log Pattern",
+            description = "Message Pattern for formatting the log messages",
+            value = DEFAULT_PATTERN
+    )
+    private static final String PROP_MSG_PATTERN = "logPattern";
+
     @Reference
     private QueryStatManagerMBean queryStatManagerMBean;
 
     @Reference
     private SlingRepository slingRepository;
+
+    private QueryLogCollector logCollector;
+
+    private ServiceRegistration reg;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -143,12 +189,41 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         }
     }
 
+    @Activate
+    private void activate(Map<String, ?> config, BundleContext context){
+        String[] loggerNames = PropertiesUtil.toStringArray(config.get(PROP_LOGGER_NAMES), null);
+
+        if (loggerNames != null){
+            String pattern = PropertiesUtil.toString(config.get(PROP_MSG_PATTERN), DEFAULT_PATTERN);
+            logCollector = new QueryLogCollector(loggerNames, pattern);
+            reg = context.registerService(TurboFilter.class.getName(), logCollector, null);
+        }
+    }
+
+    @Deactivate
+    private void deactivate(){
+        if (reg != null){
+            reg.unregister();
+        }
+    }
+
     private JSONObject explainQuery(final QueryManager queryManager, final String statement,
                                     final String language) throws RepositoryException, JSONException {
         final JSONObject json = new JSONObject();
-        final Query query = queryManager.createQuery("explain " + statement, language);
+        final String collectorKey = startCollection();
+        final QueryResult queryResult;
 
-        final QueryResult queryResult = query.execute();
+        try {
+            final Query query = queryManager.createQuery("explain " + statement, language);
+            queryResult = query.execute();
+        }
+        finally {
+            if (logCollector != null) {
+                json.put("logs", logCollector.getLogs(collectorKey));
+            }
+            stopCollection(collectorKey);
+        }
+
         final RowIterator rows = queryResult.getRows();
         final Row firstRow = rows.nextRow();
 
@@ -251,5 +326,108 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         }
 
         return jsonArray;
+    }
+
+    private String startCollection(){
+        final String collectorKey = UUID.randomUUID().toString();
+        MDC.put(QueryLogCollector.COLLECTOR_KEY, collectorKey);
+        return collectorKey;
+    }
+
+    private void stopCollection(String key){
+        MDC.remove(key);
+        if (logCollector != null){
+            logCollector.stopCollection(key);
+        }
+    }
+
+    private static class QueryLogCollector extends TurboFilter {
+        //MDC key defined in org.apache.jackrabbit.oak.query.QueryEngineImpl
+        private static final String QUERY_ANALYZE = "oak.query.analyze";
+        private static final String COLLECTOR_KEY = "collectorKey";
+
+        private final String[] loggerNames;
+        private final Layout<ILoggingEvent> layout;
+        private final Map<String, List<ILoggingEvent>> logEvents
+                = new ConcurrentHashMap<String, List<ILoggingEvent>>();
+
+        private QueryLogCollector(String[] loggerNames, String pattern) {
+            this.loggerNames = loggerNames;
+            this.layout = createLayout(pattern);
+        }
+
+        @Override
+        public FilterReply decide(Marker marker, ch.qos.logback.classic.Logger logger,
+                                  Level level, String format, Object[] params, Throwable t) {
+            if (MDC.get(QUERY_ANALYZE) == null){
+                return FilterReply.NEUTRAL;
+            }
+
+            String collectorKey = MDC.get(COLLECTOR_KEY);
+
+            if (collectorKey == null){
+                return FilterReply.NEUTRAL;
+            }
+
+            if (!configuredLogger(logger.getName())){
+                return FilterReply.NEUTRAL;
+            }
+
+            //isXXXEnabled call. Accept the call to allow actual message to be
+            //logged
+            if (format == null){
+                return FilterReply.ACCEPT;
+            }
+
+            ILoggingEvent logEvent = new LoggingEvent(ch.qos.logback.classic.Logger.FQCN,
+                    logger, level, format, t, params);
+            log(collectorKey, logEvent);
+
+            //Return NEUTRAL to allow normal logging of message depending on level
+            return FilterReply.NEUTRAL;
+        }
+
+        public List<String> getLogs(String collectorKey){
+            List<ILoggingEvent> eventList = logEvents.get(collectorKey);
+            if (eventList == null){
+                return Collections.emptyList();
+            }
+            List<String> result = new ArrayList<String>(eventList.size());
+            for (ILoggingEvent e : eventList){
+                result.add(layout.doLayout(e));
+            }
+            return result;
+        }
+
+        public void stopCollection(String key) {
+            logEvents.remove(key);
+        }
+
+        private void log(String collectorKey, ILoggingEvent e) {
+            List<ILoggingEvent> eventList = logEvents.get(collectorKey);
+            if (eventList == null){
+                eventList = new ArrayList<ILoggingEvent>();
+                logEvents.put(collectorKey, eventList);
+            }
+            eventList.add(e);
+        }
+
+        private boolean configuredLogger(String name) {
+            for (String loggerName : loggerNames){
+                if (name.startsWith(loggerName)){
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static Layout<ILoggingEvent> createLayout(String pattern) {
+            PatternLayout pl = new PatternLayout();
+            pl.setPattern(pattern);
+            pl.setOutputPatternAsHeader(false);
+            pl.setContext((LoggerContext) LoggerFactory.getILoggerFactory());
+            pl.start();
+            return pl;
+        }
     }
 }
