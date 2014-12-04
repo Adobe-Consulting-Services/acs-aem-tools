@@ -175,6 +175,9 @@
                                         <ul ng-repeat="log in result.explain.logs" >
                                             <li>{{ log }}</li>
                                         </ul>
+                                        <div ng-show="result.explain.logsTruncated">
+                                        ...
+                                        </div>
                                     </div>
 
                                 </div>
