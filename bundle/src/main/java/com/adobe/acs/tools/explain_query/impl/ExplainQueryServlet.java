@@ -107,7 +107,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
     )
     private static final String PROP_LOGGER_NAMES = "loggerNames";
 
-    private static final String DEFAULT_PATTERN = "\"%d{dd.MM.yyyy HH:mm:ss.SSS} *%level* %logger %msg%n";
+    private static final String DEFAULT_PATTERN = "*%level* %logger{15} %msg%n";
 
     @Property(label = "Log Pattern",
             description = "Message Pattern for formatting the log messages",
