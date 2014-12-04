@@ -115,6 +115,14 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
     )
     private static final String PROP_MSG_PATTERN = "logPattern";
 
+    private static final int DEFAULT_LIMIT = 100;
+
+    @Property(label = "Log Limit",
+            description = "Number of log message which should be collected in memory",
+            intValue = DEFAULT_LIMIT
+    )
+    private static final String PROP_LOG_COUNT_LIMIT = "logMsgCountLimit";
+
     @Reference
     private QueryStatManagerMBean queryStatManagerMBean;
 
@@ -195,7 +203,8 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
 
         if (loggerNames != null){
             String pattern = PropertiesUtil.toString(config.get(PROP_MSG_PATTERN), DEFAULT_PATTERN);
-            logCollector = new QueryLogCollector(loggerNames, pattern);
+            int msgCountLimit = PropertiesUtil.toInteger(config.get(PROP_LOG_COUNT_LIMIT), DEFAULT_LIMIT);
+            logCollector = new QueryLogCollector(loggerNames, pattern, msgCountLimit);
             logCollectorRegistration = context.registerService(TurboFilter.class.getName(), logCollector, null);
         }
     }
@@ -219,7 +228,12 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         }
         finally {
             if (logCollector != null) {
+                List<String> logs = logCollector.getLogs(collectorKey);
                 json.put("logs", logCollector.getLogs(collectorKey));
+
+                if (logs.size() == logCollector.msgCountLimit){
+                    json.put("logsTruncated", true);
+                }
             }
             stopCollection(collectorKey);
         }
@@ -348,11 +362,13 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
 
         private final String[] loggerNames;
         private final Layout<ILoggingEvent> layout;
+        private final int msgCountLimit;
         private final Map<String, List<ILoggingEvent>> logEvents
                 = new ConcurrentHashMap<String, List<ILoggingEvent>>();
 
-        private QueryLogCollector(String[] loggerNames, String pattern) {
+        private QueryLogCollector(String[] loggerNames, String pattern, int msgCountLimit) {
             this.loggerNames = loggerNames;
+            this.msgCountLimit = msgCountLimit;
             this.layout = createLayout(pattern);
         }
 
@@ -409,7 +425,10 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
                 eventList = new ArrayList<ILoggingEvent>();
                 logEvents.put(collectorKey, eventList);
             }
-            eventList.add(e);
+
+            if (eventList.size() < msgCountLimit) {
+                eventList.add(e);
+            }
         }
 
         private boolean configuredLogger(String name) {
