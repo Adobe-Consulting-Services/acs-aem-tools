@@ -123,7 +123,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
 
     private QueryLogCollector logCollector;
 
-    private ServiceRegistration reg;
+    private ServiceRegistration logCollectorRegistration;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -196,14 +196,14 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         if (loggerNames != null){
             String pattern = PropertiesUtil.toString(config.get(PROP_MSG_PATTERN), DEFAULT_PATTERN);
             logCollector = new QueryLogCollector(loggerNames, pattern);
-            reg = context.registerService(TurboFilter.class.getName(), logCollector, null);
+            logCollectorRegistration = context.registerService(TurboFilter.class.getName(), logCollector, null);
         }
     }
 
     @Deactivate
     private void deactivate(){
-        if (reg != null){
-            reg.unregister();
+        if (logCollectorRegistration != null){
+            logCollectorRegistration.unregister();
         }
     }
 
