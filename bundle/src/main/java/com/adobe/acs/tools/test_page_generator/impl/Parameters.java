@@ -43,6 +43,8 @@ public class Parameters {
 
     private static final int DEFAULT_BUCKET_SIZE = 100;
 
+    private static final String DEFAULT_BUCKET_TYPE = "sling:Folder";
+
     private final String rootPath;
 
     private final String template;
@@ -52,6 +54,8 @@ public class Parameters {
     private final int bucketSize;
 
     private final int saveThreshold;
+
+    private final String bucketType;
 
     private final Map<String, Object> properties;
 
@@ -65,6 +69,7 @@ public class Parameters {
         template = json.optString("template", "");
         total = json.optInt("total", 0);
         bucketSize = json.optInt("bucketSize", DEFAULT_BUCKET_SIZE);
+        bucketType = json.optString("bucketType", DEFAULT_BUCKET_TYPE);
         saveThreshold = json.optInt("saveThreshold", DEFAULT_SAVE_THRESHOLD);
 
         properties = new HashMap<String, Object>();
@@ -126,6 +131,10 @@ public class Parameters {
         }
     }
 
+    public final String getBucketType() {
+        return StringUtils.defaultIfEmpty(this.bucketType, DEFAULT_BUCKET_TYPE);
+    }
+
     public final int getSaveThreshold() {
         if (saveThreshold > 0) {
             return saveThreshold;
@@ -145,6 +154,7 @@ public class Parameters {
         printWriter.println("Template: " + this.getTemplate());
         printWriter.println("Total Pages to Create: " + this.getTotal());
         printWriter.println("Bucket Size: " + this.getBucketSize());
+        printWriter.println("Bucket Type: " + this.getBucketType());
         printWriter.println("Save Threshold: " + this.getSaveThreshold());
 
         return printWriter.toString();
