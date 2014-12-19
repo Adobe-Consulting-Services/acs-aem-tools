@@ -45,8 +45,10 @@ import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
 import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.apache.sling.jcr.api.SlingRepository;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.framework.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -204,7 +206,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         if (loggerNames != null){
             String pattern = PropertiesUtil.toString(config.get(PROP_MSG_PATTERN), DEFAULT_PATTERN);
             int msgCountLimit = PropertiesUtil.toInteger(config.get(PROP_LOG_COUNT_LIMIT), DEFAULT_LIMIT);
-            logCollector = new QueryLogCollector(loggerNames, pattern, msgCountLimit);
+            logCollector = new QueryLogCollector(loggerNames, pattern, msgCountLimit, checkMDCSupport(context));
             logCollectorRegistration = context.registerService(TurboFilter.class.getName(), logCollector, null);
         }
     }
@@ -355,6 +357,19 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         }
     }
 
+    private static boolean checkMDCSupport(BundleContext context) {
+        //MDC support is present since 1.0.9
+        Version versionWithMDCSupport = new Version(1, 0, 9);
+        for (Bundle b : context.getBundles()) {
+            if ("org.apache.jackrabbit.oak-core".equals(b.getSymbolicName())) {
+                return versionWithMDCSupport.compareTo(b.getVersion()) <= 0;
+            }
+        }
+
+        //By default it is assumed that MDC support is present
+        return true;
+    }
+
     private static class QueryLogCollector extends TurboFilter {
         //MDC key defined in org.apache.jackrabbit.oak.query.QueryEngineImpl
         private static final String QUERY_ANALYZE = "oak.query.analyze";
@@ -365,23 +380,29 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         private final int msgCountLimit;
         private final Map<String, List<ILoggingEvent>> logEvents
                 = new ConcurrentHashMap<String, List<ILoggingEvent>>();
+        private final boolean mdcEnabled;
 
-        private QueryLogCollector(String[] loggerNames, String pattern, int msgCountLimit) {
+        private QueryLogCollector(String[] loggerNames, String pattern, int msgCountLimit, boolean mdcEnabled) {
             this.loggerNames = loggerNames;
             this.msgCountLimit = msgCountLimit;
             this.layout = createLayout(pattern);
+            this.mdcEnabled = mdcEnabled;
+
+            if (!mdcEnabled){
+                log.debug("Current Oak version does not provide MDC. Explain log would have some extra entries");
+            }
         }
 
         @Override
         public FilterReply decide(Marker marker, ch.qos.logback.classic.Logger logger,
                                   Level level, String format, Object[] params, Throwable t) {
-            if (MDC.get(QUERY_ANALYZE) == null){
+
+            String collectorKey = MDC.get(COLLECTOR_KEY);
+            if (collectorKey == null){
                 return FilterReply.NEUTRAL;
             }
 
-            String collectorKey = MDC.get(COLLECTOR_KEY);
-
-            if (collectorKey == null){
+            if (mdcEnabled && MDC.get(QUERY_ANALYZE) == null){
                 return FilterReply.NEUTRAL;
             }
 
