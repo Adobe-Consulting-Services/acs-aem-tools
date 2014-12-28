@@ -24,9 +24,9 @@ public class ClientLibOptimizerServletTest {
 	
 	@Test
 	public void testSimpleHierarchy() {
-		ClientLibrary clientLibraryA = new MockClientLibraryBuilder("categoryA").getClientLibrary();
-		ClientLibrary clientLibraryB = new MockClientLibraryBuilder("categoryB").setDependentLibraries(clientLibraryA).getClientLibrary();
-		ClientLibrary clientLibraryC = new MockClientLibraryBuilder("categoryC").setEmbeddedJsLibraries(clientLibraryB).getClientLibrary();
+		ClientLibrary clientLibraryA = new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.JS, "categoryA").getClientLibrary();
+		ClientLibrary clientLibraryB = new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.JS, "categoryB").setDependentLibraries(clientLibraryA).getClientLibrary();
+		ClientLibrary clientLibraryC = new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.JS, "categoryC").setEmbeddedJsLibraries(clientLibraryB).getClientLibrary();
 
 		List<String> allCategories = new ArrayList<String>();
 		ClientLibOptimizerServlet.getSortedDependentCategories(Collections.singleton(clientLibraryC), Collections.singleton("categoryC"), LibraryType.JS, allCategories);
@@ -36,9 +36,9 @@ public class ClientLibOptimizerServletTest {
 	
 	@Test(expected=DependencyLoopException.class)
 	public void testLoopHierarchy() {
-		ClientLibrary clientLibraryA = new MockClientLibraryBuilder("categoryA").getClientLibrary();
-		ClientLibrary clientLibraryB = new MockClientLibraryBuilder("categoryB").setDependentLibraries(clientLibraryA).getClientLibrary();
-		ClientLibrary clientLibraryC = new MockClientLibraryBuilder("categoryC").setEmbeddedJsLibraries(clientLibraryB).getClientLibrary();
+		ClientLibrary clientLibraryA = new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.JS, "categoryA").getClientLibrary();
+		ClientLibrary clientLibraryB = new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.JS, "categoryB").setDependentLibraries(clientLibraryA).getClientLibrary();
+		ClientLibrary clientLibraryC = new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.JS, "categoryC").setEmbeddedJsLibraries(clientLibraryB).getClientLibrary();
 		
 		// put in a dependency loop
 		Mockito.doReturn(getPathMap(clientLibraryC)).when(clientLibraryA).getEmbedded(LibraryType.JS);
@@ -49,11 +49,11 @@ public class ClientLibOptimizerServletTest {
 	
 	@Test
 	public void testComplexHierarchy() {
-		ClientLibrary clientLibraryA =  new MockClientLibraryBuilder("categoryA").getClientLibrary();
-		ClientLibrary clientLibraryB = new MockClientLibraryBuilder("categoryB").setDependentLibraries(clientLibraryA).getClientLibrary();
-		ClientLibrary clientLibraryC = new MockClientLibraryBuilder("categoryC").setDependentLibraries(clientLibraryB).getClientLibrary();
-		ClientLibrary clientLibraryD =  new MockClientLibraryBuilder("categoryD").setDependentLibraries(clientLibraryA).getClientLibrary();
-		ClientLibrary clientLibraryE = new MockClientLibraryBuilder("categoryE").setDependentLibraries(clientLibraryD).setEmbeddedJsLibraries(clientLibraryC).getClientLibrary();
+		ClientLibrary clientLibraryA = new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.JSANDCSS, "categoryA").getClientLibrary();
+		ClientLibrary clientLibraryB = new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.JSANDCSS, "categoryB").setDependentLibraries(clientLibraryA).getClientLibrary();
+		ClientLibrary clientLibraryC = new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.JSANDCSS, "categoryC").setDependentLibraries(clientLibraryB).getClientLibrary();
+		ClientLibrary clientLibraryD = new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.JSANDCSS, "categoryD").setDependentLibraries(clientLibraryA).getClientLibrary();
+		ClientLibrary clientLibraryE = new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.JSANDCSS, "categoryE").setDependentLibraries(clientLibraryD).setEmbeddedJsLibraries(clientLibraryC).getClientLibrary();
 		
 		List<String> allCategories = new ArrayList<String>();
 		ClientLibOptimizerServlet.getSortedDependentCategories(Collections.singleton(clientLibraryE), Collections.singleton("categoryE"), LibraryType.JS, allCategories);
@@ -61,44 +61,35 @@ public class ClientLibOptimizerServletTest {
 		Assert.assertThat(allCategories, Matchers.contains("categoryA","categoryD","categoryB", "categoryC", "categoryE"));
 	}
 	
+	
 	@Test
 	public void testComplexCssAndJsHierarchy() {
-		ClientLibrary clientLibraryA =  new MockClientLibraryBuilder("categoryA").getClientLibrary();
-		ClientLibrary clientLibraryB = new MockClientLibraryBuilder("categoryB").setDependentLibraries(clientLibraryA).getClientLibrary();
-		ClientLibrary clientLibraryC = new MockClientLibraryBuilder("categoryC").setDependentLibraries(clientLibraryB).getClientLibrary();
-		ClientLibrary clientLibraryD =  new MockClientLibraryBuilder("categoryD").setEmbeddedCssLibraries(clientLibraryA).getClientLibrary();
-		ClientLibrary clientLibraryE = new MockClientLibraryBuilder("categoryE").setDependentLibraries(clientLibraryD).setEmbeddedJsLibraries(clientLibraryC).getClientLibrary();
+		ClientLibrary clientLibraryA =  new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.CSS, "categoryA").getClientLibrary();
+		ClientLibrary clientLibraryB = new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.JSANDCSS, "categoryB").setDependentLibraries(clientLibraryA).getClientLibrary();
+		ClientLibrary clientLibraryC = new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.JS, "categoryC").setDependentLibraries(clientLibraryB).getClientLibrary();
+		ClientLibrary clientLibraryD =  new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.JSANDCSS, "categoryD").setEmbeddedCssLibraries(clientLibraryA).getClientLibrary();
+		ClientLibrary clientLibraryE = new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.JSANDCSS, "categoryE").setDependentLibraries(clientLibraryD).setEmbeddedJsLibraries(clientLibraryC).getClientLibrary();
 		
 		List<String> allCategories = new ArrayList<String>();
 		ClientLibOptimizerServlet.getSortedDependentCategories(Collections.singleton(clientLibraryE), Collections.singleton("categoryE"), LibraryType.JS, allCategories);
-		Assert.assertThat(allCategories, Matchers.contains("categoryD", "categoryA","categoryB", "categoryC", "categoryE"));
+		Assert.assertThat(allCategories, Matchers.contains("categoryD", "categoryB", "categoryC", "categoryE"));
 		
+		allCategories.clear();
 		ClientLibOptimizerServlet.getSortedDependentCategories(Collections.singleton(clientLibraryE), Collections.singleton("categoryE"), LibraryType.CSS, allCategories);
-		
-		Assert.assertThat(allCategories, Matchers.contains("categoryA","categoryD","categoryB", "categoryC", "categoryE"));
+		Assert.assertThat(allCategories, Matchers.contains("categoryA","categoryD","categoryB","categoryE"));
 	}
 	
 	@Test
 	public void testCQJquery() {
-		ClientLibrary jQuery = new MockClientLibraryBuilder("jquery").getClientLibrary();
-		ClientLibrary graniteUtils = new MockClientLibraryBuilder("granite.utils").setDependentLibraries(jQuery).getClientLibrary();
-		ClientLibrary graniteJQuery = new MockClientLibraryBuilder("granite.jquery").setDependentLibraries(jQuery, graniteUtils).getClientLibrary();
-		ClientLibrary cqQuery = new MockClientLibraryBuilder("cq.jquery").setDependentLibraries(graniteJQuery).getClientLibrary();
+		ClientLibrary jQuery = new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.JS, "jquery").getClientLibrary();
+		ClientLibrary graniteUtils = new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.JS, "granite.utils").setDependentLibraries(jQuery).getClientLibrary();
+		ClientLibrary graniteJQuery = new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.JS, "granite.jquery").setDependentLibraries(jQuery, graniteUtils).getClientLibrary();
+		ClientLibrary cqQuery = new MockClientLibraryBuilder(MockClientLibraryBuilder.MockClientLibraryType.JS, "cq.jquery").setDependentLibraries(graniteJQuery).getClientLibrary();
 		
 		List<String> allCategories = new ArrayList<String>();
 		ClientLibOptimizerServlet.getSortedDependentCategories(Collections.singleton(cqQuery), Collections.singleton("cq.jquery"), LibraryType.JS, allCategories);
 		
 		Assert.assertThat(allCategories, Matchers.contains("jquery", "granite.utils","granite.jquery", "cq.jquery"));
-	}
-	
-	@Test
-	public void testCqWidgets() {
-		ClientLibrary jQuery = new MockClientLibraryBuilder("jquery").getClientLibrary();
-		ClientLibrary graniteUtils = new MockClientLibraryBuilder("granite.utils").setDependentLibraries(jQuery).getClientLibrary();
-		ClientLibrary graniteJQuery = new MockClientLibraryBuilder("granite.jquery").setDependentLibraries(jQuery, graniteUtils).getClientLibrary();
-		ClientLibrary cqQuery = new MockClientLibraryBuilder("cq.jquery").setDependentLibraries(graniteJQuery).getClientLibrary();
-		
-		
 	}
 
 
@@ -107,9 +98,33 @@ public class ClientLibOptimizerServletTest {
 		private Set<String> jsEmbedCategories = new HashSet<String>();
 		private Set<String> cssEmbedCategories = new HashSet<String>();
 		
-		public MockClientLibraryBuilder(String... categories) {
+		private static enum MockClientLibraryType {
+			JS,
+			CSS,
+			JSANDCSS,
+			NONE
+		};
+		
+		public MockClientLibraryBuilder(MockClientLibraryType type, String... categories) {
 			 library = Mockito.mock(ClientLibrary.class);
 			 Mockito.when(library.getCategories()).thenReturn(categories);
+			 Set<LibraryType> types = new HashSet<LibraryType>();
+			 switch (type) {
+			 	case JS:
+			 		types.add(LibraryType.JS);
+			 		break;
+			 	case CSS:
+			 		types.add(LibraryType.CSS);
+			 		break;
+			 	case JSANDCSS:
+			 		types.add(LibraryType.JS);
+			 		types.add(LibraryType.CSS);
+			 		break;
+			 	case NONE:
+			 		// no type at all
+			 		break;
+			 }
+			 Mockito.when(library.getTypes()).thenReturn(types);
 			 // take first category as path name by default (in lower case)
 			 setPath(categories[0].toLowerCase());
 			 Mockito.doReturn(Collections.<String, ClientLibrary> emptyMap()).when(library).getDependencies(false);

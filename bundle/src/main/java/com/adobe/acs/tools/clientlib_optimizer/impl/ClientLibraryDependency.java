@@ -36,7 +36,7 @@ public class ClientLibraryDependency {
 		this.isEmbed = isEmbed;
 		
 		this.requestedCategories = new TreeSet<String>(java.util.Collections.reverseOrder());
-		// filter out the requested categories
+		// only the requested categories are relevant (from all the categories of this library)
 		for (String category : library.getCategories()) {
 			if (requestedCategories.contains(category)) {
 				this.requestedCategories.add(category);
@@ -51,34 +51,38 @@ public class ClientLibraryDependency {
 	 * @return
 	 */
 	public List<String> buildDependencyTree(List<String> categories, int currentPosition) {
-		
-    	for (String category : requestedCategories) {
-    		if (categories.contains(category)) {
-    			log.debug("Category {} already in list, not adding twice!", category, library.getPath());
-    			if (currentPosition < categories.indexOf(category)) {
-    				// if duplicate is after the current position move it directly in front of current position
-    				categories.remove(category);
-    	    		categories.add(currentPosition, category);
-    	    		log.debug("Moved category to because it is needed earlier!");
-    			} else {
-    				log.debug("No need to move category because it is loaded early enough!");
-    				// move current position to make sure the dependent libraries are also loaded early enough
-    				currentPosition = categories.indexOf(category);
-    			}
-    		} else {
-    			categories.add(currentPosition, category);
-    		}
-    	} 
+		log.debug("Giving out dependencies for {}", getStackTrace(parent, library.getPath()));
+		// only consider entry if it is of the required type!
+		if (library.getTypes().contains(type)) {
+			for (String category : requestedCategories) {
+	    		if (categories.contains(category)) {
+	    			log.debug("Category {} already in list, not adding twice!", category, library.getPath());
+	    			if (currentPosition < categories.indexOf(category)) {
+	    				// if duplicate is after the current position move it directly in front of current position
+	    				categories.remove(category);
+	    	    		categories.add(currentPosition, category);
+	    	    		log.debug("Move category {} to the current position because it is needed earlier!", category);
+	    			} else {
+	    				log.debug("No need to move category because it is loaded early enough!");
+	    				// move current position to make sure the dependent libraries are also loaded early enough
+	    				currentPosition = categories.indexOf(category);
+	    			}
+	    		} else {
+	    			categories.add(currentPosition, category);
+	    		}
+	    	}
+		} else {
+			log.debug("Not considering categories of this client library because they have the wrong type {}, request was type {}", library.getTypes(), type);
+		}
+    	 
     	
     	// add embedded libraries (per type)
-    	if (LibraryType.JS == type) {
-    		log.debug("Processing embedded JS libraries of library with path {}", library.getPath());
-    		addLibraries(categories, true, library.getEmbedded(LibraryType.JS), library.getEmbeddedCategories(), currentPosition);
-    		// which category to take here?
-    	} if (LibraryType.CSS == type) {
-    		log.debug("Processing embedded CSS libraries of library with path {}", library.getPath());
-    		addLibraries(categories, true, library.getEmbedded(LibraryType.CSS), library.getEmbeddedCategories(), currentPosition);
-    	}
+		// always embed all types to correctly include transitive categories of the right type (even if intermediate embed has the wrong type)
+    	log.debug("Processing embedded JS libraries of library with path {}", library.getPath());
+    	addLibraries(categories, true, library.getEmbedded(LibraryType.JS), library.getEmbeddedCategories(), currentPosition);
+    	log.debug("Processing embedded CSS libraries of library with path {}", library.getPath());
+    	addLibraries(categories, true, library.getEmbedded(LibraryType.CSS), library.getEmbeddedCategories(), currentPosition);
+    	
     	
     	log.debug("Processing dependent libraries of library with path {}", library.getPath());
 		// add dependent libraries
@@ -95,7 +99,7 @@ public class ClientLibraryDependency {
 		// add in reverse order (because each might add a number of dependent libraries)
 		for (Map.Entry<String, ClientLibrary> entry: sortedLibrariesMap.descendingMap().entrySet()) {
 			ClientLibraryDependency dependency = new ClientLibraryDependency(this, entry.getValue(), new HashSet<String>(Arrays.asList(requestedCategories)), isEmbed, type);
-            categories = dependency.buildDependencyTree(categories, currentPosition);
+	        categories = dependency.buildDependencyTree(categories, currentPosition);
         }
     	return categories;
 	}
@@ -126,6 +130,6 @@ public class ClientLibraryDependency {
 	}
 	
 	public String toString() {
-		return library.getPath() + "[cat:" + StringUtils.join(library.getCategories()) + ", embed:"+ isEmbed +"]";
+		return library.getPath() + "[cat:" + StringUtils.join(library.getCategories()) + ", embed:"+ isEmbed +", type: "+ library.getTypes() +"]";
 	}
 }
