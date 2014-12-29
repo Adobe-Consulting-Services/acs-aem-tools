@@ -22,8 +22,6 @@ import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.commons.json.JSONArray;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.day.cq.widget.ClientLibrary;
 import com.day.cq.widget.HtmlLibraryManager;
@@ -39,9 +37,13 @@ import com.day.cq.widget.LibraryType;
 )
 
 public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
-    private static final Logger log = LoggerFactory.getLogger(ClientLibOptimizerServlet.class);
 
-    private static final String PARAM_LIBRARY_TYPE_CSS = "css";
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private static final String PARAM_LIBRARY_TYPE_CSS = "css";
 
     private static final String PARAM_LIBRARY_TYPE_JS = "js";
 
@@ -57,7 +59,6 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
         final Map<LibraryType, Boolean> types = new HashMap<LibraryType, Boolean>();
         types.put(LibraryType.JS, this.hasLibraryTypeParam(request, PARAM_LIBRARY_TYPE_JS));
         types.put(LibraryType.CSS, this.hasLibraryTypeParam(request, PARAM_LIBRARY_TYPE_CSS));
-
 
         final List<String> categories = this.getCategories(this.getCategoriesParam(request), types);
 
@@ -108,7 +109,7 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
     private List<String> getSortedDependentCategories(Set<String> originalCategories, LibraryType type, List<String> existingCategories) {
     	final Collection<ClientLibrary> libraries = htmlLibraryManager.getLibraries(
     			originalCategories.toArray(new String[0]),
-                type,
+                null, // always request all types (to also consider transitive embeds/dependencies of the required type)
                 true,
                 false);
         
@@ -130,13 +131,10 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
     	return existingCategories;
     }
 
-   // see  https://github.com/Adobe-Consulting-Services/acs-aem-tools/pull/47 for a discussion around that
+    // see  https://github.com/Adobe-Consulting-Services/acs-aem-tools/pull/47 for a discussion around that
     // https://github.com/Adobe-Consulting-Services/acs-aem-tools/issues/12
     private List<String> getCategories(Set<String> originalCategories, Map<LibraryType, Boolean> types) {
-
         List<String> categories = new ArrayList<String>();
-        
-        /* JS */
         if (types.get(LibraryType.JS)) {
         	categories = getSortedDependentCategories(originalCategories, LibraryType.JS, categories);
         } 

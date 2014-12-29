@@ -75,7 +75,7 @@ clientLibsOptimizerApp.controller('MainCtrl', function($scope, $http, $timeout) 
             } else {
                 $scope.addNotification('notice',
                     'No client libraries could be found. '
-                     + 'Verify the provided client libraries exist on this AEM instance.');
+                     + 'Verify the provided client libraries with the provided type exist on this AEM instance.');
             }
         }).
         error(function(data, status, headers, config) {
