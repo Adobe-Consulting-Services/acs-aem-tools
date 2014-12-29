@@ -137,7 +137,7 @@ public class TestPageGeneratorServlet extends SlingAllMethodsServlet {
                 bucketCount = 0;
             }
 
-            final String folderPath = this.getOrCreateBucketPath(resourceResolver, rootPath, depthTracker);
+            final String folderPath = this.getOrCreateBucketPath(resourceResolver, parameters, rootPath, depthTracker);
 
             final Page page = createPage(resourceResolver,
                     folderPath,
@@ -228,7 +228,8 @@ public class TestPageGeneratorServlet extends SlingAllMethodsServlet {
      * @return the path to the newly created bucket
      * @throws RepositoryException
      */
-    private String getOrCreateBucketPath(ResourceResolver resourceResolver, String rootPath, int[] depthTracker)
+    private String getOrCreateBucketPath(ResourceResolver resourceResolver, Parameters params, String rootPath, int[]
+            depthTracker)
             throws RepositoryException {
         final Session session = resourceResolver.adaptTo(Session.class);
         String folderPath = rootPath;
@@ -241,8 +242,19 @@ public class TestPageGeneratorServlet extends SlingAllMethodsServlet {
         if (resourceResolver.getResource(folderPath) != null) {
             return folderPath;
         } else {
-            Node node = JcrUtil.createPath(folderPath, NT_SLING_FOLDER, NT_SLING_FOLDER, session, false);
-            log.debug("Created new folder path at [ {} ]", node.getPath());
+            Node node;
+
+            if (StringUtils.equals(NT_SLING_FOLDER, params.getBucketType())) {
+                // Create bucket structure as sling:Folders
+                node = JcrUtil.createPath(folderPath, NT_SLING_FOLDER, NT_SLING_FOLDER, session, false);
+                log.debug("Created new folder path at [ {} ]", node.getPath());
+            } else {
+                // Create bucket structure as cq:Pages
+                node = JcrUtil.createPath(folderPath, NameConstants.NT_PAGE, NameConstants.NT_PAGE, session, false);
+                JcrUtil.createPath(folderPath + "/jcr:content", NameConstants.NT_PAGE, "cq:PageContent",
+                        session, false);
+            }
+
             return node.getPath();
         }
     }

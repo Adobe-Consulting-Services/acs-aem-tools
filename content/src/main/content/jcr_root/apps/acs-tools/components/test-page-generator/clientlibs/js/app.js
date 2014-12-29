@@ -30,8 +30,9 @@ angular.module('testPageGeneratorApp',[]).controller('MainCtrl', ['$scope', '$ht
     $scope.notifications = [];
 
     $scope.form = {
+        bucketType: 'sling:Folder',
         properties: [
-            { name: '', value: '', multi: false }
+            {name: '', value: '', multi: false}
         ]
     };
 
