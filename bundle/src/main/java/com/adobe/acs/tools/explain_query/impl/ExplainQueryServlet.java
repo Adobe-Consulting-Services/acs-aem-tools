@@ -44,7 +44,6 @@ import org.apache.sling.commons.json.JSONArray;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
 import org.apache.sling.commons.osgi.PropertiesUtil;
-import org.apache.sling.jcr.api.SlingRepository;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -64,7 +63,6 @@ import javax.jcr.query.RowIterator;
 import javax.management.openmbean.CompositeData;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -107,15 +105,16 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
                     "org.apache.jackrabbit.oak.plugins.index"
             }
     )
-    private static final String PROP_LOGGER_NAMES = "loggerNames";
+    private static final String PROP_LOGGER_NAMES = "log.logger-names";
 
-    private static final String DEFAULT_PATTERN = "*%level* %logger{15} %msg%n";
+    //private static final String DEFAULT_PATTERN = "*%level* %logger{15} %msg%n";
+    private static final String DEFAULT_PATTERN = "%msg%n";
 
     @Property(label = "Log Pattern",
-            description = "Message Pattern for formatting the log messages",
+            description = "Message Pattern for formatting the log messages. [ Default: " + DEFAULT_PATTERN + " ]",
             value = DEFAULT_PATTERN
     )
-    private static final String PROP_MSG_PATTERN = "logPattern";
+    private static final String PROP_MSG_PATTERN = "log.pattern";
 
     private static final int DEFAULT_LIMIT = 100;
 
@@ -123,13 +122,10 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
             description = "Number of log message which should be collected in memory",
             intValue = DEFAULT_LIMIT
     )
-    private static final String PROP_LOG_COUNT_LIMIT = "logMsgCountLimit";
+    private static final String PROP_LOG_COUNT_LIMIT = "log.message-count-limit";
 
     @Reference
     private QueryStatManagerMBean queryStatManagerMBean;
-
-    @Reference
-    private SlingRepository slingRepository;
 
     private QueryLogCollector logCollector;
 

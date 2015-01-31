@@ -170,9 +170,9 @@
 
                                     <div class="call-out">{{ result.explain.plan }}</div>
 
-                                    <!-- TODO Simple impl which just dumps the logs as bullet list-->
                                     <div class="call-out">
-                                        <ul ng-repeat="log in result.explain.logs" >
+                                        <ul class="log-messages"
+                                            ng-repeat="log in result.explain.logs">
                                             <li>{{ log }}</li>
                                         </ul>
                                         <div ng-show="result.explain.logsTruncated">
