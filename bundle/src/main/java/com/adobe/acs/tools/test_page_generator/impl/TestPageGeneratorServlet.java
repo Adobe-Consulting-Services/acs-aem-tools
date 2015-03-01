@@ -141,9 +141,9 @@ public class TestPageGeneratorServlet extends SlingAllMethodsServlet {
 
             final Page page = createPage(resourceResolver,
                     folderPath,
-                    NODE_PREFIX + (i + 1),
+                    NODE_PREFIX + i,
                     parameters.getTemplate(),
-                    TITLE_PREFIX + (i + 1));
+                    TITLE_PREFIX + i);
 
             final ModifiableValueMap properties = page.getContentResource().adaptTo(ModifiableValueMap.class);
 
