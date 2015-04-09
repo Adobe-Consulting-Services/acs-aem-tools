@@ -29,7 +29,11 @@ vltApp.controller('MainCtrl', function($scope, $http, $timeout, $interval, ngDia
 	$scope.task_src = 'http://admin:admin@localhost:4502/crx/server/-/jcr:root/content/dam/geometrixx';
 
 	$scope.task_dst = '/content/dam/geometrixx2';
-	
+
+	$scope.task_batchSize = "2048";
+
+	$scope.task_throttle = "1";
+
 	$scope.checkboxModel = {
         recursive : true,
         update : true,
@@ -45,6 +49,9 @@ vltApp.controller('MainCtrl', function($scope, $http, $timeout, $interval, ngDia
     $scope.notifications = [];
 
     $scope.tasks = [];
+    
+    $scope.excludes = [];
+    
 
     /*
      * Loads the tasks
@@ -139,21 +146,28 @@ vltApp.controller('MainCtrl', function($scope, $http, $timeout, $interval, ngDia
     };
     
     $scope.confirm = function() {
-        var cmd = {
+        var i=0, excludes = [], cmd = {
             "cmd":"create",
             "id": $scope.task_id,
             "src": $scope.task_src,
             "dst": $scope.task_dst,
-            "batchsize": 2048,
+            "batchsize": $scope.task_batchSize,
             "update": $scope.checkboxModel.update,
             "onlyNewer": $scope.checkboxModel.onlyNewer,
             "recursive": $scope.checkboxModel.recursive,
             "noOrdering": $scope.checkboxModel.noOrdering,
-            "throttle": 1
+            "throttle": $scope.task_throttle
         };
         
         if ($scope.task_resumeFrom !== "") {
             cmd.resumeFrom = $scope.task_resumeFrom;
+        }
+        
+        if ($scope.excludes.length > 0) {
+            for (;i<$scope.excludes.length; i++){
+                excludes.push($scope.excludes[i].value);
+            }
+            cmd.excludes = excludes;
         }
     
         $http.post($scope.rcp_uri, cmd).
@@ -172,6 +186,14 @@ vltApp.controller('MainCtrl', function($scope, $http, $timeout, $interval, ngDia
      */
     $scope.createTask = function() {
         ngDialog.open({ template: 'createTaskTemplate', controller: 'MainCtrl' });
+    };
+
+    $scope.addExclude = function() {
+        $scope.excludes.push({ value: "" }); 
+    };
+    
+    $scope.removeExclude = function(index){
+        $scope.excludes.splice(index, 1);
     };
     
     $scope.$on('ngDialog.opened', function (event, $dialog) {

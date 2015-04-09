@@ -49,7 +49,7 @@
 
 			<nav class="crumbs">
 				<a href="/miscadmin">Tools</a> <a
-					href="<%= currentPage.getPath() %>.html">VTL-RCP</a>
+					href="<%= currentPage.getPath() %>.html">VLT-RCP</a>
 			</nav>
 
 	        <div class="drawer theme-dark">	
@@ -114,6 +114,9 @@
 										No ordering: {{ task.noOrdering }}<br>
 										Throttle: {{ task.throttle }}<br>
 										Resume from: {{ task.resumeFrom }}<br>
+										<div ng-show="task.excludes.length > 0">Excludes:<br>
+										 <span ng-repeat="exclude in task.excludes">{{exclude}}<br></span>
+										</div>
 									</div>
 								</td>
 								<td><a href="#" ng-click="task.expanded = !task.expanded"
@@ -129,6 +132,16 @@
 						</tbody>
 					</table>
 				</div>
+                <div ng-show="notifications.length > 0">
+                    <div ng-repeat="notification in notifications">
+                        <div class="alert {{ notification.type }}">
+                            <button class="close" data-dismiss="alert">&times;</button>
+                            <strong>{{ notification.title }}</strong>
+
+                            <div>{{ notification.message }}</div>
+                        </div>
+                    </div>
+                </div>				
 			</div>
 		</div>
 
@@ -147,6 +160,15 @@
         <tr><td><label>Only&nbsp;newer</label></td><td><input class="opaque" type="checkbox" ng-model="checkboxModel.onlyNewer"></td></tr>
         <tr><td><label>No&nbsp;ordering</label></td><td><input class="opaque" type="checkbox" ng-model="checkboxModel.noOrdering"></td></tr>
         <tr><td><label>Resume&nbsp;from</label></td><td><input type="text" class="fullwidth" ng-model="task_resumeFrom" name="resumeFrom" placeholder="/content/geometrixx2"></td></tr>
+        <tr><td><label>Batch&nbsp;size</label></td><td><input type="text" ng-model="task_batchSize" name="resumeFrom" placeholder="2048" size="5"></td></tr>
+        <tr><td><label>Throttle</label></td><td><input type="text" ng-model="task_throttle" name="throttle" placeholder="1" size="2"></td></tr>
+        <tr><td valign="top"><label>Excludes</label></td><td align="right"><a href="#" class="icon-add small" ng-click="addExclude()"></a>
+        <div ng-show="excludes.length > 0">
+            <ul class="list-unstyled" ng-repeat="exclude in excludes">
+              <li><nobr><input type="text" class="fullwidth" ng-model="exclude.value" name="exclude{{$index}}" placeholder="/content/geometrixx/(en|fr)/tools(/.*)?"><a href="#" ng-click="removeExclude($index)" class="icon-delete"></a></nobr></li>
+			</ul>
+        </div>				
+        </td></tr>
 	    <tr><td></td><td><input type="button" value="Create" ng-click="confirm()"/><input type="button" value="Cancel" ng-click="closeThisDialog()"/></td></tr>
 	</table>
     </form>
