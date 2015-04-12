@@ -1,0 +1,4 @@
+#base=css
+ngDialog.min.css
+ngDialog-theme-default.min.css
+ngDialog-theme-plain.min.css
