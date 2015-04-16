@@ -24,7 +24,7 @@ var vltApp = angular.module('vltApp',['ngDialog']);
 
 vltApp.controller('MainCtrl', function($scope, $http, $timeout, $interval, ngDialog) {
 	
-	$scope.rcp_uri = '/libs/granite/packaging/rcp';
+	$scope.rcp_uri = '/system/jackrabbit/filevault/rcp';
 	
 	$scope.task_src = 'http://admin:admin@localhost:4502/crx/server/-/jcr:root/content/dam/geometrixx';
 
