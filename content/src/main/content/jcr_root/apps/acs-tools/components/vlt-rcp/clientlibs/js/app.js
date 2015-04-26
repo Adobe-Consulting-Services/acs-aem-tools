@@ -28,18 +28,18 @@ vltApp.controller('MainCtrl', function ($scope, $http, $timeout, $interval, $q, 
 
     $scope.rcp_uri = '/libs/granite/packaging/rcp';
 
-    $scope.task_src = 'http://admin:admin@localhost:4502/crx/server/-/jcr:root/content/dam/geometrixx';
+    $scope.task_src = 'http://admin:admin@localhost:4502/crx/server/-/jcr:root/content/dam/my-site';
 
-    $scope.task_dst = '/content/dam/geometrixx2';
+    $scope.task_dst = '/content/dam/my-site';
 
-    $scope.task_batchSize = "2048";
+    $scope.task_batchSize = '1024';
 
-    $scope.task_throttle = "1";
+    $scope.task_throttle = '';
 
     $scope.checkboxModel = {
-        recursive: true,
-        update: true,
-        onlyNewer: true,
+        recursive: false,
+        update: false,
+        onlyNewer: false,
         noOrdering: false,
         autoRefresh: false
     };
@@ -168,18 +168,20 @@ vltApp.controller('MainCtrl', function ($scope, $http, $timeout, $interval, $q, 
     };
 
     $scope.confirm = function () {
-        var i = 0, excludes = [], cmd = {
-            "cmd": "create",
-            "id": $scope.task_id,
-            "src": $scope.task_src,
-            "dst": $scope.task_dst,
-            "batchsize": $scope.task_batchSize,
-            "update": $scope.checkboxModel.update,
-            "onlyNewer": $scope.checkboxModel.onlyNewer,
-            "recursive": $scope.checkboxModel.recursive,
-            "noOrdering": $scope.checkboxModel.noOrdering,
-            "throttle": $scope.task_throttle
-        };
+        var i = 0,
+            excludes = [],
+            cmd = {
+                "cmd": "create",
+                "id": $scope.task_id,
+                "src": $scope.task_src,
+                "dst": $scope.task_dst,
+                "batchsize": $scope.task_batchSize || 1024,
+                "update": $scope.checkboxModel.update,
+                "onlyNewer": $scope.checkboxModel.onlyNewer,
+                "recursive": $scope.checkboxModel.recursive,
+                "noOrdering": $scope.checkboxModel.noOrdering,
+                "throttle": $scope.task_throttle || 0
+            };
 
         if ($scope.task_resumeFrom !== "") {
             cmd.resumeFrom = $scope.task_resumeFrom;

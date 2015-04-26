@@ -121,20 +121,18 @@
                     <input type="text"
                            ng-model="task_batchSize"
                            name="resumeFrom"
-                           placeholder="2048"
-                           size="5"/>
+                           placeholder="2048"/>
                 </td>
             </tr>
             <tr>
                 <td class="label-col">
-                    <label>Throttle<br/>(in seconds)</label>
+                    <label>Throttle</label>
                 </td>
                 <td class="field-col">
                     <input type="text"
                            ng-model="task_throttle"
                            name="throttle"
-                           placeholder="1"
-                           size="2"/>
+                           placeholder="in seconds"/>
                 </td>
             </tr>
 

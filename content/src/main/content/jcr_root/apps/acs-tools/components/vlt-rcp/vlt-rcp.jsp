@@ -141,8 +141,9 @@
                                                     <div ng-show="task.expanded">
 
                                                         <ul>
-                                                            <li>Current path: {{ task.status.currentPath }}</li>
-                                                            <li>Last saved path: {{ task.status.lastSavedPath }}</li>
+                                                            <li>Current path: {{ task.status.currentPath || 'N/A' }}</li>
+                                                            <li>Last saved path:
+                                                                {{ task.status.lastSavedPath || 'N/A' }}</li>
                                                             <li>Total nodes: {{ task.status.totalNodes }}</li>
                                                             <li>Total size: {{ task.status.totalSize }}</li>
                                                             <li>Current size: {{ task.status.currentSize }}</li>
@@ -162,8 +163,8 @@
                                                         <li>Update: {{ task.update }}</li>
                                                         <li>Only newer: {{ task.onlyNewer }}</li>
                                                         <li>No ordering: {{ task.noOrdering }}</li>
-                                                        <li>Throttle: {{ task.throttle }}</li>
-                                                        <li>Resume from: {{ task.resumeFrom }}</li>
+                                                        <li>Throttle: {{ task.throttle || 0}} seconds</li>
+                                                        <li>Resume from: {{ task.resumeFrom || 'Not set'}}</li>
 
                                                         <li ng-show="task.excludes.length > 0">
                                                             Excludes:
