@@ -121,7 +121,7 @@
                     <input type="text"
                            ng-model="task_batchSize"
                            name="resumeFrom"
-                           placeholder="2048"/>
+                           placeholder="1024"/>
                 </td>
             </tr>
             <tr>
