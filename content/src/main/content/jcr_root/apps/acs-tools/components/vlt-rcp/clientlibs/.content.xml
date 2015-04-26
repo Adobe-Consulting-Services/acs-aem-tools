@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
     jcr:primaryType="cq:ClientLibraryFolder"
-    categories="[vlt-rcp.app]"
-    dependencies="[coralui,acs-tools.ace,acs-tools.angularjs,acs-tools.angularui.ace,acs-tools.ngDialog,underscore]"/>
+    categories="[acs-tools.vlt-rcp.app]"
+    dependencies="[coralui,acs-tools.ace,acs-tools.angularjs,acs-tools.ngDialog,underscore]"/>

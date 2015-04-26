@@ -18,161 +18,199 @@
   #L%
   --%>
 
-<%@include file="/libs/foundation/global.jsp"%>
-<%
-    final String faviconPath = resourceResolver.map(component.getPath() + "/clientlibs/images/favicon.png");
-%>
+<%@include file="/libs/foundation/global.jsp" %><%
+    pageContext.setAttribute("favicon", resourceResolver.map(component.getPath() + "/clientlibs/images/favicon.png"));
 
-<!doctype html>
-<html ng-app="vltApp">
-<head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+%><!doctype html>
+<html>
 
-<title>VLT-RCP | ACS AEM Tools</title>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>VLT-RCP | ACS AEM Tools</title>
+        <link rel="shortcut icon" href="${favicon}"/>
+        <cq:includeClientLib css="acs-tools.vlt-rcp.app"/>
+    </head>
 
-<link rel="shortcut icon" href="<%= faviconPath %>" />
+    <body id="acs-tools-vlt-rcp-app-css">
 
-<cq:includeClientLib css="vlt-rcp.app" />
+        <div id="acs-tools-vlt-rcp-app" ng-controller="MainCtrl">
+            <header class="top">
 
-</head>
+                <div class="logo">
+                    <a href="/"><i class="icon-marketingcloud medium"></i></a> <span
+                        ng-show="running" class="spinner icon-spinner medium"></span>
+                </div>
 
-<body id="acs-tools-vlt-rcp">
+                <nav class="crumbs">
+                    <a href="/miscadmin">Tools</a> <a
+                        href="${currentPage.path}.html">VLT-RCP</a>
+                </nav>
 
-	<div id=vltApp" ng-controller="MainCtrl">
-		<header class="top">
+                <div class="drawer theme-dark">
+                    <label>Auto refresh </label><input type="checkbox" ng-model="checkboxModel.autoRefresh">
+                    <a href="#" class="icon-add medium" ng-click="createTask()"></a>
+                </div>
+            </header>
 
-			<div class="logo">
-				<a href="/"><i class="icon-marketingcloud medium"></i></a> <span
-					ng-show="running" class="spinner icon-spinner medium"></span>
-			</div>
+            <div class="page" role="main" ng-init="init();">
 
-			<nav class="crumbs">
-				<a href="/miscadmin">Tools</a> <a
-					href="<%= currentPage.getPath() %>.html">VLT-RCP</a>
-			</nav>
+                <cq:include script="includes/notifications.jsp"/>
 
-	        <div class="drawer theme-dark">	
-	            <label>Auto refresh </label><input class="opaque" type="checkbox" ng-model="checkboxModel.autoRefresh">
-	            <a href="#" class="icon-add medium" ng-click="createTask()"></a>
-	        </div>
-		</header>
 
-		<div class="page" role="main" ng-init="init();">
-			<div class="content">
-				<div class="section" ng-show="tasks.length == 0">
+                <div class="content">
+                    <div class="content-container">
+                        <div class="content-container-inner">
 
-					<h2>No Task defined</h2>
+                            <h1>VLT-RCP Web UI</h1>
 
-					<p>Click on <a href="#" class="icon-add medium" ng-click="createTask()"></a> to create a task</p>
+                            <%-- VLT-RCP 3.1.6+ Not installed --%>
+                            <div ng-show="vltMissing">
+                                <div class="alert error large">
+                                    <strong>VLT-RCP 3.1.6+ Missing or Inactive</strong>
+                                    <div>
+                                        VLT-RCP endpoint could not be reached.
 
-				</div>
+                                        <ol>
+                                            <li>
+                                                <a href="http://mirrors.ibiblio.org/maven2/org/apache/jackrabbit/vault/org.apache.jackrabbit.vault.rcp"
+                                                   target="_blank">Download and install</a>
+                                                VLT-RCP on this AEM instance.
+                                            </li>
+                                            <li>Ensure the Apache Jackrabbit FileVault RCP Server Bundle is
+                                                <a href="/system/console/bundles"
+                                                   x-cq-linkchecker="skip"
+                                                   target="_blank">Active</a>.</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
 
-				<div class="section" ng-show="tasks.length > 0">
+                            <div ng-show="!vltMissing">
+                                <div class="section" ng-show="tasks.length == 0">
 
-					<h2>Current Tasks</h2>
+                                    <%-- No Tasks Defined --%>
+                                    <div class="alert notice large">
+                                        <strong>No tasks defined</strong>
+                                        <div>
+                                            No VLT-RCP tasks have been defined.
 
-					<p>Click on a task below to view the current status</p>
+                                            <ul>
+                                                <li><a ng-click="createTask()">Create a new VLT-RCP task</a>.</li>
+                                            </ul>
 
-					<table class="data fullwidth">
-						<thead>
-							<tr>
-								<th>ID</th>
-								<th>Status</th>
-								<th>Settings</th>
-								<th>Action</th>
-							</tr>
-						</thead>
+                                        </div>
+                                    </div>
 
-						<tbody>
-							<tr ng-repeat="task in tasks"
-								ng-class="{ expanded : task.expanded }">
-								<td class="num">
-									<div>{{ task.id }}</div>
-								</td>
-								<td class="num">
-									<div>{{ task.status.state }}</div>
-									<div ng-show="task.expanded">
-										Current Path: {{ task.status.currentPath }}<br>
-										Last Saved Path: {{ task.status.lastSavedPath }}<br>
-										Total Nodes: {{ task.status.totalNodes }}<br>
-										Total Size: {{ task.status.totalSize }}<br>
-										Current Size: {{ task.status.currentSize }}<br>
-										Current Nodes: {{ task.status.currentNodes }}<br>
-									</div>
-								</td>
-								<td class="num">
-									<div>
-										Source: {{ task.src }}<br>
-										Destination: {{ task.dst }}<br>
-									</div>
-									<div ng-show="task.expanded">
-										Recursive: {{ task.recursive }}<br>
-										Batch Size: {{ task.batchsize }}<br>
-										Update: {{ task.update }}<br>
-										Only Newer: {{ task.onlyNewer }}<br>
-										No ordering: {{ task.noOrdering }}<br>
-										Throttle: {{ task.throttle }}<br>
-										Resume from: {{ task.resumeFrom }}<br>
-										<div ng-show="task.excludes.length > 0">Excludes:<br>
-										 <span ng-repeat="exclude in task.excludes">{{exclude}}<br></span>
-										</div>
-									</div>
-								</td>
-								<td><a href="#" ng-click="task.expanded = !task.expanded"
-									ng-class="task.expanded ? 'icon-treecollapse' : 'icon-treeexpand'">
-								</a><a href="#" ng-show="task.status.state == 'NEW'" ng-click="start(task)"
-									class="icon-play-circle">
-								</a><a href="#" ng-show="task.status.state == 'RUNNING'" ng-click="stop(task)"
-									class="icon-stop">
-								</a><a href="#" ng-click="remove(task)"
-									class="icon-delete">
-								</a></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-                <div ng-show="notifications.length > 0">
-                    <div ng-repeat="notification in notifications">
-                        <div class="alert {{ notification.type }}">
-                            <button class="close" data-dismiss="alert">&times;</button>
-                            <strong>{{ notification.title }}</strong>
+                                </div>
 
-                            <div>{{ notification.message }}</div>
+                                <%-- Tasks Defined --%>
+                                <div class="section" ng-show="tasks.length > 0">
+
+                                    <h2>Current Tasks</h2>
+
+                                    <p>
+                                        Click on the <i class="icon-play-circle"></i> to view the details for each Task.
+                                    </p>
+
+                                    <table class="data tasks">
+                                        <thead>
+                                            <tr>
+                                                <th>Task Id</th>
+                                                <th>Status</th>
+                                                <th>Settings</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            <tr ng-repeat="task in tasks"
+                                                ng-class="{ expanded : task.expanded }">
+                                                <td>
+                                                    {{ task.id }}
+                                                </td>
+
+                                                <td>
+                                                    <div>{{ task.status.state }}</div>
+                                                    <div ng-show="task.expanded">
+
+                                                        <ul>
+                                                            <li>Current path: {{ task.status.currentPath }}</li>
+                                                            <li>Last saved path: {{ task.status.lastSavedPath }}</li>
+                                                            <li>Total nodes: {{ task.status.totalNodes }}</li>
+                                                            <li>Total size: {{ task.status.totalSize }}</li>
+                                                            <li>Current size: {{ task.status.currentSize }}</li>
+                                                            <li>Current nodes: {{ task.status.currentNodes }}</li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <ul>
+                                                        <li>Source: {{ task.src }}</li>
+                                                        <li>Destination: {{ task.dst }}</li>
+                                                    </ul>
+
+                                                    <ul ng-show="task.expanded">
+                                                        <li>Recursive: {{ task.recursive }}</li>
+                                                        <li>Batch size: {{ task.batchsize }}</li>
+                                                        <li>Update: {{ task.update }}</li>
+                                                        <li>Only newer: {{ task.onlyNewer }}</li>
+                                                        <li>No ordering: {{ task.noOrdering }}</li>
+                                                        <li>Throttle: {{ task.throttle }}</li>
+                                                        <li>Resume from: {{ task.resumeFrom }}</li>
+
+                                                        <li ng-show="task.excludes.length > 0">
+                                                            Excludes:
+                                                            <ul>
+                                                                <li ng-repeat="exclude in task.excludes">{{exclude}}</li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                                <td class="actions">
+
+                                                    <div class="action-button">
+                                                        <a href="#" ng-click="task.expanded = !task.expanded"
+                                                           ng-class="task.expanded ? 'icon-treecollapse' : 'icon-treeexpand'"></a>
+                                                    </div>
+
+                                                    <div class="action-button">
+                                                        <a href="#" ng-show="task.status.state == 'NEW'"
+                                                           ng-click="start(task)"
+                                                           class="icon-play-circle"></a>
+                                                    </div>
+
+                                                    <div class="action-button">
+                                                        <a href="#" ng-show="task.status.state == 'RUNNING'"
+                                                           ng-click="stop(task)"
+                                                           class="icon-stop"></a>
+                                                    </div>
+
+                                                    <div class="action-button">
+                                                        <a href="#" ng-click="remove(task)"
+                                                           class="icon-delete">
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>				
-			</div>
-		</div>
+                </div>
+            </div>
 
-	</div>
+            <cq:include script="includes/create-task-template.jsp"/>
+        </div>
 
-	<cq:includeClientLib js="vlt-rcp.app" />
-	<script type="text/ng-template" id="createTaskTemplate">
-    <h1>Create a new task</h1>
-	<form name="myForm" ng-controller="MainCtrl">
-	<table class="fullwidth">
-        <tr><td><label>Id</label></td><td><input type="text" ng-model="task_id" name="id" size="30"></td></tr>
-        <tr><td><label>Source</label></td><td class="fullwidth"><input type="text" class="fullwidth" ng-model="task_src" name="src" placeholder="http://admin:admin@localhost:4502/crx/server/-/jcr:root/content/dam/geometrixx"></td></tr>
-        <tr><td><label>Destination</label></td><td><input type="text" class="fullwidth" ng-model="task_dst" name="dst" placeholder="/content/geometrixx2"></td></tr>
-        <tr><td><label>Recursive</label></td><td><input class="opaque" type="checkbox" ng-model="checkboxModel.recursive"></td></tr>
-        <tr><td><label>Update</label></td><td><input class="opaque" type="checkbox" ng-model="checkboxModel.update"></td></tr>
-        <tr><td><label>Only&nbsp;newer</label></td><td><input class="opaque" type="checkbox" ng-model="checkboxModel.onlyNewer"></td></tr>
-        <tr><td><label>No&nbsp;ordering</label></td><td><input class="opaque" type="checkbox" ng-model="checkboxModel.noOrdering"></td></tr>
-        <tr><td><label>Resume&nbsp;from</label></td><td><input type="text" class="fullwidth" ng-model="task_resumeFrom" name="resumeFrom" placeholder="/content/geometrixx2"></td></tr>
-        <tr><td><label>Batch&nbsp;size</label></td><td><input type="text" ng-model="task_batchSize" name="resumeFrom" placeholder="2048" size="5"></td></tr>
-        <tr><td><label>Throttle</label></td><td><input type="text" ng-model="task_throttle" name="throttle" placeholder="1" size="2"></td></tr>
-        <tr><td valign="top"><label>Excludes</label></td><td align="right"><a href="#" class="icon-add small" ng-click="addExclude()"></a>
-        <div ng-show="excludes.length > 0">
-            <ul class="list-unstyled" ng-repeat="exclude in excludes">
-              <li><nobr><input type="text" class="fullwidth" ng-model="exclude.value" name="exclude{{$index}}" placeholder="/content/geometrixx/(en|fr)/tools(/.*)?"><a href="#" ng-click="removeExclude($index)" class="icon-delete"></a></nobr></li>
-			</ul>
-        </div>				
-        </td></tr>
-	    <tr><td></td><td><input type="button" value="Create" ng-click="confirm()"/><input type="button" value="Cancel" ng-click="closeThisDialog()"/></td></tr>
-	</table>
-    </form>
-	</script>
+        <cq:includeClientLib js="acs-tools.vlt-rcp.app"/>
 
-</body>
+        <%-- Register angular app; Decreases chances of collisions w other angular apps on the page (ex. via injection) --%>
+        <script type="text/javascript">
+            angular.bootstrap(document.getElementById('acs-tools-vlt-rcp-app'),
+                    ['vltRcpApp']);
+        </script>
+    </body>
 </html>
