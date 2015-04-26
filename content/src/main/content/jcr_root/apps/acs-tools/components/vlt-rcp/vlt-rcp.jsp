@@ -47,7 +47,7 @@
                         href="${currentPage.path}.html">VLT-RCP</a>
                 </nav>
 
-                <div class="drawer theme-dark">
+                <div ng-hide="vltMissing" class="drawer theme-dark">
                     <label>Auto refresh </label><input type="checkbox" ng-model="checkboxModel.autoRefresh">
                     <a href="#" class="icon-add medium" ng-click="createTask()"></a>
                 </div>
@@ -62,12 +62,12 @@
                     <div class="content-container">
                         <div class="content-container-inner">
 
-                            <h1>VLT-RCP Web UI</h1>
+                            <h1>VLT-RCP</h1>
 
-                            <%-- VLT-RCP 3.1.6+ Not installed --%>
+                            <%-- VLT-RCP Not installed --%>
                             <div ng-show="vltMissing">
                                 <div class="alert error large">
-                                    <strong>VLT-RCP 3.1.6+ Missing or Inactive</strong>
+                                    <strong>VLT-RCP Bundle Missing or Inactive</strong>
                                     <div>
                                         VLT-RCP endpoint could not be reached.
 
@@ -77,10 +77,11 @@
                                                    target="_blank">Download and install</a>
                                                 VLT-RCP on this AEM instance.
                                             </li>
-                                            <li>Ensure the Apache Jackrabbit FileVault RCP Server Bundle is
+                                            <li>Ensure the
                                                 <a href="/system/console/bundles"
                                                    x-cq-linkchecker="skip"
-                                                   target="_blank">Active</a>.</li>
+                                                   target="_blank">Apache Jackrabbit FileVault RCP Server Bundle is
+                                                    Active</a>.</li>
                                         </ol>
                                     </div>
                                 </div>
@@ -110,7 +111,7 @@
                                     <h2>Current Tasks</h2>
 
                                     <p>
-                                        Click on the <i class="icon-play-circle"></i> to view the details for each Task.
+                                        Click on the <i class="icon-treeexpand"></i> to view the details for each Task.
                                     </p>
 
                                     <table class="data tasks">
