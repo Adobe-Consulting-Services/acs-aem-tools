@@ -1,0 +1,76 @@
+#acs-tools-tag-maker-app {
+
+  .content-container {
+    width: 100%;
+
+    .content-container-inner {
+      width: 960px;
+      margin: 0 auto;
+    }
+  }
+
+  form {
+
+    .form-row {
+      height: 4em;
+      line-height: 3em;
+
+      .form-left-cell {
+        width: 10em;
+        padding-right: 1em;
+        margin-right: 1em;
+        border-right: 0.0625rem solid #cccccc;
+        float: left;
+        height: 4em;
+      }
+
+      h4 {
+        .form-left-cell();
+        font-weight: bold;
+        text-align: right;
+      }
+
+      input[type="text"],
+      select {
+        min-width: 75%;
+      }
+
+      .form-error {
+        font-size: 1.5em;
+        height: .8em;
+        vertical-align: top;
+        margin-top: -.1em;
+      }
+
+      .tooltip.error {
+        color: #333;
+      }
+    }
+  }
+  .error {
+    margin-top: 2em;
+    color: red;
+  }
+
+  .notifications {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 960px;
+    z-index: 1000;
+  }
+
+  .results {
+    margin-top: 2em;
+    background-color: #FFF;
+    padding: 2em;
+    border: solid 1px #CCC;
+    margin-bottom: 2em;
+
+    h2 {
+      margin-bottom: 1em;
+    }
+  }
+}

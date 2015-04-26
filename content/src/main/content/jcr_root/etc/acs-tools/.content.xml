@@ -6,5 +6,6 @@
     <jsp-code-display/>
     <query-editor/>
     <explain-query/>
+    <tag-maker/>
     <test-page-generator/>
 </jcr:root>
