@@ -67,7 +67,7 @@
                             <%-- VLT-RCP Not installed --%>
                             <div ng-show="vltMissing">
                                 <div class="alert error large">
-                                    <strong>VLT-RCP Bundle Missing or Inactive</strong>
+                                    <strong>VLT-RCP servlet missing, inactive or unreachable</strong>
                                     <div>
                                         VLT-RCP endpoint could not be reached.
 
@@ -77,11 +77,16 @@
                                                    target="_blank">Download and install</a>
                                                 VLT-RCP on this AEM instance.
                                             </li>
-                                            <li>Ensure the
-                                                <a href="/system/console/bundles"
-                                                   x-cq-linkchecker="skip"
-                                                   target="_blank">Apache Jackrabbit FileVault RCP Server Bundle is
-                                                    Active</a>.</li>
+                                            <li>Ensure the  <a href="/system/console/bundles"  x-cq-linkchecker="skip"
+                                                               target="_blank">Apache Jackrabbit FileVault RCP Server
+                                                Bundle is Active</a>.
+                                            </li>
+                                            <li>
+                                                The VLT-RCP endpoint URL must be accessible and not blocked via
+                                                Dispatcher or another reverse proxy. Note: The VLT RCP servlet
+                                                endpoint changed from &quot;/system/jackrabbit/filevault/rcp&quot; to
+                                                &quot;/libs/granite/packaging/rcp&quot; in VLT-RCP 3.1.6.
+                                            </li>
                                         </ol>
                                     </div>
                                 </div>

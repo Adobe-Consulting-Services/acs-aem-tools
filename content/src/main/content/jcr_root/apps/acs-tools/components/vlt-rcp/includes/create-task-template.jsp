@@ -41,7 +41,7 @@
                     <input type="text"
                            ng-model="task_src"
                            name="src"
-                           placeholder="http://admin:admin@localhost:4502/crx/server/-/jcr:root/content/dam/geometrixx"/>
+                           placeholder="http://admin:admin@localhost:4502/crx/server/-/jcr:root/content/dam/my-site"/>
                 </td>
             </tr>
             <tr>
@@ -52,7 +52,7 @@
                     <input type="text"
                            ng-model="task_dst"
                            name="dst"
-                           placeholder="/content/geometrixx2"/></td>
+                           placeholder="/content/dam/my-site"/></td>
             </tr>
             <tr>
                 <td class="label-col">
@@ -62,7 +62,7 @@
                     <label class="switch">
                         <input type="checkbox"
                                name="recursive"
-                               ng-model="checkboxModel.noOrecursiverdering"><span>No</span><span>Yes</span>
+                               ng-model="checkboxModel.recursive"><span>No</span><span>Yes</span>
                     </label>
                 </td>
             </tr>
@@ -110,7 +110,7 @@
                     <input type="text"
                            ng-model="task_resumeFrom"
                            name="resumeFrom"
-                           placeholder="/content/geometrixx2"/>
+                           placeholder="/content/dam/my-site"/>
                 </td>
             </tr>
             <tr>
@@ -127,7 +127,7 @@
             </tr>
             <tr>
                 <td class="label-col">
-                    <label>Throttle</label>
+                    <label>Throttle<br/>(in seconds)</label>
                 </td>
                 <td class="field-col">
                     <input type="text"
@@ -156,7 +156,7 @@
                             <li>
                                 <input type="text"
                                         ng-model="exclude.value"
-                                        placeholder="/content/geometrixx/(en|fr)/tools(/.*)?"/>
+                                        placeholder="/content/dam/my-site/(en|fr)/documents(/.*)?"/>
 
                                 <a ng-click="removeExclude($index)" class="remove icon-minus-circle"></a>
                             </li>
