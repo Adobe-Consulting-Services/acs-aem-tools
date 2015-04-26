@@ -1,6 +1,6 @@
 package com.adobe.acs.tools.tagmaker.tagdataconverters.impl;
 
-import com.adobe.acs.tools.tagmaker.impl.TagData;
+import com.adobe.acs.tools.tagmaker.TagData;
 import com.adobe.acs.tools.tagmaker.tagdataconverters.TagDataConverter;
 import junit.framework.TestCase;
 

@@ -17,29 +17,7 @@
  * limitations under the License.
  * #L%
  */
-
+@Version("1.0.0")
 package com.adobe.acs.tools.tagmaker.tagdataconverters;
 
-import com.adobe.acs.tools.tagmaker.TagData;
-
-public interface TagDataConverter {
-
-    String PROP_NAME = "name";
-
-    String PROP_LABEL = "label";
-
-    /**
-     * Returns the human friendly label for this Tag Data Converter; Used to allow human users to select what Tag
-     * Data Converter to use.
-     * @return the human friendly label
-     */
-    String getLabel();
-
-    /**
-     * Converts the String representation of the Tag Data into a Tag Data object.
-     * @param data the raw String representation of the Tag Data
-     * @return the TagData object derived from the data param
-     */
-    TagData convert(String data);
-
-}
+import aQute.bnd.annotation.Version;

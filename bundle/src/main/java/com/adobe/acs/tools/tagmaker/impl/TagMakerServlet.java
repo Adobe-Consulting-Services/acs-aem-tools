@@ -1,6 +1,27 @@
+/*
+ * #%L
+ * ACS AEM Tools Bundle
+ * %%
+ * Copyright (C) 2015 Adobe
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 package com.adobe.acs.tools.tagmaker.impl;
 
 
+import com.adobe.acs.tools.tagmaker.TagData;
 import com.adobe.acs.tools.tagmaker.tagdataconverters.TagDataConverter;
 import com.adobe.acs.tools.tagmaker.tagdataconverters.impl.DefaultConverterImpl;
 import com.day.cq.tagging.InvalidTagFormatException;
@@ -61,13 +82,15 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
     private static final Logger log = LoggerFactory.getLogger(TagMakerServlet.class);
 
     private static final String DEFAULT_CHARSET = "UTF-8";
+
     private static final String DEFAULT_CONVERTER = DefaultConverterImpl.LABEL;
+
     private static final boolean DEFAULT_CLEAN = true;
 
     private Map<String, TagDataConverter> tagDataConverters = new ConcurrentHashMap<String, TagDataConverter>();
 
     @Override
-    protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response)
+    protected final void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response)
             throws ServletException, IOException {
 
         response.setContentType("application/json");
@@ -76,7 +99,7 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
         final JSONArray jsonArray = new JSONArray();
         try {
 
-            for(Map.Entry<String, TagDataConverter> entry : this.tagDataConverters.entrySet()) {
+            for (Map.Entry<String, TagDataConverter> entry : this.tagDataConverters.entrySet()) {
                 final JSONObject jsonObject = new JSONObject();
 
                 jsonObject.put("label", entry.getValue().getLabel());
@@ -95,7 +118,7 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
 
 
     @Override
-    protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response)
+    protected final void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response)
             throws ServletException, IOException {
 
         response.setContentType("application/json");
@@ -113,7 +136,7 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
         final RequestParameter converterParam = request.getRequestParameter("converter");
 
         boolean clean = DEFAULT_CLEAN;
-        if(cleanParam != null) {
+        if (cleanParam != null) {
             clean = Boolean.valueOf(StringUtils.defaultIfEmpty(cleanParam.toString(),
                     String.valueOf(DEFAULT_CLEAN)));
         }
@@ -140,7 +163,7 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
 
         TagDataConverter tagDataConverter = this.tagDataConverters.get(converter);
 
-        if(tagDataConverter == null) {
+        if (tagDataConverter == null) {
             log.error("Could not find Tag Data Converter [ {} ]", converter);
 
             response.setStatus(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -161,7 +184,7 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
                 csv.setFieldSeparatorRead(separator);
             }
 
-            if(clean) {
+            if (clean) {
                 is = this.stripLineEnds(is, charset, csv.getFieldSeparatorRead());
             }
 
@@ -219,10 +242,11 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
 
                 tagData = tagDataConverter.convert(element);
 
-                if(!tagData.isValid()) {
+                if (!tagData.isValid()) {
                     log.warn("Could not convert CSV element [ {} ] into valid Tag Data; skipping...");
                     break;
-                } if (i == 0) {
+                }
+                if (i == 0) {
                     // Tag Namespace
                     tagId = tagData.getName() + TagConstants.NAMESPACE_DELIMITER;
                 } else if (i == 1) {
@@ -257,9 +281,9 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
 
         final LineIterator lineIterator = IOUtils.lineIterator(is, charset);
 
-        while(lineIterator.hasNext()) {
+        while (lineIterator.hasNext()) {
             String line = StringUtils.stripToNull(lineIterator.next());
-            if(line != null) {
+            if (line != null) {
                 line = StringUtils.stripEnd(line, String.valueOf(chartoStrip));
                 printStream.println(line);
             }
@@ -277,7 +301,7 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
     }
 
     protected final void bindTagDataConverter(final TagDataConverter service,
-                                           final Map<Object, Object> props) {
+                                              final Map<Object, Object> props) {
         final String type = PropertiesUtil.toString(props.get(TagDataConverter.PROP_NAME), null);
         if (type != null) {
             this.tagDataConverters.put(type, service);
@@ -285,7 +309,7 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
     }
 
     protected final void unbindTagDataConverter(final TagDataConverter service,
-                                             final Map<Object, Object> props) {
+                                                final Map<Object, Object> props) {
         final String type = PropertiesUtil.toString(props.get(TagDataConverter.PROP_NAME), null);
         if (type != null) {
             this.tagDataConverters.remove(type);
