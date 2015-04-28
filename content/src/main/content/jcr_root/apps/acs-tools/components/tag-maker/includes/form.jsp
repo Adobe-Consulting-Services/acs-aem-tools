@@ -29,6 +29,7 @@
                     ng-required="true"
                     required>
                     <option ng-repeat="converter in converters"
+                            ng-selected="{{converter.value === form.converter}}"
                             value="{{ converter.value }}">{{ converter.label }}</option>
             </select>
         </span>
