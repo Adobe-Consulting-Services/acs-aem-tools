@@ -239,7 +239,9 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
             final Map<String, String> params = OsgiPropertyUtil.toMap(lines, "=", false, null, true);
 
             final com.day.cq.search.Query query = queryBuilder.createQuery(PredicateGroup.create(params), session);
-            effectiveStatement = query.getResult().getQueryStatement();
+            final SearchResult result = query.getResult();
+            effectiveStatement = result.getQueryStatement();
+            json.put("filteringPredicates", result.getFilteringPredicates());
         } else {
             effectiveStatement = statement;
             effectiveLanguage = language;

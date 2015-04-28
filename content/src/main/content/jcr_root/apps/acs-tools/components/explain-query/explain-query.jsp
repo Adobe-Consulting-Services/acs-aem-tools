@@ -171,6 +171,11 @@
 
                                     <div class="call-out">{{ result.explain.plan }}</div>
 
+                                    <div class="call-out" ng-show="result.explain.filteringPredicates">
+                                        Filtering Predicates:<br/>
+                                        {{ result.explain.filteringPredicates }}
+                                    </div>
+
                                     <div class="call-out">
                                         <ul class="log-messages"
                                             ng-repeat="log in result.explain.logs track by $index">
