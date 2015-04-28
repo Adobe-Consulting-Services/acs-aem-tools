@@ -173,7 +173,7 @@
 
                                     <div class="call-out">
                                         <ul class="log-messages"
-                                            ng-repeat="log in result.explain.logs">
+                                            ng-repeat="log in result.explain.logs track by $index">
                                             <li>{{ log }}</li>
                                         </ul>
                                         <div ng-show="result.explain.logsTruncated">
