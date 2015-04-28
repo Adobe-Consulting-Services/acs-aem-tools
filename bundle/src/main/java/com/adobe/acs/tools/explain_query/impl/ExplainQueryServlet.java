@@ -27,6 +27,7 @@ import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.classic.turbo.TurboFilter;
 import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.spi.FilterReply;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
@@ -53,6 +54,11 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.slf4j.Marker;
 
+import com.adobe.acs.commons.util.OsgiPropertyUtil;
+import com.day.cq.search.PredicateGroup;
+import com.day.cq.search.QueryBuilder;
+import com.day.cq.search.result.SearchResult;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
@@ -63,6 +69,7 @@ import javax.jcr.query.RowIterator;
 import javax.management.openmbean.CompositeData;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -91,6 +98,8 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
     private static final String SQL2 = "JCR-SQL2";
 
     private static final String XPATH = "xpath";
+
+    private static final String QUERY_BUILDER = "queryBuilder";
 
     private static final String[] LANGUAGES = new String[]{ SQL, SQL2, XPATH };
 
@@ -126,6 +135,9 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
 
     @Reference
     private QueryStatManagerMBean queryStatManagerMBean;
+
+    @Reference
+    private QueryBuilder queryBuilder;
 
     private QueryLogCollector logCollector;
 
@@ -167,20 +179,18 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         String language = request.getParameter("language");
 
         final Session session = resourceResolver.adaptTo(Session.class);
-        final QueryManager queryManager;
 
         try {
-            queryManager = session.getWorkspace().getQueryManager();
 
             final JSONObject json = new JSONObject();
             json.put("statement", statement);
             json.put("language", language);
 
-            json.put("explain", explainQuery(queryManager, statement, language));
+            json.put("explain", explainQuery(session, statement, language));
 
             if (request.getParameter("executionTime") != null
                     && StringUtils.equals("true", request.getParameter("executionTime"))) {
-                json.put("timing", this.executionTimes(queryManager, statement, language));
+                json.put("timing", this.executionTimes(session, statement, language));
             }
 
             response.setContentType("application/json");
@@ -214,17 +224,30 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         }
     }
 
-    private JSONObject explainQuery(final QueryManager queryManager, final String statement,
+    private JSONObject explainQuery(final Session session, final String statement,
                                     final String language) throws RepositoryException, JSONException {
+        final QueryManager queryManager = session.getWorkspace().getQueryManager();
         final JSONObject json = new JSONObject();
         final String collectorKey = startCollection();
         final QueryResult queryResult;
+        final String effectiveLanguage;
+        final String effectiveStatement;
 
-        try {
-            final Query query = queryManager.createQuery("explain " + statement, language);
-            queryResult = query.execute();
+        if (language.equals(QUERY_BUILDER)) {
+            effectiveLanguage = XPATH;
+            final String[] lines = StringUtils.split(statement, '\n');
+            final Map<String, String> params = OsgiPropertyUtil.toMap(lines, "=", false, null, true);
+
+            final com.day.cq.search.Query query = queryBuilder.createQuery(PredicateGroup.create(params), session);
+            effectiveStatement = query.getResult().getQueryStatement();
+        } else {
+            effectiveStatement = statement;
+            effectiveLanguage = language;
         }
-        finally {
+        try {
+            final Query query = queryManager.createQuery("explain " + effectiveStatement, effectiveLanguage);
+            queryResult = query.execute();
+        } finally {
             if (logCollector != null) {
                 List<String> logs = logCollector.getLogs(collectorKey);
                 json.put("logs", logCollector.getLogs(collectorKey));
@@ -241,8 +264,6 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
 
         final String plan = firstRow.getValue("plan").getString();
         json.put("plan", plan);
-
-
 
         final JSONArray propertyIndexes = new JSONArray();
 
@@ -282,20 +303,39 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         return json;
     }
 
-    private JSONObject executionTimes(final QueryManager queryManager, final String statement,
+    private JSONObject executionTimes(final Session session, final String statement,
                                       final String language) throws RepositoryException, JSONException {
+        final QueryManager queryManager = session.getWorkspace().getQueryManager();
         final JSONObject json = new JSONObject();
 
-        final Query query = queryManager.createQuery(statement, language);
+        long executionTime;
+        long getNodesTime;
 
-        long start = System.currentTimeMillis();
-        final QueryResult queryResult = query.execute();
-        long executionTime = System.currentTimeMillis() - start;
+        if (language.equals(QUERY_BUILDER)) {
+            final String[] lines = StringUtils.split(statement, '\n');
+            final Map<String, String> params = OsgiPropertyUtil.toMap(lines, "=", false, null, true);
 
-        start = System.currentTimeMillis();
-        queryResult.getNodes();
-        long getNodesTime = System.currentTimeMillis() - start;
+            final com.day.cq.search.Query query = queryBuilder.createQuery(PredicateGroup.create(params), session);
+            long start = System.currentTimeMillis();
+            SearchResult result = query.getResult();
+            executionTime = System.currentTimeMillis() - start;
 
+            start = System.currentTimeMillis();
+            result.getNodes();
+            getNodesTime = System.currentTimeMillis() - start;
+        } else {
+            final Query query = queryManager.createQuery(statement, language);
+
+            long start = System.currentTimeMillis();
+            final QueryResult queryResult = query.execute();
+            executionTime = System.currentTimeMillis() - start;
+
+            start = System.currentTimeMillis();
+            queryResult.getNodes();
+            getNodesTime = System.currentTimeMillis() - start;
+
+
+        }
         json.put("executeTime", executionTime);
         json.put("getNodesTime", getNodesTime);
         json.put("totalTime", executionTime + getNodesTime);

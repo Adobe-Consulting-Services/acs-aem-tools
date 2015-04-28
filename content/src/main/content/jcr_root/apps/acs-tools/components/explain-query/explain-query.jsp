@@ -98,6 +98,7 @@
                                                 <option value="xpath">xpath</option>
                                                 <option value="sql">sql</option>
                                                 <option value="JCR-SQL2">JCR-SQL2</option>
+                                                <option value="queryBuilder">QueryBuilder</option>
                                             </select>
                                         </div>
                                     </div>
