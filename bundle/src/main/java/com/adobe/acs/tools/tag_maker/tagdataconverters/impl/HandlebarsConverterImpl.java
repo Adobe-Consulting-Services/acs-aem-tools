@@ -18,39 +18,44 @@
  * #L%
  */
 
-package com.adobe.acs.tools.tagmaker.tagdataconverters.impl;
+package com.adobe.acs.tools.tag_maker.tagdataconverters.impl;
 
-import com.adobe.acs.tools.tagmaker.TagData;
-import com.adobe.acs.tools.tagmaker.tagdataconverters.TagDataConverter;
+import com.adobe.acs.tools.tag_maker.TagData;
+import com.adobe.acs.tools.tag_maker.tagdataconverters.TagDataConverter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Component(
-    label = "ACS AEM Tools - Tag Maker - Lowercase with Dashes Converter"
+    label = "ACS AEM Tools - Tag Maker - Handlebars Converter"
 )
 @Properties({
         @Property(
                 label = "Name",
                 name = TagDataConverter.PROP_NAME,
-                value = LowercaseWithDashesConverterImpl.NAME,
+                value = HandlebarsConverterImpl.NAME,
                 propertyPrivate = true
         ),
         @Property(
                 label = "Label",
                 name = TagDataConverter.PROP_LABEL,
-                value = LowercaseWithDashesConverterImpl.LABEL,
+                value = HandlebarsConverterImpl.LABEL,
                 propertyPrivate = true
         )
 })
 @Service
-public class LowercaseWithDashesConverterImpl implements TagDataConverter {
+public class HandlebarsConverterImpl implements TagDataConverter {
 
-    public static final String NAME = "acs-commons-lowercase-dashes";
+    public static final String NAME = "acs-commons-handlebars";
 
-    public static final String LABEL = "Lowercase w/ Dashes";
+    public static final String LABEL = "Handlebars";
+
+    private static final Pattern PATTERN = Pattern.compile("\\{\\{(.+)}}$");
 
     @Override
     public final String getLabel() {
@@ -58,20 +63,24 @@ public class LowercaseWithDashesConverterImpl implements TagDataConverter {
     }
 
     @Override
-    public final TagData convert(final String data) {
-        String title = data;
+    public final TagData convert(String data) {
+        data = StringUtils.stripToEmpty(data);
 
-        String name = data;
-        name = StringUtils.stripToEmpty(name);
-        name = StringUtils.lowerCase(name);
-        name = StringUtils.replace(name, "&", " and ");
-        name = StringUtils.replace(name, "/", " or ");
-        name = name.replaceAll("[^a-z0-9-]+", "-");
-        name = StringUtils.stripEnd(name, "-");
-        name = StringUtils.stripStart(name, "-");
+        String name;
+
+        final Matcher matcher = PATTERN.matcher(data);
+
+        if (matcher.find() && matcher.groupCount() == 1) {
+            name = matcher.group(1);
+            name = StringUtils.stripToEmpty(name);
+        } else {
+           return TagData.EMPTY;
+        }
+
+        String title = PATTERN.matcher(data).replaceAll("");
+        title = StringUtils.stripToEmpty(title);
 
         final TagData tagData = new TagData(name);
-
         tagData.setTitle(title);
 
         return tagData;

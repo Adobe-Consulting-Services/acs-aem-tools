@@ -1,7 +1,7 @@
-package com.adobe.acs.tools.tagmaker.tagdataconverters.impl;
+package com.adobe.acs.tools.tag_maker.tagdataconverters.impl;
 
-import com.adobe.acs.tools.tagmaker.TagData;
-import com.adobe.acs.tools.tagmaker.tagdataconverters.TagDataConverter;
+import com.adobe.acs.tools.tag_maker.TagData;
+import com.adobe.acs.tools.tag_maker.tagdataconverters.TagDataConverter;
 import junit.framework.TestCase;
 
 public class LowercaseWithDashesConverterImplTest extends TestCase {

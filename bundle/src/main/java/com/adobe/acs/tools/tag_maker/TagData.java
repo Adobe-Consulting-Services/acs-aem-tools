@@ -18,7 +18,7 @@
  * #L%
  */
 
-package com.adobe.acs.tools.tagmaker;
+package com.adobe.acs.tools.tag_maker;
 
 import org.apache.commons.lang.StringUtils;
 

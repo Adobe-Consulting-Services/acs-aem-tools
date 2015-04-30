@@ -18,10 +18,10 @@
  * #L%
  */
 
-package com.adobe.acs.tools.tagmaker.tagdataconverters.impl;
+package com.adobe.acs.tools.tag_maker.tagdataconverters.impl;
 
-import com.adobe.acs.tools.tagmaker.TagData;
-import com.adobe.acs.tools.tagmaker.tagdataconverters.TagDataConverter;
+import com.adobe.acs.tools.tag_maker.TagData;
+import com.adobe.acs.tools.tag_maker.tagdataconverters.TagDataConverter;
 import com.day.cq.commons.jcr.JcrUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.felix.scr.annotations.Component;

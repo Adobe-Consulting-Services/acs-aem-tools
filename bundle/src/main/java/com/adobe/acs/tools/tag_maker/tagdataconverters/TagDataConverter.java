@@ -18,9 +18,9 @@
  * #L%
  */
 
-package com.adobe.acs.tools.tagmaker.tagdataconverters;
+package com.adobe.acs.tools.tag_maker.tagdataconverters;
 
-import com.adobe.acs.tools.tagmaker.TagData;
+import com.adobe.acs.tools.tag_maker.TagData;
 
 public interface TagDataConverter {
 

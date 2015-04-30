@@ -17,8 +17,7 @@
  * limitations under the License.
  * #L%
  */
-
 @Version("1.0.0")
-package com.adobe.acs.tools.tagmaker;
+package com.adobe.acs.tools.tag_maker.tagdataconverters;
 
 import aQute.bnd.annotation.Version;
