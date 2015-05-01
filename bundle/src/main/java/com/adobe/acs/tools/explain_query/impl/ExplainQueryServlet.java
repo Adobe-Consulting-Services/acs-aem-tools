@@ -27,7 +27,10 @@ import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.classic.turbo.TurboFilter;
 import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.spi.FilterReply;
-
+import com.adobe.acs.commons.util.OsgiPropertyUtil;
+import com.day.cq.search.PredicateGroup;
+import com.day.cq.search.QueryBuilder;
+import com.day.cq.search.result.SearchResult;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
@@ -54,11 +57,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.slf4j.Marker;
 
-import com.adobe.acs.commons.util.OsgiPropertyUtil;
-import com.day.cq.search.PredicateGroup;
-import com.day.cq.search.QueryBuilder;
-import com.day.cq.search.result.SearchResult;
-
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
@@ -69,7 +67,6 @@ import javax.jcr.query.RowIterator;
 import javax.management.openmbean.CompositeData;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -93,6 +90,9 @@ import java.util.regex.Pattern;
 public class ExplainQueryServlet extends SlingAllMethodsServlet {
     private static final Logger log = LoggerFactory.getLogger(ExplainQueryServlet.class);
 
+    //MDC key defined in org.apache.jackrabbit.oak.query.QueryEngineImpl
+    private static final String OAK_QUERY_ANALYZE = "oak.query.analyze";
+
     private static final String SQL = "sql";
 
     private static final String SQL2 = "JCR-SQL2";
@@ -101,22 +101,26 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
 
     private static final String QUERY_BUILDER = "queryBuilder";
 
-    private static final String[] LANGUAGES = new String[]{ SQL, SQL2, XPATH };
+    private static final String[] LANGUAGES = new String[]{SQL, SQL2, XPATH};
 
-    private static final Pattern PROPERTY_INDEX_PATTERN = Pattern.compile("\\/\\*\\sproperty\\s([^\\s=]+)[=\\s]");
-    private static final Pattern FILTER_PATTERN = Pattern.compile("\\[[^\\s]+\\]\\sas\\s\\[[^\\s]+\\]\\s\\/\\*\\sFilter\\(");
+    private static final Pattern PROPERTY_INDEX_PATTERN =
+            Pattern.compile("\\/\\*\\sproperty\\s([^\\s=]+)[=\\s]");
+
+    private static final Pattern FILTER_PATTERN =
+            Pattern.compile("\\[[^\\s]+\\]\\sas\\s\\[[^\\s]+\\]\\s\\/\\*\\sFilter\\(");
 
     @Property(label = "Query Logger Names",
-            description = "Logger names from which logs need to be collected while a query is executed",
+            description = "Logger names from which logs need to be collected while a query is executed. "
+                    + "Provide in the format '<package-name>=<mdc-filter-name>' where <mdc-filter-name>' is optional.",
             unbounded = PropertyUnbounded.ARRAY,
             value = {
-                    "org.apache.jackrabbit.oak.query",
-                    "org.apache.jackrabbit.oak.plugins.index"
+                    "org.apache.jackrabbit.oak.query=" + OAK_QUERY_ANALYZE,
+                    "org.apache.jackrabbit.oak.plugins.index=" + OAK_QUERY_ANALYZE,
+                    "com.day.cq.search.impl.builder.QueryImpl"
             }
     )
     private static final String PROP_LOGGER_NAMES = "log.logger-names";
 
-    //private static final String DEFAULT_PATTERN = "*%level* %logger{15} %msg%n";
     private static final String DEFAULT_PATTERN = "%msg%n";
 
     @Property(label = "Log Pattern",
@@ -205,25 +209,6 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         }
     }
 
-    @Activate
-    private void activate(Map<String, ?> config, BundleContext context){
-        String[] loggerNames = PropertiesUtil.toStringArray(config.get(PROP_LOGGER_NAMES), null);
-
-        if (loggerNames != null){
-            String pattern = PropertiesUtil.toString(config.get(PROP_MSG_PATTERN), DEFAULT_PATTERN);
-            int msgCountLimit = PropertiesUtil.toInteger(config.get(PROP_LOG_COUNT_LIMIT), DEFAULT_LIMIT);
-            logCollector = new QueryLogCollector(loggerNames, pattern, msgCountLimit, checkMDCSupport(context));
-            logCollectorRegistration = context.registerService(TurboFilter.class.getName(), logCollector, null);
-        }
-    }
-
-    @Deactivate
-    private void deactivate(){
-        if (logCollectorRegistration != null){
-            logCollectorRegistration.unregister();
-        }
-    }
-
     private JSONObject explainQuery(final Session session, final String statement,
                                     final String language) throws RepositoryException, JSONException {
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
@@ -252,7 +237,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
                 List<String> logs = logCollector.getLogs(collectorKey);
                 json.put("logs", logCollector.getLogs(collectorKey));
 
-                if (logs.size() == logCollector.msgCountLimit){
+                if (logs.size() == logCollector.msgCountLimit) {
                     json.put("logsTruncated", true);
                 }
             }
@@ -281,7 +266,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         }
 
         final Matcher filterMatcher = FILTER_PATTERN.matcher(plan);
-        if(filterMatcher.find()) {
+        if (filterMatcher.find()) {
             /* Filter (nodeType index) */
 
             propertyIndexes.put("nodeType");
@@ -333,8 +318,6 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
             start = System.currentTimeMillis();
             queryResult.getNodes();
             getNodesTime = System.currentTimeMillis() - start;
-
-
         }
         json.put("executeTime", executionTime);
         json.put("getNodesTime", getNodesTime);
@@ -380,15 +363,15 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         return jsonArray;
     }
 
-    private String startCollection(){
+    private String startCollection() {
         final String collectorKey = UUID.randomUUID().toString();
         MDC.put(QueryLogCollector.COLLECTOR_KEY, collectorKey);
         return collectorKey;
     }
 
-    private void stopCollection(String key){
+    private void stopCollection(String key) {
         MDC.remove(key);
-        if (logCollector != null){
+        if (logCollector != null) {
             logCollector.stopCollection(key);
         }
     }
@@ -406,25 +389,49 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         return true;
     }
 
-    private static class QueryLogCollector extends TurboFilter {
-        //MDC key defined in org.apache.jackrabbit.oak.query.QueryEngineImpl
-        private static final String QUERY_ANALYZE = "oak.query.analyze";
+    @Activate
+    private void activate(Map<String, ?> config, BundleContext context) {
+
+        Map<String, String> loggers = OsgiPropertyUtil.toMap(PropertiesUtil.toStringArray(
+                config.get(PROP_LOGGER_NAMES), new String[0]), "=", true, null);
+
+        if (loggers != null && !loggers.isEmpty()) {
+            String pattern = PropertiesUtil.toString(config.get(PROP_MSG_PATTERN), DEFAULT_PATTERN);
+            int msgCountLimit = PropertiesUtil.toInteger(config.get(PROP_LOG_COUNT_LIMIT), DEFAULT_LIMIT);
+            logCollector = new QueryLogCollector(loggers, pattern, msgCountLimit, checkMDCSupport(context));
+            logCollectorRegistration = context.registerService(TurboFilter.class.getName(), logCollector, null);
+        }
+    }
+
+    @Deactivate
+    private void deactivate() {
+        if (logCollectorRegistration != null) {
+            logCollectorRegistration.unregister();
+        }
+    }
+
+    private static final class QueryLogCollector extends TurboFilter {
         private static final String COLLECTOR_KEY = "collectorKey";
 
-        private final String[] loggerNames;
+        private final Map<String, String> loggers;
+
         private final Layout<ILoggingEvent> layout;
+
         private final int msgCountLimit;
+
         private final Map<String, List<ILoggingEvent>> logEvents
                 = new ConcurrentHashMap<String, List<ILoggingEvent>>();
+
         private final boolean mdcEnabled;
 
-        private QueryLogCollector(String[] loggerNames, String pattern, int msgCountLimit, boolean mdcEnabled) {
-            this.loggerNames = loggerNames;
+        private QueryLogCollector(Map<String, String> loggers, String pattern, int msgCountLimit, boolean
+                mdcEnabled) {
+            this.loggers = loggers;
             this.msgCountLimit = msgCountLimit;
             this.layout = createLayout(pattern);
             this.mdcEnabled = mdcEnabled;
 
-            if (!mdcEnabled){
+            if (!mdcEnabled) {
                 log.debug("Current Oak version does not provide MDC. Explain log would have some extra entries");
             }
         }
@@ -434,21 +441,16 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
                                   Level level, String format, Object[] params, Throwable t) {
 
             String collectorKey = MDC.get(COLLECTOR_KEY);
-            if (collectorKey == null){
+            if (collectorKey == null) {
                 return FilterReply.NEUTRAL;
             }
 
-            if (mdcEnabled && MDC.get(QUERY_ANALYZE) == null){
+            if (!acceptLogger(logger.getName())) {
                 return FilterReply.NEUTRAL;
             }
 
-            if (!configuredLogger(logger.getName())){
-                return FilterReply.NEUTRAL;
-            }
-
-            //isXXXEnabled call. Accept the call to allow actual message to be
-            //logged
-            if (format == null){
+            //isXXXEnabled call. Accept the call to allow actual message to be logged
+            if (format == null) {
                 return FilterReply.ACCEPT;
             }
 
@@ -456,17 +458,17 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
                     logger, level, format, t, params);
             log(collectorKey, logEvent);
 
-            //Return NEUTRAL to allow normal logging of message depending on level
+            // Return NEUTRAL to allow normal logging of message depending on level
             return FilterReply.NEUTRAL;
         }
 
-        public List<String> getLogs(String collectorKey){
+        public List<String> getLogs(String collectorKey) {
             List<ILoggingEvent> eventList = logEvents.get(collectorKey);
-            if (eventList == null){
+            if (eventList == null) {
                 return Collections.emptyList();
             }
             List<String> result = new ArrayList<String>(eventList.size());
-            for (ILoggingEvent e : eventList){
+            for (ILoggingEvent e : eventList) {
                 result.add(layout.doLayout(e));
             }
             return result;
@@ -478,7 +480,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
 
         private void log(String collectorKey, ILoggingEvent e) {
             List<ILoggingEvent> eventList = logEvents.get(collectorKey);
-            if (eventList == null){
+            if (eventList == null) {
                 eventList = new ArrayList<ILoggingEvent>();
                 logEvents.put(collectorKey, eventList);
             }
@@ -488,12 +490,27 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
             }
         }
 
-        private boolean configuredLogger(String name) {
-            for (String loggerName : loggerNames){
-                if (name.startsWith(loggerName)){
-                    return true;
+        private boolean acceptLogger(String name) {
+            for (final Map.Entry<String, String> entry : this.loggers.entrySet()) {
+                if (name.startsWith(entry.getKey())) {
+                    // log entry logger matches a configured logger
+
+                    if (!mdcEnabled) {
+                        // If MDC is not enabled, then matching logger name is good enough
+                        return true;
+                    } else if (mdcEnabled && entry.getValue() == null) {
+                        // If MDC is enabled, but the logger is not configured to use MDC filtering then accept it
+                        return true;
+                    } else if (mdcEnabled && entry.getValue() != null && MDC.get(entry.getValue()) != null) {
+                        // If MDC is enabled and a MDC filter value is specified, then the entry must have the
+                        // MDC value
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
             }
+
             return false;
         }
 

@@ -173,7 +173,7 @@
 
                                     <div class="call-out">
                                         <ul class="log-messages"
-                                            ng-repeat="log in result.explain.logs">
+                                            ng-repeat="log in result.explain.logs track by $index">
                                             <li>{{ log }}</li>
                                         </ul>
                                         <div ng-show="result.explain.logsTruncated">
@@ -202,7 +202,7 @@
                                         </thead>
 
                                         <tbody>
-                                            <tr ng-repeat="query in queries.slow"
+                                            <tr ng-repeat="query in queries.slow track by $index"
                                                 ng-class="{ expanded : query.expanded }">
                                                 <td class="num"
                                                     ng-click="load(query)">
@@ -247,7 +247,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr ng-repeat="query in queries.popular"
+                                            <tr ng-repeat="query in queries.popular track by $index"
                                                 ng-class="{ expanded : query.expanded }">
                                                 <td class="num"
                                                     ng-click="load(query)">
