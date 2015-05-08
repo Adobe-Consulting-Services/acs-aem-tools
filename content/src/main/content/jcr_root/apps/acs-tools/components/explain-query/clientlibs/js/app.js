@@ -57,7 +57,8 @@ explainQueryApp.controller('MainCtrl', function($scope, $http, $timeout) {
             url: $scope.app.uri,
             data: 'statement=' + encodeURIComponent($scope.form.statement)
                 + '&language=' + encodeURIComponent($scope.form.language)
-                + '&executionTime=' + encodeURIComponent($scope.form.executionTime),
+                + '&executionTime=' + encodeURIComponent($scope.form.executionTime)
+                + '&resultCount=' + encodeURIComponent($scope.form.executionTime && $scope.form.resultCount),
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).
         success(function(data, status, headers, config) {

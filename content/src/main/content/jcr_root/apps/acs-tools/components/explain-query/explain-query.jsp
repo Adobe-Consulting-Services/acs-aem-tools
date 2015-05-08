@@ -128,6 +128,20 @@
                                         </span>
                                     </div>
 
+
+                                    <div class="form-row"
+                                            ng-show="form.executionTime">
+                                        <h4>Include result count</h4>
+
+                                        <span>
+                                            <label><input
+                                                    ng-model="form.resultCount"
+                                                    type="checkbox"><span>
+                                                Count the total number of results.
+                                                Large result sets will delay reporting the explanation.</span></label>
+                                        </span>
+                                    </div>
+
                                     <div class="form-row">
                                         <div class="form-left-cell">&nbsp;</div>
                                         <button class="primary">Explain</button>
@@ -143,12 +157,18 @@
                                         executed against large repositories.
                                     </div>
 
-                                    <div class="call-out" ng-show="result.timing">
-                                        Total query execution: {{ result.timing.totalTime }} ms
+                                    <div class="call-out" ng-show="result.heuristics">
+                                        Total query execution: {{ result.heuristics.totalTime }} ms
 
                                         <ul>
-                                            <li>query.execute(): {{ result.timing.executeTime }} ms</li>
-                                            <li>queryResult.getNodes(): {{ result.timing.getNodesTime }} ms</li>
+                                            <li>query.execute(): {{ result.heuristics.executeTime }} ms</li>
+                                            <li>queryResult.getNodes(): {{ result.heuristics.getNodesTime }} ms</li>
+
+
+                                            <li ng-show="result.heuristics.hasCount">Result count:
+                                                {{ result.heuristics.count }}</li>
+                                            <li ng-show="result.heuristics.hasCount">Result count time:
+                                                {{ result.heuristics.countTime }} ms</li>
                                         </ul>
                                     </div>
 

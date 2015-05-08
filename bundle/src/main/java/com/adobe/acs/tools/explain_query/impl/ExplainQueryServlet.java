@@ -57,6 +57,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.slf4j.Marker;
 
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
@@ -101,7 +102,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
 
     private static final String QUERY_BUILDER = "queryBuilder";
 
-    private static final String[] LANGUAGES = new String[]{SQL, SQL2, XPATH};
+    private static final String[] LANGUAGES = new String[]{ SQL, SQL2, XPATH };
 
     private static final Pattern PROPERTY_INDEX_PATTERN =
             Pattern.compile("\\/\\*\\sproperty\\s([^\\s=]+)[=\\s]");
@@ -186,15 +187,23 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
 
         try {
 
+            // Mark this thread as an Explain Query thread for TurboFiltering
+            EXPLAIN_QUERY_THREAD.set(true);
+
             final JSONObject json = new JSONObject();
             json.put("statement", statement);
             json.put("language", language);
 
             json.put("explain", explainQuery(session, statement, language));
 
-            if (request.getParameter("executionTime") != null
-                    && StringUtils.equals("true", request.getParameter("executionTime"))) {
-                json.put("timing", this.executionTimes(session, statement, language));
+            boolean collectExecutionTime = "true".equals(
+                    StringUtils.defaultIfEmpty(request.getParameter("executionTime"), "false"));
+
+            boolean collectCount = "true".equals(
+                    StringUtils.defaultIfEmpty(request.getParameter("resultCount"), "false"));
+
+            if (collectExecutionTime) {
+                json.put("heuristics", this.getHeuristics(session, statement, language, collectCount));
             }
 
             response.setContentType("application/json");
@@ -206,6 +215,8 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         } catch (JSONException e) {
             log.error(e.getMessage());
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } finally {
+            EXPLAIN_QUERY_THREAD.remove();
         }
     }
 
@@ -288,13 +299,19 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         return json;
     }
 
-    private JSONObject executionTimes(final Session session, final String statement,
-                                      final String language) throws RepositoryException, JSONException {
+    private JSONObject getHeuristics(final Session session,
+                                     final String statement,
+                                     final String language,
+                                     final boolean getCount) throws RepositoryException, JSONException {
+
+        int count = 0;
+
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
         final JSONObject json = new JSONObject();
 
         long executionTime;
         long getNodesTime;
+        long countTime = 0L;
 
         if (language.equals(QUERY_BUILDER)) {
             final String[] lines = StringUtils.split(statement, '\n');
@@ -308,6 +325,13 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
             start = System.currentTimeMillis();
             result.getNodes();
             getNodesTime = System.currentTimeMillis() - start;
+
+
+            if (getCount) {
+                count = result.getHits().size();
+                countTime = System.currentTimeMillis() - start;
+            }
+
         } else {
             final Query query = queryManager.createQuery(statement, language);
 
@@ -318,10 +342,30 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
             start = System.currentTimeMillis();
             queryResult.getNodes();
             getNodesTime = System.currentTimeMillis() - start;
+
+
+            if (getCount) {
+                final NodeIterator nodes = queryResult.getNodes();
+
+                while (nodes.hasNext()) {
+                    nodes.next();
+                    count++;
+                }
+
+                countTime = System.currentTimeMillis() - start;
+            }
         }
+
         json.put("executeTime", executionTime);
         json.put("getNodesTime", getNodesTime);
-        json.put("totalTime", executionTime + getNodesTime);
+
+        if (getCount) {
+            json.put("hasCount", true);
+            json.put("count", count);
+            json.put("countTime", countTime);
+        }
+
+        json.put("totalTime", executionTime + getNodesTime + countTime);
 
         return json;
     }
@@ -377,7 +421,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
     }
 
     private static boolean checkMDCSupport(BundleContext context) {
-        //MDC support is present since 1.0.9
+        //MDC support is present since 1.0.9                     s
         Version versionWithMDCSupport = new Version(1, 0, 9);
         for (Bundle b : context.getBundles()) {
             if ("org.apache.jackrabbit.oak-core".equals(b.getSymbolicName())) {
@@ -440,12 +484,21 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         public FilterReply decide(Marker marker, ch.qos.logback.classic.Logger logger,
                                   Level level, String format, Object[] params, Throwable t) {
 
+            /** NO LOGGING IN THIS METHOD **/
+
+            // If request is NOT an Explain Query generated thread, then always reply NEUTRAL
+            // This check is extremely fast and incur almost no overhead.
+
+            if (!EXPLAIN_QUERY_THREAD.get()) {
+                return FilterReply.NEUTRAL;
+            }
+
             String collectorKey = MDC.get(COLLECTOR_KEY);
             if (collectorKey == null) {
                 return FilterReply.NEUTRAL;
             }
 
-            if (!acceptLogger(logger.getName())) {
+            if (!acceptLogStatement(logger.getName())) {
                 return FilterReply.NEUTRAL;
             }
 
@@ -490,7 +543,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
             }
         }
 
-        private boolean acceptLogger(String name) {
+        private boolean acceptLogStatement(String name) {
             for (final Map.Entry<String, String> entry : this.loggers.entrySet()) {
                 if (name.startsWith(entry.getKey())) {
                     // log entry logger matches a configured logger
@@ -523,4 +576,16 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
             return pl;
         }
     }
+
+
+    /**
+     * EXPLAIN_THREAD_LOCAL variable is used to expedite the check for is the TurboFilter should Accept.
+     */
+    private static final ThreadLocal<Boolean> EXPLAIN_QUERY_THREAD = new ThreadLocal<Boolean>() {
+        @Override
+        protected Boolean initialValue() {
+            set(false);
+            return get();
+        }
+    };
 }
