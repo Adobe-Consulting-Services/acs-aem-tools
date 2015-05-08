@@ -360,7 +360,6 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         json.put("getNodesTime", getNodesTime);
 
         if (getCount) {
-            json.put("hasCount", true);
             json.put("count", count);
             json.put("countTime", countTime);
         }
@@ -577,10 +576,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         }
     }
 
-
-    /**
-     * EXPLAIN_THREAD_LOCAL variable is used to expedite the check for is the TurboFilter should Accept.
-     */
+    // EXPLAIN_THREAD_LOCAL variable is used to expedite the check for is the TurboFilter should Accept.
     private static final ThreadLocal<Boolean> EXPLAIN_QUERY_THREAD = new ThreadLocal<Boolean>() {
         @Override
         protected Boolean initialValue() {
