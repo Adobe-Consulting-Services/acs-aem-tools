@@ -102,7 +102,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
 
     private static final String QUERY_BUILDER = "queryBuilder";
 
-    private static final String[] LANGUAGES = new String[]{ SQL, SQL2, XPATH };
+    private static final String[] LANGUAGES = new String[]{SQL, SQL2, XPATH};
 
     private static final Pattern PROPERTY_INDEX_PATTERN =
             Pattern.compile("\\/\\*\\sproperty\\s([^\\s=]+)[=\\s]");
