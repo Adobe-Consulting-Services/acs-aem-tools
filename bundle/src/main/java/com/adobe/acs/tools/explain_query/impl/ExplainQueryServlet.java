@@ -147,6 +147,9 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
     @Reference
     private QueryBuilder queryBuilder;
 
+
+    private QueryLogCollector logCollector = null;
+
     private final AtomicReference<ServiceRegistration> logCollectorReg = new AtomicReference<ServiceRegistration>();
 
     private final AtomicInteger logCollectorRegCount = new AtomicInteger();
@@ -196,18 +199,15 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         final Session session = resourceResolver.adaptTo(Session.class);
 
         try {
-            final QueryLogCollector logCollector = new QueryLogCollector(this.loggers, this.pattern,
-                    this.msgCountLimit, checkMDCSupport(this.bundleContext));
-
             // Mark this thread as an Explain Query thread for TurboFiltering
-            registerLogCollector(logCollector);
+            registerLogCollector();
             logCollectorRegistered = true;
 
             final JSONObject json = new JSONObject();
             json.put("statement", statement);
             json.put("language", language);
 
-            json.put("explain", explainQuery(session, logCollector, statement, language));
+            json.put("explain", explainQuery(session, statement, language));
 
             boolean collectExecutionTime = "true".equals(
                     StringUtils.defaultIfEmpty(request.getParameter("executionTime"), "false"));
@@ -235,8 +235,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         }
     }
 
-    private JSONObject explainQuery(final Session session, final QueryLogCollector logCollector,
-                                    final String statement, final String language)
+    private JSONObject explainQuery(final Session session, final String statement, final String language)
             throws RepositoryException, JSONException {
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
         final JSONObject json = new JSONObject();
@@ -260,16 +259,17 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
             final Query query = queryManager.createQuery("explain " + effectiveStatement, effectiveLanguage);
             queryResult = query.execute();
         } finally {
-            if (logCollector != null) {
-                List<String> logs = logCollector.getLogs(collectorKey);
-                json.put("logs", logCollector.getLogs(collectorKey));
+            synchronized (this.logCollector) {
+                if (this.logCollector != null) {
+                    List<String> logs = this.logCollector.getLogs(collectorKey);
+                    json.put("logs", this.logCollector.getLogs(collectorKey));
 
-                if (logs.size() == logCollector.msgCountLimit) {
-                    json.put("logsTruncated", true);
+                    if (logs.size() == this.logCollector.msgCountLimit) {
+                        json.put("logsTruncated", true);
+                    }
                 }
+                stopCollection(collectorKey);
             }
-
-            stopCollection(logCollector, collectorKey);
         }
 
         final RowIterator rows = queryResult.getRows();
@@ -429,10 +429,12 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         return collectorKey;
     }
 
-    private void stopCollection(QueryLogCollector logCollector, String key) {
-        MDC.remove(key);
-        if (logCollector != null) {
-            logCollector.stopCollection(key);
+    private void stopCollection(String key) {
+        synchronized (this.logCollector) {
+            MDC.remove(key);
+            if (this.logCollector != null) {
+                this.logCollector.stopCollection(key);
+            }
         }
     }
 
@@ -458,12 +460,12 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
      * If multiple such request are performed then also only one filter gets
      * registered
      */
-    private void registerLogCollector(QueryLogCollector logCollector) {
+    private void registerLogCollector() {
         synchronized (logCollectorRegCount) {
             int count = logCollectorRegCount.getAndIncrement();
             if (count == 0) {
                 ServiceRegistration reg = bundleContext.registerService(TurboFilter.class.getName(),
-                        logCollector, null);
+                        this.logCollector, null);
                 logCollectorReg.set(reg);
             }
         }
@@ -489,10 +491,12 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         if (loggers != null && !loggers.isEmpty()) {
             this.pattern = PropertiesUtil.toString(config.get(PROP_MSG_PATTERN), DEFAULT_PATTERN);
             this.msgCountLimit = PropertiesUtil.toInteger(config.get(PROP_LOG_COUNT_LIMIT), DEFAULT_LIMIT);
-        } else {
-            this.pattern = DEFAULT_PATTERN;
-            this.msgCountLimit = DEFAULT_LIMIT;
 
+            // Create a single logCollector; this will be used as TurboFilters are register with the execution of
+            // this Servlet
+            this.logCollector = new QueryLogCollector(loggers, pattern, msgCountLimit, checkMDCSupport(context));
+        } else {
+            this.logCollector = null;
         }
     }
 
