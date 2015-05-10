@@ -72,10 +72,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -144,9 +147,15 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
     @Reference
     private QueryBuilder queryBuilder;
 
-    private QueryLogCollector logCollector;
+    private final AtomicReference<ServiceRegistration> logCollectorReg = new AtomicReference<ServiceRegistration>();
 
-    private ServiceRegistration logCollectorRegistration;
+    private final AtomicInteger logCollectorRegCount = new AtomicInteger();
+
+    private BundleContext bundleContext;
+    private Map<String, String> loggers = new HashMap<String, String>();
+    private String pattern = DEFAULT_PATTERN;
+    private int msgCountLimit = DEFAULT_LIMIT;
+
 
     @SuppressWarnings("unchecked")
     @Override
@@ -178,6 +187,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
     protected final void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response)
             throws ServletException, IOException {
 
+        boolean logCollectorRegistered = false;
         final ResourceResolver resourceResolver = request.getResourceResolver();
 
         String statement = StringUtils.removeStartIgnoreCase(request.getParameter("statement"), "EXPLAIN ");
@@ -186,15 +196,18 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         final Session session = resourceResolver.adaptTo(Session.class);
 
         try {
+            final QueryLogCollector logCollector = new QueryLogCollector(this.loggers, this.pattern,
+                    this.msgCountLimit, checkMDCSupport(this.bundleContext));
 
             // Mark this thread as an Explain Query thread for TurboFiltering
-            EXPLAIN_QUERY_THREAD.set(true);
+            registerLogCollector(logCollector);
+            logCollectorRegistered = true;
 
             final JSONObject json = new JSONObject();
             json.put("statement", statement);
             json.put("language", language);
 
-            json.put("explain", explainQuery(session, statement, language));
+            json.put("explain", explainQuery(session, logCollector, statement, language));
 
             boolean collectExecutionTime = "true".equals(
                     StringUtils.defaultIfEmpty(request.getParameter("executionTime"), "false"));
@@ -216,12 +229,15 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
             log.error(e.getMessage());
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } finally {
-            EXPLAIN_QUERY_THREAD.remove();
+            if (logCollectorRegistered) {
+                unregisterLogCollector();
+            }
         }
     }
 
-    private JSONObject explainQuery(final Session session, final String statement,
-                                    final String language) throws RepositoryException, JSONException {
+    private JSONObject explainQuery(final Session session, final QueryLogCollector logCollector,
+                                    final String statement, final String language)
+            throws RepositoryException, JSONException {
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
         final JSONObject json = new JSONObject();
         final String collectorKey = startCollection();
@@ -252,7 +268,8 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
                     json.put("logsTruncated", true);
                 }
             }
-            stopCollection(collectorKey);
+
+            stopCollection(logCollector, collectorKey);
         }
 
         final RowIterator rows = queryResult.getRows();
@@ -412,7 +429,7 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         return collectorKey;
     }
 
-    private void stopCollection(String key) {
+    private void stopCollection(QueryLogCollector logCollector, String key) {
         MDC.remove(key);
         if (logCollector != null) {
             logCollector.stopCollection(key);
@@ -432,24 +449,59 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         return true;
     }
 
+    /**
+     * TurboFilters causes slowness as they are executed on critical path
+     * Hence care is taken to only register the filter only when required
+     * Logic below ensures that filter is only registered for the duration
+     * or request which needs to be "monitored".
+     *
+     * If multiple such request are performed then also only one filter gets
+     * registered
+     */
+    private void registerLogCollector(QueryLogCollector logCollector) {
+        synchronized (logCollectorRegCount) {
+            int count = logCollectorRegCount.getAndIncrement();
+            if (count == 0) {
+                ServiceRegistration reg = bundleContext.registerService(TurboFilter.class.getName(),
+                        logCollector, null);
+                logCollectorReg.set(reg);
+            }
+        }
+    }
+
+    private void unregisterLogCollector() {
+        synchronized (logCollectorRegCount) {
+            int count = logCollectorRegCount.decrementAndGet();
+            if (count == 0) {
+                ServiceRegistration reg = logCollectorReg.getAndSet(null);
+                reg.unregister();
+            }
+        }
+    }
+
     @Activate
     private void activate(Map<String, ?> config, BundleContext context) {
+        this.bundleContext = context;
 
-        Map<String, String> loggers = OsgiPropertyUtil.toMap(PropertiesUtil.toStringArray(
+        this.loggers = OsgiPropertyUtil.toMap(PropertiesUtil.toStringArray(
                 config.get(PROP_LOGGER_NAMES), new String[0]), "=", true, null);
 
         if (loggers != null && !loggers.isEmpty()) {
-            String pattern = PropertiesUtil.toString(config.get(PROP_MSG_PATTERN), DEFAULT_PATTERN);
-            int msgCountLimit = PropertiesUtil.toInteger(config.get(PROP_LOG_COUNT_LIMIT), DEFAULT_LIMIT);
-            logCollector = new QueryLogCollector(loggers, pattern, msgCountLimit, checkMDCSupport(context));
-            logCollectorRegistration = context.registerService(TurboFilter.class.getName(), logCollector, null);
+            this.pattern = PropertiesUtil.toString(config.get(PROP_MSG_PATTERN), DEFAULT_PATTERN);
+            this.msgCountLimit = PropertiesUtil.toInteger(config.get(PROP_LOG_COUNT_LIMIT), DEFAULT_LIMIT);
+        } else {
+            this.pattern = DEFAULT_PATTERN;
+            this.msgCountLimit = DEFAULT_LIMIT;
+
         }
     }
 
     @Deactivate
     private void deactivate() {
-        if (logCollectorRegistration != null) {
-            logCollectorRegistration.unregister();
+        ServiceRegistration reg = logCollectorReg.getAndSet(null);
+
+        if (reg != null) {
+            reg.unregister();
         }
     }
 
@@ -487,10 +539,6 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
 
             // If request is NOT an Explain Query generated thread, then always reply NEUTRAL
             // This check is extremely fast and incur almost no overhead.
-
-            if (!EXPLAIN_QUERY_THREAD.get()) {
-                return FilterReply.NEUTRAL;
-            }
 
             String collectorKey = MDC.get(COLLECTOR_KEY);
             if (collectorKey == null) {
@@ -575,13 +623,4 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
             return pl;
         }
     }
-
-    // EXPLAIN_THREAD_LOCAL variable is used to expedite the check for is the TurboFilter should Accept.
-    private static final ThreadLocal<Boolean> EXPLAIN_QUERY_THREAD = new ThreadLocal<Boolean>() {
-        @Override
-        protected Boolean initialValue() {
-            set(false);
-            return get();
-        }
-    };
 }
