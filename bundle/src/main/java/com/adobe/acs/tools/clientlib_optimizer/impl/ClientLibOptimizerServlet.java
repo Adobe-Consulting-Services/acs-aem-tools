@@ -28,7 +28,7 @@ import com.day.cq.widget.HtmlLibraryManager;
 import com.day.cq.widget.LibraryType;
 
 @SlingServlet(
-        label = "ACS AEM Tools - ClientLibrary Optimizer Servlett",
+        label = "ACS AEM Tools - ClientLibrary Optimizer Servlet",
         description = "...",
         methods = { "GET" },
         resourceTypes = { "acs-tools/components/clientlibs-optimizer" },
