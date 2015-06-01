@@ -18,10 +18,10 @@
  * #L%
  */
 
-/*global angular: false */
+/*global angular: false, ACS: false */
 
 
-var clientLibsOptimizerApp = angular.module('clientLibsOptimizerApp',[]);
+var clientLibsOptimizerApp = angular.module('clientLibsOptimizerApp', ['ACS.Tools.notifications']);
 
 clientLibsOptimizerApp.controller('MainCtrl', function($scope, $http, $timeout) {
 
@@ -122,21 +122,11 @@ clientLibsOptimizerApp.controller('MainCtrl', function($scope, $http, $timeout) 
     };
 
     $scope.addNotification = function (type, title, message) {
-        var timeout = 30000;
-
-        if(type === 'success')  {
-            timeout = timeout / 2;
-        }
-
         $scope.notifications.push({
             type: type,
             title: title,
             message: message
         });
-
-        $timeout(function() {
-            $scope.notifications.shift();
-        }, timeout);
     };
 });
 

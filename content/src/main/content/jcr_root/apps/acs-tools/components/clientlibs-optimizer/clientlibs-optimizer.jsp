@@ -38,7 +38,6 @@
     <body id="acs-tools-clientlibs-optimizer-app">
 
         <header class="top">
-
             <div class="logo">
                 <a href="/"><i class="icon-marketingcloud medium"></i></a>
             </div>
@@ -56,7 +55,7 @@
                 <div class="content">
                     <div class="content-container">
 
-                        <cq:include script="includes/notifications.jsp"/>
+                        <notifications items="notifications"></notifications>
 
                         <h1>Client Library Optimizer</h1>
 

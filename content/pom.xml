@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <!-- ====================================================================== -->
     <!-- P A R E N T P R O J E C T D E S C R I P T I O N -->
@@ -30,7 +31,7 @@
             <resource>
                 <directory>src/main/content/META-INF/vault/definition</directory>
                 <targetPath>../vault-work/META-INF/vault/definition</targetPath>
-            </resource>              
+            </resource>
         </resources>
 
         <plugins>
@@ -79,61 +80,62 @@
                 </configuration>
             </plugin>
 
-              <plugin>
-                  <groupId>org.codehaus.mojo</groupId>
-                  <artifactId>license-maven-plugin</artifactId>
-                  <configuration>
-                      <excludes>
-                          <exclude>**/*.xml</exclude>
-                          <exclude>**/aemfiddle/code-templates/**</exclude>
-                          <exclude>**/angularjs/*.js</exclude>
-                          <exclude>**/aceeditor/**</exclude>
-                          <exclude>**/vendor/**</exclude>
-                      </excludes>
-                  </configuration>
-              </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*.xml</exclude>
+                        <exclude>**/aemfiddle/code-templates/**</exclude>
+                        <exclude>**/angularjs/*.js</exclude>
+                        <exclude>**/aceeditor/**</exclude>
+                        <exclude>**/vendor/**</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
 
-              <!-- configuration to create minimal package -->
-              <plugin>
-                  <groupId>org.codehaus.gmaven</groupId>
-                  <artifactId>gmaven-plugin</artifactId>
-                  <version>1.5</version>
-                  <executions>
-                      <execution>
-                          <id>create-min-package</id>
-                          <phase>package</phase>
-                          <goals>
-                              <goal>execute</goal>
-                          </goals>
-                          <configuration>
-                              <source>${pom.basedir}/src/main/script/CreateMinPackage.groovy</source>
-                          </configuration>
-                      </execution>
-                  </executions>
-              </plugin>
-              <plugin>
-                  <groupId>org.codehaus.mojo</groupId>
-                  <artifactId>build-helper-maven-plugin</artifactId>
-                  <version>1.8</version>
-                  <executions>
-                      <execution>
-                          <id>attach-artifacts</id>
-                          <phase>package</phase>
-                          <goals>
-                              <goal>attach-artifact</goal>
-                          </goals>
-                          <configuration>
-                              <artifacts>
-                                  <artifact>
-                                      <file>${project.build.directory}/${project.artifactId}-${project.version}-min.zip</file>
-                                      <type>zip</type>
-                                      <classifier>min</classifier>
-                                  </artifact>
-                              </artifacts>
-                          </configuration>
-                      </execution>
-                  </executions>
-              </plugin>
+            <!-- configuration to create minimal package -->
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>create-min-package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>${pom.basedir}/src/main/script/CreateMinPackage.groovy</source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/${project.artifactId}-${project.version}-min.zip
+                                    </file>
+                                    <type>zip</type>
+                                    <classifier>min</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
