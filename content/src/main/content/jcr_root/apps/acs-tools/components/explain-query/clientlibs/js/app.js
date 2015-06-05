@@ -18,9 +18,16 @@
  * #L%
  */
 
-/*global angular: false */
+/*global angular: false, window: false */
 
-var explainQueryApp = angular.module('explainQueryApp',[]);
+var explainQueryApp = angular.module('explainQueryApp', []);
+
+explainQueryApp.config( [
+    '$compileProvider',
+    function( $compileProvider ) {
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(data):/);
+    }
+]);
 
 explainQueryApp.controller('MainCtrl', function($scope, $http, $timeout) {
 
@@ -56,8 +63,9 @@ explainQueryApp.controller('MainCtrl', function($scope, $http, $timeout) {
             method: 'POST',
             url: $scope.app.uri,
             data: 'statement=' + encodeURIComponent($scope.form.statement)
-                + '&language=' + encodeURIComponent($scope.form.language)
-                + '&executionTime=' + encodeURIComponent($scope.form.executionTime),
+            + '&language=' + encodeURIComponent($scope.form.language)
+            + '&executionTime=' + encodeURIComponent($scope.form.executionTime)
+            + '&resultCount=' + encodeURIComponent($scope.form.executionTime && $scope.form.resultCount),
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).
         success(function(data, status, headers, config) {
@@ -71,6 +79,10 @@ explainQueryApp.controller('MainCtrl', function($scope, $http, $timeout) {
             $scope.addNotification('error', 'ERROR', 'Check your query and try again.');
         });
 
+    };
+
+    $scope.exportAsJSON = function(data) {
+        return window.encodeURIComponent(JSON.stringify(data, null, 4));
     };
 
     $scope.addNotification = function (type, title, message) {
