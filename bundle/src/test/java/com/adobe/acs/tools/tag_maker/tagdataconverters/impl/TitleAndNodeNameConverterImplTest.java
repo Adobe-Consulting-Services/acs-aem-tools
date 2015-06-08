@@ -4,9 +4,9 @@ import com.adobe.acs.tools.tag_maker.TagData;
 import com.adobe.acs.tools.tag_maker.tagdataconverters.TagDataConverter;
 import junit.framework.TestCase;
 
-public class HandlebarsConverterImplTest extends TestCase {
+public class TitleAndNodeNameConverterImplTest extends TestCase {
 
-    TagDataConverter converter = new HandlebarsConverterImpl();
+    TagDataConverter converter = new TitleAndNodeNameConverterImpl();
 
     public void testConvert() throws Exception {
 

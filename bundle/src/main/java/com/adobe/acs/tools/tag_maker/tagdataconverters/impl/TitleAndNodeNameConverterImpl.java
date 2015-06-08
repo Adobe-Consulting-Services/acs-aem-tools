@@ -32,28 +32,30 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component(
-    label = "ACS AEM Tools - Tag Maker - Handlebars Converter"
+    label = "ACS AEM Tools - Tag Maker - Title and Name Converter"
 )
 @Properties({
         @Property(
                 label = "Name",
                 name = TagDataConverter.PROP_NAME,
-                value = HandlebarsConverterImpl.NAME,
+                value = TitleAndNodeNameConverterImpl.NAME,
                 propertyPrivate = true
         ),
         @Property(
                 label = "Label",
                 name = TagDataConverter.PROP_LABEL,
-                value = HandlebarsConverterImpl.LABEL,
+                value = TitleAndNodeNameConverterImpl.LABEL,
                 propertyPrivate = true
         )
 })
 @Service
-public class HandlebarsConverterImpl implements TagDataConverter {
+public class TitleAndNodeNameConverterImpl implements TagDataConverter {
 
-    public static final String NAME = "acs-commons-handlebars";
+    public static final String NAME = "acs-commons-title-and-node-name";
 
-    public static final String LABEL = "Handlebars";
+    public static final String LABEL = "Title {{ node-name }}";
+
+    private static final Pattern ACCEPT_PATTERN = Pattern.compile(".+\\{\\{(.+)}}$");
 
     private static final Pattern PATTERN = Pattern.compile("\\{\\{(.+)}}$");
 
@@ -84,5 +86,11 @@ public class HandlebarsConverterImpl implements TagDataConverter {
         tagData.setTitle(title);
 
         return tagData;
+    }
+
+    @Override
+    public boolean accepts(String data) {
+        final Matcher matcher = ACCEPT_PATTERN.matcher(data);
+        return matcher.matches();
     }
 }

@@ -48,9 +48,9 @@ import org.apache.felix.scr.annotations.Service;
 @Service
 public class LowercaseWithDashesConverterImpl implements TagDataConverter {
 
-    public static final String NAME = "acs-commons-lowercase-dashes";
+    public static final String NAME = "acs-commons-lowercase-dashes-en-us";
 
-    public static final String LABEL = "Lowercase w/ Dashes";
+    public static final String LABEL = "Lowercase with Dashes (English)";
 
     @Override
     public final String getLabel() {
@@ -76,5 +76,11 @@ public class LowercaseWithDashesConverterImpl implements TagDataConverter {
         tagData.setTitle(title);
 
         return tagData;
+    }
+
+    @Override
+    public boolean accepts(String data) {
+        // Accepts any formats
+        return true;
     }
 }

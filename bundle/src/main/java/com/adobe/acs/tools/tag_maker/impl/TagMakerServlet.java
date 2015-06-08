@@ -66,10 +66,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @SlingServlet(
         label = "ACS AEM Tools - Tag Maker Servlet",
-        methods = { "GET", "POST" },
-        resourceTypes = { "acs-tools/components/tag-maker" },
-        selectors = { "init", "make-tags" },
-        extensions = { "json" }
+        methods = {"GET", "POST"},
+        resourceTypes = {"acs-tools/components/tag-maker"},
+        selectors = {"init", "make-tags"},
+        extensions = {"json"}
 )
 @References({
         @Reference(
@@ -84,6 +84,8 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
     private static final String DEFAULT_CHARSET = "UTF-8";
 
     private static final String DEFAULT_CONVERTER = DefaultConverterImpl.LABEL;
+
+    private static final String NONE_CONVERTER = "__NONE";
 
     private static final boolean DEFAULT_CLEAN = true;
 
@@ -113,9 +115,7 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
         } catch (JSONException e) {
             response.setStatus(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-
     }
-
 
     @Override
     protected final void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response)
@@ -134,6 +134,8 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
         final RequestParameter fileParameter = request.getRequestParameter("file");
         final RequestParameter separatorParam = request.getRequestParameter("separator");
         final RequestParameter converterParam = request.getRequestParameter("converter");
+        final RequestParameter fallbackConverterParam = request.getRequestParameter("fallbackConverter");
+
 
         boolean clean = DEFAULT_CLEAN;
         if (cleanParam != null) {
@@ -144,6 +146,11 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
         String converter = DEFAULT_CONVERTER;
         if (converterParam != null) {
             converter = StringUtils.defaultIfEmpty(converterParam.toString(), DEFAULT_CONVERTER);
+        }
+
+        String fallbackConverter = NONE_CONVERTER;
+        if (fallbackConverterParam != null) {
+            fallbackConverter = StringUtils.defaultIfEmpty(fallbackConverterParam.toString(), NONE_CONVERTER);
         }
 
         String charset = DEFAULT_CHARSET;
@@ -161,9 +168,20 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
             separator = separatorParam.toString().charAt(0);
         }
 
-        TagDataConverter tagDataConverter = this.tagDataConverters.get(converter);
 
-        if (tagDataConverter == null) {
+        final List<TagDataConverter> tagDataConverters = new ArrayList<TagDataConverter>();
+
+        final TagDataConverter primaryTagConverter = this.getTagDataConverter(converter);
+        if (primaryTagConverter != null) {
+            tagDataConverters.add(primaryTagConverter);
+        }
+
+        final TagDataConverter fallbackTagConverter = this.getTagDataConverter(fallbackConverter);
+        if (fallbackTagConverter != null) {
+            tagDataConverters.add(fallbackTagConverter);
+        }
+
+        if (tagDataConverters.isEmpty()) {
             log.error("Could not find Tag Data Converter [ {} ]", converter);
 
             response.setStatus(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -191,7 +209,7 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
             final Iterator<String[]> rows = csv.read(is, charset);
 
             try {
-                final List<String> result = this.makeTags(tagManager, tagDataConverter, rows);
+                final List<String> result = this.makeTags(tagManager, tagDataConverters, rows);
 
                 try {
                     jsonResponse.put("tagIds", result);
@@ -218,7 +236,8 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
         response.getWriter().print(jsonResponse.toString());
     }
 
-    private List<String> makeTags(final TagManager tagManager, final TagDataConverter tagDataConverter,
+    private List<String> makeTags(final TagManager tagManager,
+                                  final List<TagDataConverter> tagDataConverters,
                                   final Iterator<String[]> rows) throws InvalidTagFormatException, RepositoryException {
 
         final Set<String> result = new LinkedHashSet<String>();
@@ -231,7 +250,7 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
             String tagId = null;
 
             for (int i = 0; i < row.length; i++) {
-                TagData tagData;
+                TagData tagData = null;
 
                 final String element = StringUtils.trimToNull(row[i]);
 
@@ -240,9 +259,17 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
                     break;
                 }
 
-                tagData = tagDataConverter.convert(element);
+                for (final TagDataConverter tagDataConverter : tagDataConverters) {
+                    if (tagDataConverter.accepts(element)) {
+                        tagData = tagDataConverter.convert(element);
+                        break;
+                    }
+                }
 
-                if (!tagData.isValid()) {
+                if (tagData == null) {
+                    log.warn("Could not find a Tag Data Converter that accepts CSV element [ {} ]; skipping...");
+                    break;
+                } else if (!tagData.isValid()) {
                     log.warn("Could not convert CSV element [ {} ] into valid Tag Data; skipping...");
                     break;
                 }
@@ -290,6 +317,14 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
         }
 
         return new ByteArrayInputStream(baos.toByteArray());
+    }
+
+    private TagDataConverter getTagDataConverter(final String name) {
+        if (StringUtils.isNotBlank(name)) {
+            return this.tagDataConverters.get(name);
+        }
+
+        return null;
     }
 
     private void addMessage(JSONObject jsonObject, String message) {

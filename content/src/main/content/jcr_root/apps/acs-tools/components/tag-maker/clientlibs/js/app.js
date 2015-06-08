@@ -34,6 +34,7 @@ tagMakerApp.controller('MainCtrl', ['$scope', '$http', '$timeout', 'Upload', fun
         charset: '',
         clean: 'true',
         converter: 'default',
+        fallbackConverter: 'none',
         separator: ''
     };
 
@@ -50,6 +51,12 @@ tagMakerApp.controller('MainCtrl', ['$scope', '$http', '$timeout', 'Upload', fun
         $http.get($scope.app.uri + '.init.json').
             success(function (data, status, headers, config) {
                 $scope.converters = data;
+                $scope.fallbackConverters = data;
+                $scope.fallbackConverters.push({
+                    label: "None",
+                    value: "acs-commons-none"
+                });
+                
             }).
             error(function (data, status, headers, config) {
                 $scope.addNotification('error',
@@ -69,6 +76,7 @@ tagMakerApp.controller('MainCtrl', ['$scope', '$http', '$timeout', 'Upload', fun
                 'charset': $scope.form.charset || '',
                 'clean': $scope.form.clean || 'false',
                 'converter': $scope.form.converter || 'default',
+                'fallbackConverter': $scope.form.fallbackConverter || 'default',
                 'delimiter': $scope.form.delimiter || '',
                 'separator': $scope.form.separator || ''
             },

@@ -69,4 +69,10 @@ public class DefaultConverterImpl implements TagDataConverter {
 
         return tagData;
     }
+
+    @Override
+    public boolean accepts(String data) {
+        // Default accepts all formats
+        return true;
+    }
 }

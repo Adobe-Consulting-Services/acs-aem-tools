@@ -20,7 +20,7 @@
 <form ng-submit="makeTags()">
 
     <div class="form-row">
-        <h4>Tag Data Converter</h4>
+        <h4>Primary Tag Data Converter</h4>
 
         <span>
             <select
@@ -34,6 +34,24 @@
             </select>
         </span>
     </div>
+
+    <div class="form-row">
+        <h4>Fallback Tag Data Converter</h4>
+
+        <span>
+            <select
+                    name="fallbackConverter"
+                    ng-model="form.fallbackConverter"
+                    ng-required="true"
+                    required>
+                <option ng-repeat="converter in fallbackConverters"
+                        ng-selected="{{converter.value === form.converter}}"
+                        value="{{ converter.value }}">{{ converter.label }}</option>
+            </select>
+        </span>
+    </div>
+
+
 
     <div class="form-row">
         <h4>CSV File</h4>

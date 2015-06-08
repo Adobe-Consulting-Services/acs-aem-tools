@@ -42,4 +42,10 @@ public interface TagDataConverter {
      */
     TagData convert(String data);
 
+    /**
+     * Determines if the Tag Data Converter can convert the provided data.
+     * @param data the data to convert
+     * @return true is the Tag Data Converter cant convert the data, false if it cannot
+     */
+    boolean accepts(String data);
 }
