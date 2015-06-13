@@ -69,17 +69,17 @@ angular.module('acs-tools-clientlibs-optimizer-app', ['ACS.Tools.notifications']
 
             if ($scope.result.categories) {
                 NotificationsService.add('success',
-                    'Success! Review the optimized client library definition below');
+                    'Success', 'Review the optimized client library definition below');
 
             } else {
                 NotificationsService.add('notice',
-                    'No client libraries could be found. '
-                     + 'Verify the provided client libraries with the provided type exist on this AEM instance.');
+                    'Client libs not found',
+                    'Verify the specified client libraries/types exist');
             }
         }).
         error(function(data, status, headers, config) {
                 NotificationsService.add('error',
-                     'Error. Ensure no cyclic dependencies in the provided client libraries.');
+                     'Error', 'Ensure no cyclic dependencies in the provided client libraries');
         });
 
         $scope.app.formErrors = {

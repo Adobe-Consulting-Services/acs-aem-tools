@@ -18,7 +18,8 @@
   ~ #L%
   --%>
 
-<form   name="tpgForm"
+<form   class="no-separator"
+        name="tpgForm"
         novalidate
         ng-submit="generatePages(tpgForm.$valid)">
 
