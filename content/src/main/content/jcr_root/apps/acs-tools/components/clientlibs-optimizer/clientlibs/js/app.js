@@ -20,9 +20,10 @@
 
 /*global angular: false, ACS: false */
 
-angular.module('acs-tools-clientlibs-optimizer-app', ['ACS.Tools.notifications']).controller('MainCtrl',
 
-    ['$scope', '$http', 'NotificationsService', function($scope, $http, NotificationsService) {
+var clientLibsOptimizerApp = angular.module('clientLibsOptimizerApp', ['ACS.Tools.notifications']);
+
+clientLibsOptimizerApp.controller('MainCtrl', function($scope, $http, $timeout) {
 
     $scope.app = {
         uri: '',
@@ -42,7 +43,7 @@ angular.module('acs-tools-clientlibs-optimizer-app', ['ACS.Tools.notifications']
         categories: ''
     };
 
-    //$scope.notifications = [];
+    $scope.notifications = [];
 
     $scope.$watch('form.categories', function(newValue, oldValue) {
         if(newValue && newValue.indexOf('"') >= 0) {
@@ -68,18 +69,18 @@ angular.module('acs-tools-clientlibs-optimizer-app', ['ACS.Tools.notifications']
             $scope.result.categories = data.categories.join() || '';
 
             if ($scope.result.categories) {
-                NotificationsService.add('success',
+                $scope.addNotification('success',
                     'Success! Review the optimized client library definition below');
 
             } else {
-                NotificationsService.add('notice',
+                $scope.addNotification('notice',
                     'No client libraries could be found. '
                      + 'Verify the provided client libraries with the provided type exist on this AEM instance.');
             }
         }).
         error(function(data, status, headers, config) {
-                NotificationsService.add('error',
-                     'Error. Ensure no cyclic dependencies in the provided client libraries.');
+            $scope.addNotification('error',
+                    + 'Error. Ensure no cyclic dependencies in the provided client libraries.');
         });
 
         $scope.app.formErrors = {
@@ -119,5 +120,13 @@ angular.module('acs-tools-clientlibs-optimizer-app', ['ACS.Tools.notifications']
 
         return !$scope.app.formErrors.types;
     };
-}]);
+
+    $scope.addNotification = function (type, title, message) {
+        $scope.notifications.push({
+            type: type,
+            title: title,
+            message: message
+        });
+    };
+});
 

@@ -2,4 +2,3 @@
 
 page.less
 form.less
-notifications.less

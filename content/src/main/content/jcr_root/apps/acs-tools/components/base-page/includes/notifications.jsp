@@ -17,6 +17,5 @@
   ~ limitations under the License.
   ~ #L%
   --%>
-<%@include file="/libs/foundation/global.jsp" %><%
 
-%><notifications items="notifications"></notifications>
+<notifications items="notifications"></notifications>
