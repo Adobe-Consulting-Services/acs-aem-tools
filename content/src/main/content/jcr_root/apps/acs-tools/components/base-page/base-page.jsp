@@ -19,13 +19,31 @@
   --%>
 <%@include file="/libs/foundation/global.jsp" %><%
 
-    pageContext.setAttribute("pagePath", resourceResolver.map(currentPage.getPath()));
-    pageContext.setAttribute("resourcePath", resourceResolver.map(resource.getPath()));
-    pageContext.setAttribute("pageTitle", currentPage.getTitle());
-    pageContext.setAttribute("favicon", resourceResolver.map(component.getProperties().get("favicon", String.class)));
-    pageContext.setAttribute("clientLib", "acs-tools." + component.getName() + ".app");
+    String favicon = component.getProperties().get("favicon", String.class);
+    if (favicon != null) {
+        pageContext.setAttribute("favicon",  xssAPI.getValidHref(resourceResolver.map(favicon)));
+    }
 
-%><!doctype html>
+%><c:set var="pageTitle"
+       value="<%= xssAPI.encodeForHTML(currentPage.getTitle()) %>" />
+
+<c:set var="pagePath"
+       value="<%= xssAPI.getValidHref(resourceResolver.map(currentPage.getPath())) %>"
+       scope="request"/>
+
+<c:set var="resourcePath"
+       value="<%= xssAPI.getValidHref(resourceResolver.map(resource.getPath())) %>"
+       scope="request"/>
+
+<c:set var="clientLib"
+       value="<%= xssAPI.encodeForHTMLAttr("acs-tools." + component.getName() + ".app") %>"
+       scope="request"/>
+
+<c:set var="app"
+       value="<%= xssAPI.encodeForHTMLAttr("acs-tools-" + component.getName() + "-app") %>"
+       scope="request"/>
+
+<!doctype html>
     <head>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -51,18 +69,23 @@
             </nav>
         </header>
 
-        <div class="page" role="main" id="acs-tools-${component.name}-app">
-            <div class="content">
-                <div class="content-container">
-                    <cq:include script="includes/notifications.jsp"/>
+        <div id="acs-tools-${component.name}-app">
+            <cq:include script="includes/notifications.jsp"/>
 
-                    <h1>${pageTitle}</h1>
+            <div class="page" role="main">
+                <div class="content">
+                    <div class="content-container">
+                        <div class="content-container-inner">
 
-                    <cq:include script="content.jsp"/>
+                            <h1>${pageTitle}</h1>
+
+                            <cq:include script="content.jsp"/>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <cq:include script="includes/footer-libs.jsp"/>
+            <cq:include script="includes/footer-libs.jsp"/>
+        </div>
     </body>
 </html>

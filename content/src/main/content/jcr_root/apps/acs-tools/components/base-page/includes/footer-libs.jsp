@@ -16,12 +16,13 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   ~ #L%
-  --%><%
+  --%><%@include file="/libs/foundation/global.jsp" %><%
+
 %><cq:includeClientLib js="acs-tools.base-page"/>
 <cq:includeClientLib js="${clientLib}"/><%
 
 %><%-- Register angular app; Decreases chances of collisions w other angular apps on the page (ex. via injection) --%><%
 
 %><script type="text/javascript">
-  angular.bootstrap(document.getElementById('acs-tools-${component.name}-app'), ['xxxApp']);
+  angular.bootstrap(document.getElementById('${app}'), ['${app}']);
 </script>
