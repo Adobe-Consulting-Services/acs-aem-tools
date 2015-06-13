@@ -30,7 +30,8 @@ jspCodeDisplay.controller('MainCtrl', ['$scope', '$http', 'NotificationsService'
 
         $scope.line = '';
 
-    $scope.submitLine = function() {
+    $scope.debug = function() {
+
         jspCodeDisplay.editor.setValue('');
 
         NotificationsService.running(true);

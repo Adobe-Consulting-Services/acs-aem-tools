@@ -26,16 +26,16 @@
         <section class="fieldset">
 
             <label class="fieldlabel" for="line">Enter a line from a stack trace like:
-
-                <code>org.apache.jsp.apps.geometrixx.components.contentpage.content_jsp._jspService(content_jsp.java:75)</code>
-
+                <br/>
+                <code>  org.apache.jsp.apps.geometrixx.components.contentpage.content_jsp._jspService(content_jsp.java:75)</code>
+                <br/>
                 and see the Java code below
             </label>
 
             <input class="field" type="text" name="line" ng-model="line"/>
 
             <div>
-                <button class="primary" ng-click="submitLine()">Go</button>
+                <button class="primary" ng-click="debug()">Go</button>
             </div>
         </section>
     </form>
