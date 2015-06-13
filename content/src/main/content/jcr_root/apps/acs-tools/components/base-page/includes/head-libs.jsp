@@ -16,7 +16,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   ~ #L%
-  --%><%
+  --%><%@include file="/libs/foundation/global.jsp" %><%
 
 %><cq:includeClientLib css="acs-tools.base-page"/>
 <cq:includeClientLib css="${clientLib}"/>
