@@ -8,5 +8,6 @@
     <explain-query/>
     <jsp-code-display/>
     <query-editor/>
+    <tag-maker/>
     <test-page-generator/>
 </jcr:root>

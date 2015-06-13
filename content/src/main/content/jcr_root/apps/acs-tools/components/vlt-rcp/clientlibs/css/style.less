@@ -18,46 +18,114 @@
  * #L%
  */
 
-#acs-tools-vlt-rcp {
+#acs-tools-vlt-rcp-app-css {
 
-    .page {
-        padding-bottom: 1.5rem;
+  .content-container {
+    width: 100%;
+
+    .content-container-inner {
+      width: 960px;
+      margin: 0 auto;
+    }
+  }
+
+  .drawer {
+    padding-left: 1em;
+
+    input[type=checkbox] {
+      opacity: 1;
+      margin-top: -10px;
+      margin-left: 5px;
+      margin-right: 2em
+    }
+  }
+
+  .notifications {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 960px;
+    z-index: 1000;
+  }
+
+  .tasks {
+    width: 100%;
+
+    td {
+      text-align: left;
+      vertical-align: top;
     }
 
-    /* header */
-
-    header > .drawer > button {
-        margin-top: 7px;
-    }
-
-    ul.list-unstyled li {
-   	    list-style-type: none;
-	}
-	
-    .opaque {
-        opacity : 1;
-    }
-    
-    .fullwidth {
-       width: 100%;
-    }
-
-    table.data {
-      tr td {
-        vertical-align: top;
+    td.actions {
+      text-align: center;
+      .action-button {
+        margin: 10px auto;
       }
-      
-      td.num {
-        text-align: left;
-      }
+    }
+  }
 
-      tr td div {
-        max-height: 5em;
-        overflow-y: hidden;
-      }
+  .create-new-task {
+    width: 80%;
 
-      tr.expanded td div {
-        max-height: initial;
+    .label-col {
+      width: 10em;
+      padding-right: 1em;
+      font-weight: bold;
+      text-align: right;
+
+      label {
+        line-height: 1.5em;
       }
     }
+
+    .field-col {
+      text-align: left;
+    }
+
+    input[type=text] {
+      width: 100%;
+    }
+
+    .add-remove-list {
+
+      .add {
+        margin-top: 5px;
+
+        a {
+          color: #000;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+
+      .remove {
+        margin: 10px
+      }
+
+      ul {
+        list-style: none;
+        margin: 1em 0;
+        padding :0;
+
+        li {
+          margin: 0;
+          padding: 0 0 .5em 0;
+
+          input[type=text] {
+            width: 90%;
+          }
+        }
+      }
+    }
+  }
+}
+
+.ngdialog.ngdialog-theme-default {
+  padding-top: 45px !important;
+  padding-bottom: 10px !important;
+
 }
