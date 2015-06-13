@@ -20,7 +20,8 @@
 
 <%@include file="/libs/foundation/global.jsp" %><%
 
-%><form ng-submit="explain()">
+%><form class="no-separator"
+        ng-submit="explain()">
 
     <div class="form-row">
         <h4>Language</h4>
@@ -50,7 +51,7 @@
     </div>
 
     <div class="form-row">
-        <h4>Include execution time</h4>
+        <h4 class="no-height">Include execution time</h4>
 
         <span>
             <label><input

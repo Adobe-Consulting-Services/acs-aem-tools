@@ -13,13 +13,14 @@
 
     .form-row {
       line-height: 3em;
+      font-size: 1em;
       clear: both;
 
       .form-left-cell {
         width: 10em;
         padding-right: 1em;
         margin-right: 1em;
-        border-right: 0.0625rem solid #cccccc;
+        border-right: 1px solid #cccccc;
         float: left;
         height: 4em;
       }
@@ -28,13 +29,20 @@
         .form-left-cell();
         font-weight: bold;
         text-align: right;
-        line-height: 1.25em;
+        line-height: 3em;
       }
 
+      h4.no-height {
+        height: auto;
+      }
 
       input[type="text"],
       select {
         min-width: 75%;
+      }
+
+      .selector {
+        font-size: 1em;
       }
 
       .form-error {
@@ -51,6 +59,11 @@
       .ng-invalid {
         border: solid 1px #FF4132 !important;
         color: #CC544B
+      }
+
+      input[type=file].ng-invalid {
+        border: 0 !important;
+        color: inherit;
       }
     }
 

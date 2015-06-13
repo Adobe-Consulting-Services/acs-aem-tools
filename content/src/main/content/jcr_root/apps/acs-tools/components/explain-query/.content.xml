@@ -3,5 +3,5 @@
     cq:defaultView="html"
     jcr:primaryType="cq:Component"
     jcr:title="Explain Query"
-    sling:resourceSuperType="foundation/components/page"
+    sling:resourceSuperType="acs-tools/components/base-page"
     componentGroup=".hidden"/>
