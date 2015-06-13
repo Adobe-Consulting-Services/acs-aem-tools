@@ -2,7 +2,7 @@
   ~ #%L
   ~ ACS AEM Tools Bundle
   ~ %%
-  ~ Copyright (C) 2013 Adobe
+  ~ Copyright (C) 2015 Adobe
   ~ %%
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -17,31 +17,6 @@
   ~ limitations under the License.
   ~ #L%
   --%>
-
-<div ng-show="notifications.length > 0">
-    <div ng-repeat="notification in notifications">
-        <div class="alert {{ notification.type }}">
-            <button class="close" data-dismiss="alert">&times;</button>
-            <strong>{{ notification.title }}</strong>
-
-            <div>{{ notification.message }}</div>
-        </div>
-    </div>
-</div>
-
-
-<div ng-show="app.running">
-
-    <div class="alert notice large">
-        <strong>Creating pages</strong>
-        <div>
-            <i class="spinner large"></i>
-            Please be patient while the system creates your pages; depending on the total
-            number of pages requested to be created this process could take a long time.
-        </div>
-    </div>
-</div>
-
 <div ng-show="results.success"
      class="results alert success large">
     <strong>Results Summary</strong>

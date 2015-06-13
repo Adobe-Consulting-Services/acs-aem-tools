@@ -3,5 +3,5 @@
     cq:defaultView="html"
     jcr:primaryType="cq:Component"
     jcr:title="Test Page Generator"
-    sling:resourceSuperType="foundation/components/page"
+    sling:resourceSuperType="acs-tools/components/base-page"
     componentGroup=".hidden"/>

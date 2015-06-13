@@ -20,75 +20,60 @@
 
 /*global JSON: false, angular: false */
 
+angular.module('acs-tools-test-page-generator-app', ['ACS.Tools.notifications']).controller('MainCtrl',
+    ['$scope', '$http', '$timeout', 'NotificationsService', function ($scope, $http, $timeout, NotificationsService) {
 
-angular.module('testPageGeneratorApp',[]).controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope, $http, $timeout) {
+        NotificationsService.init(
+            "Creating pages",
+            "Please be patient while the system creates your pages; " +
+            "depending on the total number of pages requested to be created this process could take a long time.");
 
-    $scope.app = {
-        uri: ''
-    };
+        $scope.app = {
+            uri: ''
+        };
 
-    $scope.notifications = [];
-
-    $scope.form = {
-        properties: [
-            { name: '', value: '', multi: false }
-        ]
-    };
-
-    $scope.results = {};
-
-    $scope.addProperty = function(properties) {
-        properties.push( { name:'', value:'' } );
-    };
-
-    $scope.removeProperty = function(properties, index) {
-        properties.splice(index, 1);
-    };
-
-    $scope.generatePages = function(isValid) {
-
-        if(!isValid) {
-            this.addNotification('error',
-            "Error",
-            "Form is invalid. Please correct and resubmit.");
-            return;
-        }
+        $scope.form = {
+            properties: [
+                {name: '', value: '', multi: false}
+            ]
+        };
 
         $scope.results = {};
-        $scope.app.running = true;
 
-        $http({
-            method: 'POST',
-            url: $scope.app.uri,
-            data: 'json=' + encodeURIComponent(JSON.stringify($scope.form)),
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-        }).
-        success(function(data, status, headers, config) {
-            $scope.results = data || {};
-            $scope.app.running = false;
-        }).
-        error(function(data, status, headers, config) {
-            $scope.addNotification('error', 'ERROR',
-                    data.title + '. ' +  data.message);
-            $scope.app.running = false;
-        });
-    };
+        $scope.addProperty = function (properties) {
+            properties.push({name: '', value: ''});
+        };
 
-    $scope.addNotification = function (type, title, message) {
-        var timeout = 40000;
+        $scope.removeProperty = function (properties, index) {
+            properties.splice(index, 1);
+        };
 
-        if(type === 'success')  {
-            timeout = timeout / 2;
-        }
+        $scope.generatePages = function (isValid) {
 
-        $scope.notifications.unshift({
-            type: type,
-            title: title,
-            message: message
-        });
+            if (!isValid) {
+                NotificationsService.add('error', "Error", "Form is invalid. Please correct and resubmit.");
+                return;
+            }
 
-        $timeout(function() {
-            $scope.notifications.shift();
-        }, timeout);
-    };
-}]);
+            $scope.results = {};
+            $scope.app.running = true;
+            NotificationsService.running($scope.app.running);
+
+            $http({
+                method: 'POST',
+                url: $scope.app.uri,
+                data: 'json=' + encodeURIComponent(JSON.stringify($scope.form)),
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            }).
+                success(function (data, status, headers, config) {
+                    $scope.results = data || {};
+                    $scope.app.running = false;
+                    NotificationsService.running($scope.app.running);
+                }).
+                error(function (data, status, headers, config) {
+                    NotificationsService.add('error', 'ERROR', data.title + '. ' + data.message);
+                    $scope.app.running = false;
+                    NotificationsService.running($scope.app.running);
+                });
+        };
+    }]);

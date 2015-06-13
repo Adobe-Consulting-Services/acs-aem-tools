@@ -48,16 +48,16 @@ jspCodeDisplay.controller('MainCtrl', ['$scope', '$http', 'NotificationsService'
                 jspCodeDisplay.editor.setValue(data.code);
                 jspCodeDisplay.editor.gotoLine(data.lineNumber, 0, true);
 
-                NotificationsService.add('success', "The erring line has been identified");
+                NotificationsService.add('success', 'Success', 'The line was identified');
 
             } else {
-                NotificationsService.add('error', data.error);
+                NotificationsService.add('error', 'Error', data.error);
             }
 
             NotificationsService.running(false);
 
         }).error(function(data, status, headers, config) {
-            NotificationsService.add('error', status);
+            NotificationsService.add('error', 'Error', status);
         });
     };
 }]);
