@@ -18,15 +18,17 @@
   ~ #L%
   --%>
 
-<div ng-show="notifications.length > 0"
-     class="notifications">
-    <div ng-repeat="notification in notifications">
-        <div class="alert {{ notification.type }}">
-            <button class="close" data-dismiss="alert">&times;</button>
-            <strong>{{ notification.title }}</strong>
+<%@include file="/libs/foundation/global.jsp" %><%
 
-            <div>{{ notification.message }}</div>
-        </div>
-    </div>
-</div>
+    pageContext.setAttribute("fileApiJS", resourceResolver.map("/etc/clientlibs/acs-tools/vendor/FileAPI.min.js"));
+    pageContext.setAttribute("fileApiSWF",
+            resourceResolver.map("/etc/clientlibs/acs-tools/vendor/FileAPI.min.js/FileAPI.flash.swf"));
+
+%><script>
+    // Need to be loaded before angular-file-upload-shim(.min).js
+    FileAPI = {
+        jsUrl: '${fileApiJS}',
+        flashUrl: '${fileApiSWF}'
+    }
+</script>
 

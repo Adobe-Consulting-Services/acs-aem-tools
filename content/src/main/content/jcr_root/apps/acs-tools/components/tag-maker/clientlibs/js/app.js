@@ -20,98 +20,78 @@
 
 /*global angular: false, Upload: false */
 
+angular.module('acs-tools-tag-maker-app', ['ngFileUpload', 'ACS.Tools.notifications']).controller('MainCtrl',
+    ['$scope', '$http', '$timeout', 'Upload', 'NotificationsService', function ($scope, $http, $timeout, Upload, NotificationsService) {
 
-var tagMakerApp = angular.module('tagMakerApp', ['ngFileUpload']);
+        $scope.app = {
+            uri: ''
+        };
 
-tagMakerApp.controller('MainCtrl', ['$scope', '$http', '$timeout', 'Upload', function ($scope, $http, $timeout, Upload) {
+        $scope.form = {
+            locale: '',
+            charset: '',
+            clean: 'true',
+            converter: 'default',
+            fallbackConverter: 'none',
+            separator: ''
+        };
 
-    $scope.app = {
-        uri: ''
-    };
-
-    $scope.form = {
-        locale: '',
-        charset: '',
-        clean: 'true',
-        converter: 'default',
-        fallbackConverter: 'none',
-        separator: ''
-    };
-
-    $scope.result = {
-        message: '',
-        tagIds: []
-    };
-
-    $scope.converters = [];
-
-    $scope.notifications = [];
-
-    $scope.init = function () {
-        $http.get($scope.app.uri + '.init.json').
-            success(function (data, status, headers, config) {
-                $scope.converters = data;
-                $scope.fallbackConverters = data;
-                $scope.fallbackConverters.push({
-                    label: "None",
-                    value: "acs-commons-none"
-                });
-                
-            }).
-            error(function (data, status, headers, config) {
-                $scope.addNotification('error',
-                    'Error! Could not initialize Tag Maker');
-            });
-    };
-
-    $scope.makeTags = function () {
         $scope.result = {
             message: '',
             tagIds: []
         };
 
-        Upload.upload({
-            url: $scope.app.uri + '.make-tags.json',
-            fields: {
-                'charset': $scope.form.charset || '',
-                'clean': $scope.form.clean || 'false',
-                'converter': $scope.form.converter || 'default',
-                'fallbackConverter': $scope.form.fallbackConverter || 'default',
-                'delimiter': $scope.form.delimiter || '',
-                'separator': $scope.form.separator || ''
-            },
-            file: $scope.files[0]
-        }).success(function (data, status, headers, config) {
-            $scope.result = data;
-            if($scope.result.tagIds.length === 0) {
-                $scope.addNotification('notice',
-                    'Warning! Could not find any tag entries that can be processed by the selected converter');
-            } else {
-                $scope.addNotification('success',
-                    'Success! ' + (data.message || 'Your tags have been created' ));
-            }
-        }).error(function (data, status, headers, config) {
-            $scope.addNotification('error',
-                'Error! ' + (data.message || 'An unknown error occurred' ));
-        });
-    };
+        $scope.converters = [];
+        $scope.fallbackConverters = [];
 
-    $scope.addNotification = function (type, title, message) {
-        var timeout = 30000;
+        $scope.init = function () {
+            $http.get($scope.app.uri + '.init.json').
+                success(function (data, status, headers, config) {
+                    angular.copy(data, $scope.converters);
+                    angular.copy(data, $scope.fallbackConverters);
 
-        if (type === 'success') {
-            timeout = timeout / 2;
-        }
+                    $scope.fallbackConverters.push({
+                        label: "None",
+                        value: "acs-commons-none"
+                    });
 
-        $scope.notifications.push({
-            type: type,
-            title: title,
-            message: message
-        });
+                }).
+                error(function (data, status, headers, config) {
+                    NotificationsService.add('error',
+                        'Error', 'Could not initialize Tag Maker');
+                });
+        };
 
-        $timeout(function () {
-            $scope.notifications.shift();
-        }, timeout);
-    };
-}]);
+        $scope.makeTags = function () {
+            $scope.result = {
+                message: '',
+                tagIds: []
+            };
+
+            Upload.upload({
+                url: $scope.app.uri + '.make-tags.json',
+                fields: {
+                    'charset': $scope.form.charset || '',
+                    'clean': $scope.form.clean || 'false',
+                    'converter': $scope.form.converter || 'default',
+                    'fallbackConverter': $scope.form.fallbackConverter || 'default',
+                    'delimiter': $scope.form.delimiter || '',
+                    'separator': $scope.form.separator || ''
+                },
+                file: $scope.files[0]
+            }).success(function (data, status, headers, config) {
+                $scope.result = data;
+                if ($scope.result.tagIds.length === 0) {
+                    NotificationsService.add('notice',
+                        'Warning', 'Could not find any tag entries that can be processed by the selected converter');
+                } else {
+                    NotificationsService.add('success',
+                        'Success', (data.message || 'Your tags have been created' ));
+                }
+            }).error(function (data, status, headers, config) {
+                NotificationsService.add('error',
+                    'Error ' + (data.message || 'An unknown error occurred' ));
+            });
+        };
+    }]);
 

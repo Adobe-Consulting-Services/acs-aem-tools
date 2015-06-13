@@ -4,13 +4,14 @@
     margin-top: 2em;
 
     .form-row {
+      height: 4em;
       line-height: 3em;
-      margin-bottom: 1em;
 
       .form-left-cell {
         width: 10em;
         padding-right: 1em;
         margin-right: 1em;
+        border-right: 0.0625rem solid #cccccc;
         float: left;
         height: 4em;
       }
@@ -19,10 +20,24 @@
         .form-left-cell();
         font-weight: bold;
         text-align: right;
+        line-height: 1.25em;
       }
 
-      input[type=text] {
-        width: 75%;
+
+      input[type="text"],
+      select {
+        min-width: 75%;
+      }
+
+      .form-error {
+        font-size: 1.5em;
+        height: .8em;
+        vertical-align: top;
+        margin-top: -.1em;
+      }
+
+      .tooltip.error {
+        color: #333;
       }
 
       .ng-invalid {
