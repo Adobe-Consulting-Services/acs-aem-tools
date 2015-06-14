@@ -26,7 +26,7 @@
     <div class="form-row">
         <h4>Language</h4>
 
-        <div class="selector">
+        <div class="select-wrapper">
             <select ng-model="form.language"
                     ng-required="true">
                 <option value="xpath">xpath</option>

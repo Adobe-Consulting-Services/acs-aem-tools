@@ -32,7 +32,7 @@ angular.module('acs-tools-tag-maker-app', ['ngFileUpload', 'ACS.Tools.notificati
             charset: '',
             clean: 'true',
             converter: 'default',
-            fallbackConverter: 'none',
+            fallbackConverter: 'acs-commons-none',
             separator: ''
         };
 
