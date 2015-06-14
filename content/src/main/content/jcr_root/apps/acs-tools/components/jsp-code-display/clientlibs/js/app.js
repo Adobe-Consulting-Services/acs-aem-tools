@@ -20,7 +20,48 @@
 
 /*global angular: false, ace: false */
 
-var jspCodeDisplay = angular.module('jspCodeDisplay', []);
+var jspCodeDisplay = angular.module('acs-tools-jsp-code-display-app', ['ACS.Tools.notifications']);
+
+jspCodeDisplay.controller('MainCtrl', ['$scope', '$http', 'NotificationsService', function($scope, $http, NotificationsService) {
+
+        $scope.app = {
+            uri: ''
+        };
+
+        $scope.line = '';
+
+    $scope.debug = function() {
+
+        jspCodeDisplay.editor.setValue('');
+
+        NotificationsService.running(true);
+
+        $http({
+                method: 'POST',
+                url: $scope.app.uri,
+                data: $.param({ line : $scope.line }),
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        }).success(function(data, status, headers, config) {
+            if (data.success) {
+
+                jspCodeDisplay.editor.setValue(data.code);
+                jspCodeDisplay.editor.gotoLine(data.lineNumber, 0, true);
+
+                NotificationsService.add('success', 'Success', 'The line was identified');
+
+            } else {
+                NotificationsService.add('error', 'Error', data.error);
+            }
+
+            NotificationsService.running(false);
+
+        }).error(function(data, status, headers, config) {
+            NotificationsService.add('error', 'Error', status);
+        });
+    };
+}]);
+
 
 (function(){
     var editor = ace.edit("editor");
@@ -28,41 +69,9 @@ var jspCodeDisplay = angular.module('jspCodeDisplay', []);
     editor.setTheme("ace/theme/vibrant_ink");
     editor.getSession().setMode("ace/mode/java");
     editor.setReadOnly(true);
-    
+
     jspCodeDisplay.editor = editor;
 }());
-
-
-jspCodeDisplay.controller('MainCtrl', ['$scope', '$http', function($scope, $http) {
-    $scope.line = '';
-    $scope.running = false;
-    $scope.error = false;
-    $scope.errorMessage = '';
-    
-    $scope.submitLine = function() {
-        $scope.error = false;
-        jspCodeDisplay.editor.setValue('');
-        $scope.running = true;
-        $http({
-            method: 'POST',
-            url: $('body').data("post-url"),
-            data: $.param({ line : $scope.line }),
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-        }).success(function(data, status, headers, config) {
-            if (data.success) {
-                jspCodeDisplay.editor.setValue(data.code);
-                jspCodeDisplay.editor.gotoLine(data.lineNumber, 0, true);
-            } else {
-                $scope.error = true;
-                $scope.errorMessage = data.error;
-            }
-            $scope.running = false;
-        }).error(function(data, status, headers, config) {
-            $scope.error = true;
-            $scope.errorMessage = status;
-        });
-    };
-}]);
 
 
 $(function() {

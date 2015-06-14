@@ -18,12 +18,11 @@
  * #L%
  */
 
-/*global angular: false */
+/*global angular: false, ACS: false */
 
+angular.module('acs-tools-clientlibs-optimizer-app', ['ACS.Tools.notifications']).controller('MainCtrl',
 
-var clientLibsOptimizerApp = angular.module('clientLibsOptimizerApp',[]);
-
-clientLibsOptimizerApp.controller('MainCtrl', function($scope, $http, $timeout) {
+    ['$scope', '$http', 'NotificationsService', function($scope, $http, NotificationsService) {
 
     $scope.app = {
         uri: '',
@@ -43,7 +42,7 @@ clientLibsOptimizerApp.controller('MainCtrl', function($scope, $http, $timeout) 
         categories: ''
     };
 
-    $scope.notifications = [];
+    //$scope.notifications = [];
 
     $scope.$watch('form.categories', function(newValue, oldValue) {
         if(newValue && newValue.indexOf('"') >= 0) {
@@ -69,18 +68,18 @@ clientLibsOptimizerApp.controller('MainCtrl', function($scope, $http, $timeout) 
             $scope.result.categories = data.categories.join() || '';
 
             if ($scope.result.categories) {
-                $scope.addNotification('success',
-                    'Success! Review the optimized client library definition below');
+                NotificationsService.add('success',
+                    'Success', 'Review the optimized client library definition below');
 
             } else {
-                $scope.addNotification('notice',
-                    'No client libraries could be found. '
-                     + 'Verify the provided client libraries with the provided type exist on this AEM instance.');
+                NotificationsService.add('notice',
+                    'Client libs not found',
+                    'Verify the specified client libraries/types exist');
             }
         }).
         error(function(data, status, headers, config) {
-            $scope.addNotification('error',
-                    + 'Error. Ensure no cyclic dependencies in the provided client libraries.');
+                NotificationsService.add('error',
+                     'Error', 'Ensure no cyclic dependencies in the provided client libraries');
         });
 
         $scope.app.formErrors = {
@@ -120,23 +119,5 @@ clientLibsOptimizerApp.controller('MainCtrl', function($scope, $http, $timeout) 
 
         return !$scope.app.formErrors.types;
     };
-
-    $scope.addNotification = function (type, title, message) {
-        var timeout = 30000;
-
-        if(type === 'success')  {
-            timeout = timeout / 2;
-        }
-
-        $scope.notifications.push({
-            type: type,
-            title: title,
-            message: message
-        });
-
-        $timeout(function() {
-            $scope.notifications.shift();
-        }, timeout);
-    };
-});
+}]);
 

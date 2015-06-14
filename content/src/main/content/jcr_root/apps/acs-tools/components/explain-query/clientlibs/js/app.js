@@ -20,104 +20,87 @@
 
 /*global angular: false, window: false */
 
-var explainQueryApp = angular.module('explainQueryApp', []);
+angular.module('acs-tools-explain-query-app', ['ACS.Tools.notifications']).config([
 
-explainQueryApp.config( [
     '$compileProvider',
-    function( $compileProvider ) {
+    function ($compileProvider) {
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(data):/);
     }
-]);
 
-explainQueryApp.controller('MainCtrl', function($scope, $http, $timeout) {
+]).controller('MainCtrl',
+    ['$scope', '$http', 'NotificationsService', function ($scope, $http, NotificationsService) {
 
-    $scope.app = {
-        uri: '',
-        running: false
-    };
+        $scope.app = {
+            uri: ''
+        };
 
-    $scope.notifications = [];
+        $scope.queries = {
+            slow: [],
+            popular: []
+        };
 
-    $scope.queries = {
-        slow: [],
-        popular: []
-    };
+        $scope.form = {
+            statement: '',
+            language: 'JCR-SQL2',
+            executionTime: false
+        };
 
-    $scope.form = {
-        statement: '',
-        language: 'JCR-SQL2',
-        executionTime: false
-    };
+        $scope.result = {};
 
-    $scope.result = { };
+        $scope.load = function (query) {
+            $scope.form.language = query.language;
+            $scope.form.statement = query.statement;
+        };
 
-    $scope.load = function(query) {
-        $scope.form.language = query.language;
-        $scope.form.statement = query.statement;
-    };
+        $scope.explain = function () {
+            NotificationsService.running(true);
 
-    $scope.explain = function() {
-        $scope.app.running = true;
+            $http({
+                method: 'POST',
+                url: $scope.app.uri,
+                data: 'statement=' + encodeURIComponent($scope.form.statement)
+                + '&language=' + encodeURIComponent($scope.form.language)
+                + '&executionTime=' + encodeURIComponent($scope.form.executionTime)
+                + '&resultCount=' + encodeURIComponent($scope.form.executionTime && $scope.form.resultCount),
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            }).
+                success(function (data, status, headers, config) {
+                    $scope.result = data || {};
+                    NotificationsService.running(false);
+                    NotificationsService.ad('success', 'SUCCESS', 'Review your query explanation');
 
-        $http({
-            method: 'POST',
-            url: $scope.app.uri,
-            data: 'statement=' + encodeURIComponent($scope.form.statement)
-            + '&language=' + encodeURIComponent($scope.form.language)
-            + '&executionTime=' + encodeURIComponent($scope.form.executionTime)
-            + '&resultCount=' + encodeURIComponent($scope.form.executionTime && $scope.form.resultCount),
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-        }).
-        success(function(data, status, headers, config) {
-            $scope.result = data || {};
-            $scope.app.running = false;
-            $scope.addNotification('success', 'SUCCESS', 'Review your query explanation');
+                }).
+                error(function (data, status, headers, config) {
+                    NotificationsService.running(false);
+                    NotificationsService.add('error', 'ERROR', 'Check your query and try again.');
+                });
 
-        }).
-        error(function(data, status, headers, config) {
-            $scope.app.running = false;
-            $scope.addNotification('error', 'ERROR', 'Check your query and try again.');
-        });
+        };
 
-    };
+        $scope.exportAsJSON = function (data) {
+            return window.encodeURIComponent(JSON.stringify(data, null, 4).replace(/\\n/gim, ''));
+        };
 
-    $scope.exportAsJSON = function(data) {
-        return window.encodeURIComponent(JSON.stringify(data, null, 4));
-    };
+        /*
+         * Loads the Slow and Popular Queries
+         */
+        $scope.init = function () {
+            $http({
+                method: 'GET',
+                url: $scope.app.uri,
+                params: {ck: (new Date()).getTime()}
+            }).
+                success(function (data, status, headers, config) {
+                    $scope.queries.slow = data.slowQueries || [];
+                    $scope.queries.popular = data.popularQueries || [];
+                }).
+                error(function (data, status, headers, config) {
+                    NotificationsService.add('error', 'ERROR', 'Could not retrieve Slow and Popular queries.');
+                });
 
-    $scope.addNotification = function (type, title, message) {
-        var timeout = 10000;
 
-        if(type === 'success')  {
-            timeout = timeout / 2;
-        }
+            NotificationsService.init("Running",
+                "Please be patient. Large or expensive queries may cause longer explanation times.");
+        };
+    }]);
 
-        $scope.notifications.unshift({
-            type: type,
-            title: title,
-            message: message
-        });
-
-        $timeout(function() {
-            $scope.notifications.shift();
-        }, timeout);
-    };
-
-    /*
-     * Loads the Slow and Popular Queries
-     */
-    $scope.init = function() {
-        $http({
-            method: 'GET',
-            url: $scope.app.uri,
-            params: { ck: (new Date()).getTime() }
-        }).
-        success(function(data, status, headers, config) {
-            $scope.queries.slow = data.slowQueries || [];
-            $scope.queries.popular = data.popularQueries || [];
-        }).
-        error(function(data, status, headers, config) {
-            $scope.addNotification('error', 'ERROR', 'Could not retrieve Slow and Popular Queries.');
-        });
-    };
-});

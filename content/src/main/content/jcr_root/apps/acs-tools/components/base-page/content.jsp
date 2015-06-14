@@ -17,15 +17,7 @@
   ~ limitations under the License.
   ~ #L%
   --%>
-<%@include file="/libs/foundation/global.jsp" %><%
 
-%><div ng-show="notifications.length > 0">
-    <div ng-repeat="notification in notifications">
-        <div class="alert {{ notification.type }}">
-            <button class="close" data-dismiss="alert">&times;</button>
-            <strong>{{ notification.title }}</strong>
 
-            <div>{{ notification.message }}</div>
-        </div>
-    </div>
-</div>
+<%-- App goes here --%>
+

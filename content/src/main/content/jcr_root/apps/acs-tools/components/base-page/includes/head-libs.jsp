@@ -2,7 +2,7 @@
   ~ #%L
   ~ ACS AEM Tools Bundle
   ~ %%
-  ~ Copyright (C) 2013 Adobe
+  ~ Copyright (C) 2015 Adobe
   ~ %%
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,17 +16,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   ~ #L%
-  --%>
+  --%><%@include file="/libs/foundation/global.jsp" %><%
 
-<div ng-show="notifications.length > 0"
-     class="notifications">
-    <div ng-repeat="notification in notifications">
-        <div class="alert {{ notification.type }}">
-            <button class="close" data-dismiss="alert">&times;</button>
-            <strong>{{ notification.title }}</strong>
-
-            <div>{{ notification.message }}</div>
-        </div>
-    </div>
-</div>
-
+%><cq:includeClientLib css="acs-tools.base-page"/>
+<cq:includeClientLib css="${clientLib}"/>

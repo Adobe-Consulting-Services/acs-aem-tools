@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<%--
   ~ #%L
   ~ ACS AEM Tools Bundle
   ~ %%
@@ -17,11 +16,16 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   ~ #L%
-  -->
-<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
-        cq:defaultView="html"
-        jcr:primaryType="cq:Component"
-        jcr:title="Tag Maker"
-        sling:resourceSuperType="acs-tools/components/base-page"
-        favicon="/libs/cq/tagging/content/tagadmin.ico"
-        componentGroup=".hidden"/>
+  --%>
+<%@include file="/libs/foundation/global.jsp" %><%
+%><%@page session="false" %><%
+
+%><div ng-controller="MainCtrl"
+     ng-init="app.uri = '${resourcePath}.generate-pages.json'; init();">
+
+    <p>Test Page Generator will create any number of pages in a bucketed structure.</p>
+
+    <cq:include script="includes/status.jsp"/>
+
+    <cq:include script="includes/form.jsp"/>
+</div>
