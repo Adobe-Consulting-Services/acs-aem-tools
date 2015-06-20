@@ -64,6 +64,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+@SuppressWarnings("PackageAccessibility")
 @SlingServlet(
         label = "ACS AEM Tools - Tag Maker Servlet",
         methods = {"GET", "POST"},

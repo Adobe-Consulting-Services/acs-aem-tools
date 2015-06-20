@@ -226,11 +226,37 @@
             <groupId>com.day.commons</groupId>
             <artifactId>day-commons-text</artifactId>
             <version>1.1.8</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq</groupId>
             <artifactId>cq-tagging</artifactId>
             <version>5.6.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.day.commons.osgi.wrapper</groupId>
+            <artifactId>com.day.commons.osgi.wrapper.joda-time</artifactId>
+            <version>1.6-0002</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.day.cq.dam</groupId>
+            <artifactId>cq-dam-api</artifactId>
+            <version>5.5.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.day.cq.dam</groupId>
+            <artifactId>cq-dam-commons</artifactId>
+            <version>5.5.10</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.commons.mime</artifactId>
+            <version>2.1.4</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

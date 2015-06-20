@@ -18,11 +18,8 @@
   ~ limitations under the License.
   ~ #L%
   -->
-<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0"
-          xmlns:jcr="http://www.jcp.org/jcr/1.0"
-          cq:defaultView="html"
-          jcr:primaryType="cq:Component"
-          jcr:title="Tag Maker"
-          sling:resourceSuperType="acs-tools/components/base-page"
-          favicon="/apps/acs-tools/components/tag-maker/clientlibs/images/favicon.ico"
-          componentGroup=".hidden"/>
+
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="cq:ClientLibraryFolder"
+    categories="acs-tools.csv-asset-importer.app"
+    dependencies="[coralui,acs-tools.angularjs,acs-tools.ng-file-upload]"/>
