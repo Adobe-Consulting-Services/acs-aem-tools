@@ -1,3 +1,23 @@
+/*
+ * #%L
+ * ACS AEM Tools Bundle
+ * %%
+ * Copyright (C) 2015 Adobe
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 package com.adobe.acs.tools.csv_asset_importer.impl;
 
 import com.day.cq.commons.jcr.JcrConstants;
@@ -131,7 +151,8 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                 this.save(request.getResourceResolver(), params.getBatchSize());
                 result.addAll(batch);
 
-                log.info("Imported as TOTAL of [ {} ] assets in {} ms", result.size(), System.currentTimeMillis() - start);
+                log.info("Imported as TOTAL of [ {} ] assets in {} ms", result.size(),
+                        System.currentTimeMillis() - start);
 
                 try {
                     jsonResponse.put("assets", result);
@@ -160,7 +181,7 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
     }
 
     /**
-     * Interrogates the Request parameters and returns a prepared and parsed set of rows from the CSV file
+     * Interrogates the Request parameters and returns a prepared and parsed set of rows from the CSV file.
      *
      * @param params the Request parameters
      * @return The rows from the uploaded CSV file
@@ -204,7 +225,8 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
     private String importAsset(final ResourceResolver resourceResolver,
                                final Parameters params,
                                final Map<String, Column> columns,
-                               final String[] row) throws FileNotFoundException, RepositoryException, PersistenceException, CsvAssetImportException {
+                               final String[] row)
+            throws FileNotFoundException, RepositoryException, PersistenceException, CsvAssetImportException {
 
         try {
             // Get, create or move the asset in the JCR
@@ -271,7 +293,7 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
     }
 
     /**
-     * Gets an existing Asset to update or creates a new Asset
+     * Gets an existing Asset to update or creates a new Asset.
      *
      * @param resourceResolver the resource resolver
      * @param params           the CSV Asset Importer params
@@ -285,7 +307,9 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
     private Asset getOrCreateAsset(final ResourceResolver resourceResolver,
                                    final Parameters params,
                                    final Map<String, Column> columns,
-                                   final String[] row) throws FileNotFoundException, RepositoryException, CsvAssetImportException {
+                                   final String[] row)
+            throws FileNotFoundException, RepositoryException, CsvAssetImportException {
+
         final AssetManager assetManager = resourceResolver.adaptTo(AssetManager.class);
 
         String uniqueId = null;
@@ -293,12 +317,15 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
             uniqueId = row[columns.get(params.getUniqueProperty()).getIndex()];
         }
 
-        final String srcPath = params.getFileLocation() + "/" + row[columns.get(params.getRelSrcPathProperty()).getIndex()];
+        final String srcPath = params.getFileLocation()
+                + "/"
+                + row[columns.get(params.getRelSrcPathProperty()).getIndex()];
         final String mimeType = this.getMimeType(params, columns, row);
         final String absTargetPath = row[columns.get(params.getAbsTargetPathProperty()).getIndex()];
 
         if (StringUtils.endsWith(absTargetPath, "/")) {
-            throw new CsvAssetImportException("Absolute path [ " + absTargetPath + " ] is to a folder, not a file. Skipping");
+            throw new CsvAssetImportException("Absolute path [ " + absTargetPath
+                    + " ] is to a folder, not a file. Skipping");
         }
 
         Asset asset = null;
@@ -322,7 +349,8 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                 final Session session = resourceResolver.adaptTo(Session.class);
 
                 if (!session.nodeExists(absTargetPath)) {
-                    JcrUtils.getOrCreateByPath(StringUtils.substringBeforeLast(absTargetPath, "/"), "sling:OrderedFolder", session);
+                    JcrUtils.getOrCreateByPath(StringUtils.substringBeforeLast(absTargetPath, "/"),
+                            "sling:OrderedFolder", session);
                 }
 
                 session.move(asset.getPath(), absTargetPath);
@@ -434,7 +462,9 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
      * @return An inputstream that is the same as is, but each line has a populated line termination entry
      * @throws IOException
      */
-    private InputStream terminateLines(final InputStream is, final char separator, final String charset) throws IOException {
+    private InputStream terminateLines(final InputStream is, final char separator, final String charset)
+            throws IOException {
+
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final PrintStream printStream = new PrintStream(baos);
 
@@ -477,7 +507,9 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
      */
     private ModifiableValueMap getMetadataProperties(final Asset asset) {
         Resource assetResource = asset.adaptTo(Resource.class);
-        Resource metadataResource = assetResource.getChild(JcrConstants.JCR_CONTENT + "/" + DamConstants.METADATA_FOLDER);
+        Resource metadataResource = assetResource.getChild(JcrConstants.JCR_CONTENT
+                + "/"
+                + DamConstants.METADATA_FOLDER);
         return metadataResource.adaptTo(ModifiableValueMap.class);
     }
 

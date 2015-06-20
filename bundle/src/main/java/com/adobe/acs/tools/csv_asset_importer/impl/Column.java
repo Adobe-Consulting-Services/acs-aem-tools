@@ -1,3 +1,23 @@
+/*
+ * #%L
+ * ACS AEM Tools Bundle
+ * %%
+ * Copyright (C) 2015 Adobe
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 package com.adobe.acs.tools.csv_asset_importer.impl;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -163,10 +183,10 @@ public final class Column<T> {
         this.multiDelimiter = multiDelimiter;
     }
 
-    public static final Map<String, Column> getColumns(String[] row,
-                                                       String multiDelimiter,
-                                                       String[] ignoreProperties,
-                                                       String[] requiredProperties) throws CsvAssetImportException {
+    public static Map<String, Column> getColumns(final String[] row,
+                                                 final String multiDelimiter,
+                                                 final String[] ignoreProperties,
+                                                 final String[] requiredProperties) throws CsvAssetImportException {
         final Map<String, Column> map = new HashMap<String, Column>();
 
         for (int i = 0; i < row.length; i++) {
@@ -181,14 +201,15 @@ public final class Column<T> {
         final List<String> missingRequiredProperties = hasRequiredFields(map.values(), requiredProperties);
 
         if (!missingRequiredProperties.isEmpty()) {
-            throw new CsvAssetImportException("Could not find required columns in CSV: " +
-                    StringUtils.join(missingRequiredProperties, ", "));
+            throw new CsvAssetImportException("Could not find required columns in CSV: "
+                    + StringUtils.join(missingRequiredProperties, ", "));
         }
 
         return map;
     }
 
-    private static final List<String> hasRequiredFields(final Collection<Column> columns, final String... requiredPropertyNames) {
+    private static List<String> hasRequiredFields(final Collection<Column> columns,
+                                                  final String... requiredPropertyNames) {
         final List<String> missing = new ArrayList<String>();
 
         for (final String propertyName : requiredPropertyNames) {

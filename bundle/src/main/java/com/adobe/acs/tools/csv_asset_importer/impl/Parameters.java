@@ -1,3 +1,23 @@
+/*
+ * #%L
+ * ACS AEM Tools Bundle
+ * %%
+ * Copyright (C) 2015 Adobe
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 package com.adobe.acs.tools.csv_asset_importer.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -41,9 +61,9 @@ public class Parameters {
 
     private InputStream file;
 
-    private Long throttle = 0L;
+    private Long throttle = DEFAULT_THROTTLE;
 
-    private int batchSize = 1000;
+    private int batchSize = DEFAULT_BATCH_SIZE;
 
     public Parameters(SlingHttpServletRequest request) throws IOException {
 
@@ -111,7 +131,7 @@ public class Parameters {
             this.uniqueProperty = StringUtils.stripToNull(uniquePropertyParam.toString());
         }
 
-        this.ignoreProperties = new String[]{ CsvAssetImporterServlet.TERMINATED };
+        this.ignoreProperties = new String[]{CsvAssetImporterServlet.TERMINATED};
         if (ignorePropertiesParam != null && StringUtils.isNotBlank(ignorePropertiesParam.toString())) {
             final String[] tmp = StringUtils.split(StringUtils.stripToNull(ignorePropertiesParam.toString()), ",");
             final List<String> list = new ArrayList<String>();
@@ -156,55 +176,59 @@ public class Parameters {
         }
     }
 
-    public String getUniqueProperty() {
+    public final String getUniqueProperty() {
         return this.uniqueProperty;
     }
 
-    public String getRelSrcPathProperty() {
+    public final String getRelSrcPathProperty() {
         return relSrcPathProperty;
     }
 
-    public String getAbsTargetPathProperty() {
+    public final String getAbsTargetPathProperty() {
         return absTargetPathProperty;
     }
 
-    public String getMimeTypeProperty() {
+    public final String getMimeTypeProperty() {
         return mimeTypeProperty;
     }
 
-    public String getFileLocation() {
+    public final String getFileLocation() {
         return fileLocation;
     }
 
-    public boolean isFullImport() {
+    public final boolean isFullImport() {
         return fullImport;
     }
 
-    public Character getSeparator() {
+    public final Character getSeparator() {
         return separator;
     }
 
-    public Character getDelimiter() {
+    public final Character getDelimiter() {
         return delimiter;
     }
 
-    public String getCharset() {
+    public final String getCharset() {
         return charset;
     }
 
-    public InputStream getFile() {
+    public final InputStream getFile() {
         return file;
     }
 
-    public int getBatchSize() {
+    public final int getBatchSize() {
         return batchSize;
     }
 
-    public String getMultiDelimiter() { return multiDelimiter; }
+    public final String getMultiDelimiter() {
+        return multiDelimiter;
+    }
 
-    public String[] getIgnoreProperties() { return ignoreProperties; }
+    public final String[] getIgnoreProperties() {
+        return ignoreProperties;
+    }
 
-    public long getThrottle() {
+    public final long getThrottle() {
         return throttle;
     }
 }
