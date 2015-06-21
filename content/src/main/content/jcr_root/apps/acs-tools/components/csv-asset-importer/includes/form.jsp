@@ -144,7 +144,7 @@
     </div>
 
     <div class="form-row">
-        <h4>Ignore Properties</h4>
+        <h4>Ignore Columns</h4>
 
         <span>
             <input type="text"

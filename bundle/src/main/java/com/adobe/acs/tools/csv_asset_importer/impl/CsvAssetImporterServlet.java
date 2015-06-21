@@ -334,7 +334,7 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                 && StringUtils.isNotBlank(uniqueId)) {
             // Check for existing Assets
             asset = this.findExistingAsset(resourceResolver,
-                    params.getAbsTargetPathProperty(),
+                    row[columns.get(params.getAbsTargetPathProperty()).getIndex()],
                     params.getUniqueProperty(),
                     uniqueId);
         }
@@ -427,12 +427,20 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
         // First try the very fast check against the absolute target path for the Asset.
         // If this a repeat processing there is a good change this is where the Asset lives.
 
-        final Resource resource = resourceResolver.getResource(absTargetPath + "/" + JcrConstants.JCR_CONTENT);
+        final String absMetadataPath = absTargetPath
+                + "/"
+                + JcrConstants.JCR_CONTENT
+                + "/"
+                + DamConstants.METADATA_FOLDER;
+
+        final Resource resource = resourceResolver.getResource(absMetadataPath);
 
         if (resource != null) {
             final ValueMap properties = resource.adaptTo(ValueMap.class);
             final String val = properties.get(uniquePropertyName, String.class);
             if (StringUtils.equals(val, uniqueId)) {
+                log.debug("Found  Asset at [ {} ] with matching unique property value of [ {} ]",
+                        resource.getPath(), uniqueId);
                 // Good news! Found the Asset at the absolute target path
                 return DamUtil.resolveToAsset(resource);
             }
@@ -442,7 +450,13 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
         // In AEM6 this property should have a supporting index so it is very fast.
 
         final Iterator<Resource> resourceIterator = resourceResolver.findResources(
-                "SELECT * FROM [dam:AssetContent] WHERE [metadata/" + uniquePropertyName + "] = '" + uniqueId + "'",
+                "SELECT * FROM [dam:AssetContent] WHERE ["
+                        + DamConstants.METADATA_FOLDER
+                        + "/"
+                        + uniquePropertyName
+                        + "] = '"
+                        + uniqueId
+                        + "'",
                 "JCR-SQL2");
 
         if (resourceIterator.hasNext()) {
