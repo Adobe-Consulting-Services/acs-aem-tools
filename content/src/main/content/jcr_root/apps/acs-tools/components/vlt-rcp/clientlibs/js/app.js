@@ -22,7 +22,9 @@
 
 var vltApp = angular.module('vltRcpApp', ['ngDialog']);
 
-vltApp.controller('MainCtrl', function ($scope, $http, $timeout, $interval, $q, ngDialog) {
+vltApp.controller('MainCtrl',
+    [ '$scope', '$http', '$timeout', '$interval', '$q', 'ngDialog',
+        function ($scope, $http, $timeout, $interval, $q, ngDialog) {
 
     $scope.rcp_uris = ['/libs/granite/packaging/rcp', '/system/jackrabbit/filevault/rcp'];
 
@@ -234,4 +236,4 @@ vltApp.controller('MainCtrl', function ($scope, $http, $timeout, $interval, $q, 
             $scope.refresh();
         }
     }, 5000);
-});
+}]);
