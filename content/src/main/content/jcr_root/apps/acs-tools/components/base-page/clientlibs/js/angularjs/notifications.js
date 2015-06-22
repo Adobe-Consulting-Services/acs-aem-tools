@@ -20,7 +20,7 @@
 
 /*global angular: false */
 
-angular.module('ACS.Tools.notifications', []).factory('NotificationsService', function ($timeout) {
+angular.module('ACS.Tools.notifications', []).factory('NotificationsService', ['$timeout', function ($timeout) {
     return {
         data: {
             timeout: 20 * 1000,
@@ -71,7 +71,7 @@ angular.module('ACS.Tools.notifications', []).factory('NotificationsService', fu
             }
         }
     };
-}).directive('notifications', function (NotificationsService) {
+}]).directive('notifications', ['NotificationsService', function (NotificationsService) {
     return {
         restrict: 'E',
         scope: {
@@ -100,4 +100,4 @@ angular.module('ACS.Tools.notifications', []).factory('NotificationsService', fu
             scope.data = NotificationsService.data;
         }
     };
-});
+}]);
