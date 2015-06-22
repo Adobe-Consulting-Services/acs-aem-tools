@@ -5,6 +5,7 @@
     id="acs-tools">
     <aem-fiddle/>
     <clientlibs-optimizer/>
+    <csv-asset-importer/>
     <explain-query/>
     <jsp-code-display/>
     <query-editor/>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<%--
   ~ #%L
   ~ ACS AEM Tools Bundle
   ~ %%
@@ -17,12 +16,19 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   ~ #L%
-  -->
-<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0"
-          xmlns:jcr="http://www.jcp.org/jcr/1.0"
-          cq:defaultView="html"
-          jcr:primaryType="cq:Component"
-          jcr:title="Tag Maker"
-          sling:resourceSuperType="acs-tools/components/base-page"
-          favicon="/apps/acs-tools/components/tag-maker/clientlibs/images/favicon.ico"
-          componentGroup=".hidden"/>
+  --%>
+
+<%@include file="/libs/foundation/global.jsp" %><%
+
+    pageContext.setAttribute("fileApiJS", resourceResolver.map("/etc/clientlibs/acs-tools/vendor/FileAPI.min.js"));
+    pageContext.setAttribute("fileApiSWF",
+            resourceResolver.map("/etc/clientlibs/acs-tools/vendor/FileAPI.min.js/FileAPI.flash.swf"));
+
+%><script>
+    // Need to be loaded before angular-file-upload-shim(.min).js
+    FileAPI = {
+        jsUrl: '${fileApiJS}',
+        flashUrl: '${fileApiSWF}'
+    }
+</script>
+
