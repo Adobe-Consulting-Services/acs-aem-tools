@@ -66,6 +66,8 @@ jspCodeDisplay.controller('MainCtrl', ['$scope', '$http', 'NotificationsService'
 (function(){
     var editor = ace.edit("editor");
 
+    ace.config.set("basePath", '/etc/clientlibs/acs-tools/vendor/aceeditor');
+
     editor.setTheme("ace/theme/vibrant_ink");
     editor.getSession().setMode("ace/mode/java");
     editor.setReadOnly(true);

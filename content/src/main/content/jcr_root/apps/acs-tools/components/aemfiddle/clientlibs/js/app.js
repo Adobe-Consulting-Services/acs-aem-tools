@@ -123,6 +123,8 @@ aemFiddle.ace = {
     }
 };
 
+ace.config.set("basePath", '/etc/clientlibs/acs-tools/vendor/aceeditor');
+
 aemFiddle.ace.input.init();
 aemFiddle.ace.output.init();
 
