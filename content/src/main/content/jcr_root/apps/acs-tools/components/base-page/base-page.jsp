@@ -21,18 +21,18 @@
 
     String favicon = component.getProperties().get("favicon", String.class);
     if (favicon != null) {
-        pageContext.setAttribute("favicon",  xssAPI.getValidHref(resourceResolver.map(favicon)));
+        pageContext.setAttribute("favicon",  xssAPI.getValidHref(resourceResolver.map(slingRequest, favicon)));
     }
 
 %><c:set var="pageTitle"
        value="<%= xssAPI.encodeForHTML(currentPage.getTitle()) %>" />
 
 <c:set var="pagePath"
-       value="<%= xssAPI.getValidHref(resourceResolver.map(currentPage.getPath())) %>"
+       value="<%= xssAPI.getValidHref(resourceResolver.map(slingRequest, currentPage.getPath())) %>"
        scope="request"/>
 
 <c:set var="resourcePath"
-       value="<%= xssAPI.getValidHref(resourceResolver.map(resource.getPath())) %>"
+       value="<%= xssAPI.getValidHref(resourceResolver.map(slingRequest, resource.getPath())) %>"
        scope="request"/>
 
 <c:set var="clientLib"

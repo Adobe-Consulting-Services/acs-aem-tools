@@ -42,6 +42,9 @@ angular.module('qeControllers').
 
             $scope.json = '{}';
 
+            $scope.init = function(config) {
+                Crx.init(config);
+            };
 
             $scope.$watch('autoQuery', function(newValue, oldValue) {
                 var promise;

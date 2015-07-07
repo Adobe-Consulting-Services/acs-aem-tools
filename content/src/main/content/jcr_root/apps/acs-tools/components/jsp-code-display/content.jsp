@@ -17,9 +17,13 @@
   ~ limitations under the License.
   ~ #L%
   --%>
-<%@include file="/libs/foundation/global.jsp"%>
+<%@include file="/libs/foundation/global.jsp"%><%
 
-<div ng-controller="MainCtrl"
+    /* ACE JS Base path */
+    pageContext.setAttribute("aceEditorBasePath",
+            resourceResolver.map(slingRequest, "/etc/clientlibs/acs-tools/vendor/aceeditor"));
+
+%><div ng-controller="MainCtrl"
      ng-init="app.uri='${resourcePath}.fetch.json'">
 
     <form class="vertical">
@@ -40,5 +44,5 @@
         </section>
     </form>
 
-    <div id="editor"></div>
+    <div id="editor" ace-editor ace-editor-base-path="${aceEditorBasePath}"></div>
 </div>

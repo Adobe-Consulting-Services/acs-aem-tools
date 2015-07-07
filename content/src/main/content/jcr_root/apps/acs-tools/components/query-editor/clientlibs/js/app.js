@@ -26,8 +26,6 @@
 
     ace.require("ace/ext/language_tools");
 
-    ace.config.set("basePath", '/etc/clientlibs/acs-tools/vendor/aceeditor');
-
     angular.module('qeApp', [
         'ngAnimate',
         'ui.ace',

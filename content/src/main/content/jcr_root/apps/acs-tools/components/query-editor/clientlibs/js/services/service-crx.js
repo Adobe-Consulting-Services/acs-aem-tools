@@ -25,27 +25,36 @@ angular.module('qeServices').
         function ($http, $q) {
             'use strict';
 
-            var canceler = $q.defer();
+            var canceler = $q.defer(),
+                config = {
+                    queryBuilderPath: '/bin/querybuilder.json',
+                    nodeTypesPath: '/crx/de/nodetypes.jsp',
+                    fileSearchPath: '/crx/de/filesearch.jsp',
+                    predicatesPath: '/bin/acs-tools/qe/predicates.json'
+                };
 
             return {
+                init: function(cfg) {
+                    config = cfg;
+                },
                 query: function (params) {
                     canceler.resolve();
                     canceler = $q.defer();
-                    return $http.get('/bin/querybuilder.json', {
+                    return $http.get(config.queryBuilderPath, {
                         params: params,
                         timeout: canceler.promise
                     });
                 },
                 nodetypes: function () {
-                    return $http.get('/crx/de/nodetypes.jsp');
+                    return $http.get(config.nodeTypesPath);
                 },
                 filesearch: function (name) {
-                    return $http.get('/crx/de/filesearch.jsp', {
+                    return $http.get(config.fileSearchPath, {
                         params: { name: name }
                     });
                 },
                 predicates: function () {
-                    return $http.get('/bin/acs-tools/qe/predicates.json');
+                    return $http.get(config.predicatesPath);
                 }
             };
         }

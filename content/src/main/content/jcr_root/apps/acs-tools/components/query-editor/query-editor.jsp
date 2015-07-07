@@ -20,10 +20,27 @@
 
 <%@include file="/libs/foundation/global.jsp" %>
 <%
-    final String faviconPath = resourceResolver.map(component.getPath() + "/clientlibs/images/favicon.png");
-%>
+    pageContext.setAttribute("faviconPath",
+            resourceResolver.map(slingRequest, component.getPath() + "/clientlibs/images/favicon.png"));
 
-<!doctype html>
+    /* ACE JS Base path */
+    pageContext.setAttribute("aceEditorBasePath",
+            resourceResolver.map(slingRequest, "/etc/clientlibs/acs-tools/vendor/aceeditor"));
+
+    /* Application paths */
+    pageContext.setAttribute("queryBuilderPath",
+            resourceResolver.map(slingRequest, "/bin/querybuilder.json"));
+
+    pageContext.setAttribute("nodeTypesPath",
+            resourceResolver.map(slingRequest, "/crx/de/nodetypes.jsp"));
+
+    pageContext.setAttribute("fileSearchPath",
+            resourceResolver.map(slingRequest, "/crx/de/filesearch.jsp"));
+
+    pageContext.setAttribute("predicatesPath",
+            resourceResolver.map(slingRequest, "/bin/acs-tools/qe/predicates.json"));
+
+%><!doctype html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -31,7 +48,7 @@
 
     <title>Query Editor | ACS AEM Tools</title>
 
-    <link rel="shortcut icon" href="<%= faviconPath %>"/>
+    <link rel="shortcut icon" href="${faviconPath}"/>
 
     <cq:includeClientLib css="query-editor.app"/>
 
@@ -39,7 +56,14 @@
 
 <body id="acs-tools-query-editor">
 
-<div id="qeApp" ng-controller="QueryEditorCtrl" ng-init="running = true; refresh()">
+<div id="qeApp"
+     ng-controller="QueryEditorCtrl"
+     ng-init="init({
+                    queryBuilderPath: '${queryBuilderPath}',
+                    nodeTypesPath: '${nodeTypesPath}',
+                    fileSearchPath: '${fileSearchPath}',
+                    predicatesPath: '${predicatesPath}'
+                }); running = true; refresh();">
     <header class="top">
 
         <div class="logo">
@@ -49,7 +73,7 @@
 
         <nav class="crumbs">
             <a href="/miscadmin">Tools</a>
-            <a href="<%= currentPage.getPath() %>.html">Query Editor</a>
+            <a href="${currentPage.path}.html">Query Editor</a>
         </nav>
 
         <div class="drawer theme-dark">
@@ -78,18 +102,27 @@
     <div class="page" role="main">
         <div class="content">
 
-            <pre id="ace-input" ui-ace="{
-              mode: 'querybuilder',
-              theme: 'vibrant_ink',
-              onLoad: initEditor,
-              onChange: $parent.refresh
-            }" ng-model="$parent.source" ng-controller="QueryInputCtrl"></pre>
+            <pre id="ace-input"
+                 ui-ace="{
+                      mode: 'querybuilder',
+                      theme: 'vibrant_ink',
+                      onLoad: initEditor,
+                      onChange: $parent.refresh
+                 }"
+                 ng-init="aceEditorBasePath='${aceEditorBasePath}'"
+                 ng-model="$parent.source"
+                 ng-controller="QueryInputCtrl"></pre>
 
-            <pre id="ace-output" ui-ace="{
-              mode: 'json',
-              theme: 'vibrant_ink',
-              onLoad: initEditor
-            }" readonly="true" ng-model="$parent.json" ng-controller="QueryOutputCtrl"></pre>
+            <pre id="ace-output"
+                 ui-ace="{
+                      mode: 'json',
+                      theme: 'vibrant_ink',
+                      onLoad: initEditor
+                 }"
+                 readonly="true"
+                 ng-init="aceEditorBasePath='${aceEditorBasePath}'"
+                 ng-model="$parent.json"
+                 ng-controller="QueryOutputCtrl"></pre>
 
         </div>
     </div>
@@ -105,6 +138,5 @@
 </div>
 
 <cq:includeClientLib js="query-editor.app"/>
-
 </body>
 </html>

@@ -31,13 +31,17 @@
     final UserProperties userProperties = upm.getUserProperties(authorizable, "profile");
 
     /* App Data */
-    final String resourcePath = resourceResolver.map(resource.getPath());
+    final String resourcePath = resourceResolver.map(slingRequest, resource.getPath());
     final String runURL = resourcePath + ".run.html";
-    final String myFiddlesPath = resourceResolver.map(userProperties.getNode().getPath() + "/" + SAVE_TO);
-    final String currentPagePath = resourceResolver.map(currentPage.getPath());
+    final String myFiddlesPath = resourceResolver.map(slingRequest,
+            userProperties.getNode().getPath() + "/" + SAVE_TO);
+    final String currentPagePath = resourceResolver.map(slingRequest, currentPage.getPath());
+
+    /* ACE JS Base path */
+    final String aceBasePath = resourceResolver.map(slingRequest, "/etc/clientlibs/acs-tools/vendor/aceeditor");
 
     /* Favicon */
-    final String faviconPath = resourceResolver.map(component.getPath() + "/clientlibs/images/favicon.png");
+    final String faviconPath = resourceResolver.map(slingRequest, component.getPath() + "/clientlibs/images/favicon.png");
 %>
 <!doctype html>
 <html>
@@ -53,11 +57,14 @@
 
 
     <body>
-        <div id="acs-tools-aemfiddle-app" ng-controller="MainCtrl">
+        <div id="acs-tools-aemfiddle-app"
+             ng-controller="MainCtrl">
             <div ng-click="ui.hideNewPopover()"
                  ng-show="data.ui.newPopover.visible"
                  id="popover-new-blanket"></div>
             <div id="app-data"
+
+                 data-ace-editor-base-path="<%= aceBasePath %>"
                  data-run-url="<%= runURL %>"
                  data-resource-path="<%= resourcePath %>"
                  data-myfiddles-path="<%= myFiddlesPath %>"
