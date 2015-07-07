@@ -27,7 +27,11 @@ angular.module('qeControllers').
             'use strict';
 
             $scope.initEditor = function (editor) {
-                var langTools = ace.require("ace/ext/language_tools");
+                var langTools;
+
+                ace.config.set('basePath', $scope.aceEditorBasePath);
+
+                langTools = ace.require("ace/ext/language_tools");
 
                 editor.setOptions({
                     enableBasicAutocompletion: true,

@@ -20,15 +20,11 @@
 
 /*global angular: false */
 
-var vltApp = angular.module('vltRcpApp', ['ngDialog']);
-
-vltApp.controller('MainCtrl',
-    [ '$scope', '$http', '$timeout', '$interval', '$q', 'ngDialog',
-        function ($scope, $http, $timeout, $interval, $q, ngDialog) {
+angular.module('acs-tools-vlt-rcp-app', ['ACS.Tools.notifications']).controller('MainCtrl',
+    [ '$scope', '$http', '$timeout', '$interval', 'NotificationsService',
+        function ($scope, $http, $timeout, $interval, NotificationsService) {
 
     $scope.rcp_uris = ['/libs/granite/packaging/rcp', '/system/jackrabbit/filevault/rcp'];
-
-    $scope.rcp_uri = '/libs/granite/packaging/rcp';
 
     $scope.task_src = 'http://admin:admin@localhost:4502/crx/server/-/jcr:root/content/dam/my-site';
 
@@ -45,12 +41,11 @@ vltApp.controller('MainCtrl',
         noOrdering: false,
         autoRefresh: false
     };
+
     $scope.app = {
-        uri: '',
+        uri: '/libs/granite/packaging/rcp',
         running: false
     };
-
-    $scope.notifications = [];
 
     $scope.tasks = [];
 
@@ -61,7 +56,9 @@ vltApp.controller('MainCtrl',
     /*
      * Loads the tasks
      */
-    $scope.init = function () {
+    $scope.init = function (rcpUris) {
+
+        $scope.rcp_uris = rcpUris || $scope.rcp_uris;
 
         angular.forEach($scope.rcp_uris, function (uri) {
 
@@ -72,16 +69,17 @@ vltApp.controller('MainCtrl',
             ).
                 success(function (data, status, headers, config) {
                     if (status === 200) {
-                        $scope.rcp_uri = uri;
+                        $scope.app.uri = uri;
                         $scope.vltMissing = false;
                         $scope.tasks = data.tasks || [];
+
                     }
                 });
         });
     };
 
     $scope.refresh = function () {
-        $http.get($scope.rcp_uri,
+        $http.get($scope.app.uri,
             {
                 params: {ck: (new Date()).getTime()}
             }
@@ -90,26 +88,8 @@ vltApp.controller('MainCtrl',
                 $scope.tasks = data.tasks || [];
             })
             .error(function (data, status, headers, config) {
-                $scope.addNotification('error', 'ERROR', 'Could not refresh tasks.');
+                NotificationsService.add('error', 'ERROR', 'Could not refresh tasks');
             });
-    };
-
-    $scope.addNotification = function (type, title, message) {
-        var timeout = 10000;
-
-        if (type === 'success') {
-            timeout = timeout / 2;
-        }
-
-        $scope.notifications.unshift({
-            type: type,
-            title: title,
-            message: message
-        });
-
-        $timeout(function () {
-            $scope.notifications.shift();
-        }, timeout);
     };
 
     /*
@@ -121,13 +101,13 @@ vltApp.controller('MainCtrl',
             "id": task.id
         };
 
-        $http.post($scope.rcp_uri, cmd).
+        $http.post($scope.app.uri, cmd).
             success(function (data, status, headers, config) {
-                $scope.addNotification('info', 'INFO', 'Task ' + task.id + ' started.');
+                NotificationsService.add('info', 'INFO', 'Task ' + task.id + ' started.');
                 $scope.refresh();
             }).
             error(function (data, status, headers, config) {
-                $scope.addNotification('error', 'ERROR', 'Could not retrieve tasks.');
+                NotificationsService.add('error', 'ERROR', 'Could not retrieve tasks');
             });
     };
 
@@ -140,13 +120,13 @@ vltApp.controller('MainCtrl',
             "id": task.id
         };
 
-        $http.post($scope.rcp_uri, cmd).
+        $http.post($scope.app.uri, cmd).
             success(function (data, status, headers, config) {
-                $scope.addNotification('info', 'INFO', 'Task ' + task.id + ' stopped.');
+                NotificationsService.add('info', 'INFO', 'Task ' + task.id + ' stopped.');
                 $scope.refresh();
             }).
             error(function (data, status, headers, config) {
-                $scope.addNotification('error', 'ERROR', 'Could not retrieve tasks.');
+                NotificationsService.add('error', 'ERROR', 'Could not retrieve tasks');
             });
     };
 
@@ -159,17 +139,17 @@ vltApp.controller('MainCtrl',
             "id": task.id
         };
 
-        $http.post($scope.rcp_uri, cmd).
+        $http.post($scope.app.uri, cmd).
             success(function (data, status, headers, config) {
-                $scope.addNotification('info', 'INFO', 'Task ' + task.id + ' removed.');
+                NotificationsService.add('info', 'INFO', 'Task ' + task.id + ' removed.');
                 $scope.refresh();
             }).
             error(function (data, status, headers, config) {
-                $scope.addNotification('error', 'ERROR', 'Could not retrieve tasks.');
+                NotificationsService.add('error', 'ERROR', 'Could not retrieve tasks');
             });
     };
 
-    $scope.confirm = function () {
+    $scope.create = function () {
         var i = 0,
             excludes = [],
             cmd = {
@@ -196,22 +176,40 @@ vltApp.controller('MainCtrl',
             cmd.excludes = excludes;
         }
 
-        $http.post($scope.rcp_uri, cmd).
+        $http.post($scope.app.uri, cmd).
             success(function (data, status, headers, config) {
-                $scope.addNotification('info', 'INFO', 'Task created.');
-                $scope.closeThisDialog();
+                NotificationsService.add('info', 'INFO', 'Task created.');
+
+                $scope.refresh();
+                angular.element('#create-new-task-modal').modal('hide');
+                $scope.reset();
             }).
             error(function (data, status, headers, config) {
-                $scope.addNotification('error', 'ERROR', 'Could not create the tasks.');
+                NotificationsService.add('error', 'ERROR', data.message);
             });
     };
 
 
-    /*
-     * Create task
-     */
-    $scope.createTask = function () {
-        ngDialog.open({template: 'createTaskTemplate', controller: 'MainCtrl'});
+    $scope.reset = function() {
+        var taskSrc = 'http://admin:admin@localhost:4502/crx/server/-/jcr:root/content/dam/my-site',
+            taskDst = '/content/dam/my-site',
+            taskBatchSize = '1024',
+            taskThrottle = '',
+            checkboxModel = {
+                recursive: false,
+                update: false,
+                onlyNewer: false,
+                noOrdering: false,
+                autoRefresh: false
+            };
+
+        $scope.task_id = '';
+        $scope.task_src = taskSrc;
+        $scope.task_dst = taskDst;
+        $scope.task_batchSize = taskBatchSize;
+        $scope.task_throttle = taskThrottle;
+        $scope.checkboxModel = checkboxModel;
+        $scope.excludes = [];
     };
 
     $scope.addExclude = function () {
@@ -222,18 +220,10 @@ vltApp.controller('MainCtrl',
         $scope.excludes.splice(index, 1);
     };
 
-    $scope.$on('ngDialog.opened', function (event, $dialog) {
-        $dialog.find('.ngdialog-content').css('width', '80%');
-
-    });
-
-    $scope.$on('ngDialog.closed', function (event, $dialog) {
-        $scope.refresh();
-    });
-
     $interval(function () {
         if ($scope.checkboxModel.autoRefresh) {
             $scope.refresh();
         }
     }, 5000);
+
 }]);

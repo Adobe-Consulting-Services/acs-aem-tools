@@ -30,6 +30,8 @@ angular.module('qeControllers').
                 var Range = ace.require("ace/range").Range,
                     event = ace.require("ace/lib/event"), markerId;
 
+                ace.config.set('basePath', $scope.aceEditorBasePath);
+
                 editor.setOptions({
                     enableMultiselect: false
                 });
