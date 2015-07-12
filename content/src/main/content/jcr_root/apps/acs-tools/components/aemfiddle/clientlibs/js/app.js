@@ -25,6 +25,20 @@ var aemFiddle = angular.module('aemFiddle',['ngSanitize']).config(['$sceProvider
 }]);
 
 
+aemFiddle.directive('aceEditor', function(){
+    return {
+        restrict: 'A',
+        link: function($scope, $elem, attrs){
+
+            /* Wait for page to load */
+            $(window).load(function() {
+                ace.config.set("basePath", attrs.aceEditorBasePath);
+            });
+        }
+    };
+});
+
+
 /* ACE Editors */
 
 aemFiddle.ace = {
@@ -123,7 +137,7 @@ aemFiddle.ace = {
     }
 };
 
-ace.config.set("basePath", '/etc/clientlibs/acs-tools/vendor/aceeditor');
+ace.config.set("basePath", $('#app-data').data('ace-editor-base-path'));
 
 aemFiddle.ace.input.init();
 aemFiddle.ace.output.init();

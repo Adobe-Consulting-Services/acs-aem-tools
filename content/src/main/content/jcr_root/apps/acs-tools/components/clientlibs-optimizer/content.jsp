@@ -19,10 +19,7 @@
   --%>
 <%@include file="/libs/foundation/global.jsp" %><%
 
-    pageContext.setAttribute("resourcePath", xssAPI.getValidHref(resourceResolver.map(resource.getPath())));
-
-%>
-<div ng-controller="MainCtrl"
+%><div ng-controller="MainCtrl"
      ng-init="app.uri = '${resourcePath}.optimize.json';">
 
     <p>Find all transitive dependencies for a set of Client Library categories.</p>

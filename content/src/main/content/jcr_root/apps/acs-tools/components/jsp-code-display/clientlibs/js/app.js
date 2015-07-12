@@ -24,11 +24,13 @@ var jspCodeDisplay = angular.module('acs-tools-jsp-code-display-app', ['ACS.Tool
 
 jspCodeDisplay.controller('MainCtrl', ['$scope', '$http', 'NotificationsService', function($scope, $http, NotificationsService) {
 
-        $scope.app = {
-            uri: ''
-        };
+    $scope.app = {
+        uri: ''
+    };
 
-        $scope.line = '';
+    $scope.line = '';
+
+    /* Methods */
 
     $scope.debug = function() {
 
@@ -60,33 +62,36 @@ jspCodeDisplay.controller('MainCtrl', ['$scope', '$http', 'NotificationsService'
             NotificationsService.add('error', 'Error', status);
         });
     };
+
 }]);
 
+jspCodeDisplay.directive('aceEditor', function(){
+    return {
+        restrict: 'A',
+        link: function($scope, $elem, attrs){
 
-(function(){
-    var editor = ace.edit("editor");
+            /* Wait for page to load */
+            $(window).load(function() {
 
-    ace.config.set("basePath", '/etc/clientlibs/acs-tools/vendor/aceeditor');
+                ace.config.set("basePath", attrs.aceEditorBasePath);
 
-    editor.setTheme("ace/theme/vibrant_ink");
-    editor.getSession().setMode("ace/mode/java");
-    editor.setReadOnly(true);
+                jspCodeDisplay.editor = ace.edit("editor");
+                jspCodeDisplay.editor.setTheme("ace/theme/vibrant_ink");
+                jspCodeDisplay.editor.getSession().setMode("ace/mode/java");
+                jspCodeDisplay.editor.setReadOnly(true);
 
-    jspCodeDisplay.editor = editor;
-}());
+                function resizeEditor(editor) {
+                    var buffer = 45;
+                    $elem.css('height', (window.innerHeight - $elem.offset().top - buffer) + 'px');
+                    editor.resize();
+                }
 
+                $(window).resize(function() {
+                    resizeEditor(jspCodeDisplay.editor);
+                });
 
-$(function() {
-    function resizeEditor() {
-        var $editor = $('#editor'),
-            buffer = 45;
-        $editor.css('height', (window.innerHeight - $editor.offset().top - buffer) + 'px');
-        jspCodeDisplay.editor.resize();
-    }
-
-    $(window).resize(function() {
-        resizeEditor();
-    });
-
-    resizeEditor();
+                resizeEditor(jspCodeDisplay.editor);
+            });
+        }
+    };
 });

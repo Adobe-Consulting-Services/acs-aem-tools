@@ -18,40 +18,11 @@
  * #L%
  */
 
-#acs-tools-vlt-rcp-app-css {
-
-  .content-container {
-    width: 100%;
-
-    .content-container-inner {
-      width: 960px;
-      margin: 0 auto;
-    }
-  }
-
-  .drawer {
-    padding-left: 1em;
-
-    input[type=checkbox] {
-      opacity: 1;
-      margin-top: -10px;
-      margin-left: 5px;
-      margin-right: 2em
-    }
-  }
-
-  .notifications {
-    position: fixed;
-    top: 50px;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    width: 960px;
-    z-index: 1000;
-  }
+#acs-tools-vlt-rcp-app {
 
   .tasks {
     width: 100%;
+    margin-bottom: 50px;
 
     td {
       text-align: left;
@@ -66,66 +37,73 @@
     }
   }
 
-  .create-new-task {
-    width: 80%;
+  .auto-refresh-label {
+    font-size: 15px;
+  }
 
-    .label-col {
-      width: 10em;
-      padding-right: 1em;
-      font-weight: bold;
-      text-align: right;
+  .top-button-group {
+    float: right;
+  }
 
-      label {
-        line-height: 1.5em;
-      }
+}
+
+#create-new-task-modal {
+
+  width: 80%;
+  margin-bottom: 50px;
+  position: absolute;
+
+  .label-col {
+    width: 10em;
+    padding-right: 1em;
+    font-weight: bold;
+    text-align: right;
+
+    label {
+      line-height: 1.5em;
     }
+  }
 
-    .field-col {
-      text-align: left;
-    }
+  .field-col {
+    text-align: left;
+    width: 82%;
+  }
 
-    input[type=text] {
-      width: 100%;
-    }
+  input[type=text] {
+    width: 100%;
+  }
 
-    .add-remove-list {
+  .add-remove-list {
+    .add {
+      margin-top: 5px;
 
-      .add {
-        margin-top: 5px;
+      a {
+        color: #000;
 
-        a {
-          color: #000;
-
-          &:hover {
-            text-decoration: underline;
-          }
+        &:hover {
+          text-decoration: underline;
         }
       }
+    }
 
-      .remove {
-        margin: 10px
-      }
+    .remove {
+      margin: 10px
+    }
 
-      ul {
-        list-style: none;
-        margin: 1em 0;
-        padding :0;
+    ul {
+      list-style: none;
+      margin: 1em 0;
+      padding :0;
 
-        li {
-          margin: 0;
-          padding: 0 0 .5em 0;
+      li {
+        margin: 0;
+        padding: 0 0 .5em 0;
 
-          input[type=text] {
-            width: 90%;
-          }
+        input[type=text] {
+          width: 90%;
         }
       }
     }
   }
 }
 
-.ngdialog.ngdialog-theme-default {
-  padding-top: 45px !important;
-  padding-bottom: 10px !important;
-
-}
