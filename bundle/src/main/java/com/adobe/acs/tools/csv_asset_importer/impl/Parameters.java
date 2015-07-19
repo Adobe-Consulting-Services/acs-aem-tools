@@ -44,6 +44,8 @@ public class Parameters {
     private String absTargetPathProperty;
 
     private String mimeTypeProperty;
+    
+    private String skipProperty;
 
     private String multiDelimiter;
 
@@ -75,6 +77,7 @@ public class Parameters {
         final RequestParameter fileLocationParam = request.getRequestParameter("fileLocation");
         final RequestParameter fullImportParam = request.getRequestParameter("fullImport");
         final RequestParameter mimeTypePropertyParam = request.getRequestParameter("mimeTypeProperty");
+        final RequestParameter skipPropertyParam = request.getRequestParameter("skipProperty");
         final RequestParameter absTargetPathPropertyParam = request.getRequestParameter("absTargetPathProperty");
         final RequestParameter relSrcPathPropertyParam = request.getRequestParameter("relSrcPathProperty");
         final RequestParameter uniquePropertyParam = request.getRequestParameter("uniqueProperty");
@@ -111,6 +114,11 @@ public class Parameters {
             this.fileLocation = fileLocationParam.toString();
         }
 
+        this.skipProperty = null;
+        if (skipPropertyParam != null && StringUtils.isNotBlank(skipPropertyParam.toString())) {
+            skipProperty = StringUtils.stripToNull(skipPropertyParam.toString());
+        }
+        
         this.mimeTypeProperty = null;
         if (mimeTypePropertyParam != null && StringUtils.isNotBlank(mimeTypePropertyParam.toString())) {
             mimeTypeProperty = StringUtils.stripToNull(mimeTypePropertyParam.toString());
@@ -190,6 +198,10 @@ public class Parameters {
 
     public final String getMimeTypeProperty() {
         return mimeTypeProperty;
+    }
+
+    public final String getSkipProperty() {
+        return skipProperty;
     }
 
     public final String getFileLocation() {

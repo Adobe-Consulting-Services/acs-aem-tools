@@ -46,6 +46,8 @@ public final class Column<T> {
 
     private String raw;
 
+    private String relPropertyPath;
+
     private String propertyName;
 
     private boolean multi = false;
@@ -64,9 +66,9 @@ public final class Column<T> {
         String[] params = StringUtils.split(paramsStr, ":");
 
         if (StringUtils.isBlank(paramsStr)) {
-            this.propertyName = this.getRaw();
+            this.relPropertyPath = this.getRaw();
         } else {
-            this.propertyName = StringUtils.trim(StringUtils.substringBefore(this.getRaw(), "{{"));
+            this.relPropertyPath = StringUtils.trim(StringUtils.substringBefore(this.getRaw(), "{{"));
 
             if (params.length == 2) {
                 this.dataType = nameToClass(StringUtils.stripToEmpty(params[0]));
@@ -81,6 +83,13 @@ public final class Column<T> {
                 }
             }
         }
+
+        if (StringUtils.contains(this.relPropertyPath, "/")) {
+            this.propertyName = StringUtils.trim(StringUtils.substringAfterLast(this.relPropertyPath, "/"));
+        } else {
+            this.propertyName = StringUtils.trim(this.relPropertyPath);
+        }
+
     }
 
     public T getData(String data) {
@@ -157,6 +166,10 @@ public final class Column<T> {
 
     public String getPropertyName() {
         return propertyName;
+    }
+
+    public String getRelPropertyPath() {
+        return relPropertyPath;
     }
 
     public boolean isMulti() {

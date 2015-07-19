@@ -22,7 +22,7 @@
 
     pageContext.setAttribute("fileApiJS", resourceResolver.map("/etc/clientlibs/acs-tools/vendor/FileAPI.min.js"));
     pageContext.setAttribute("fileApiSWF",
-            resourceResolver.map("/etc/clientlibs/acs-tools/vendor/FileAPI.min.js/FileAPI.flash.swf"));
+            resourceResolver.map(slingRequest, "/etc/clientlibs/acs-tools/vendor/FileAPI.min.js/FileAPI.flash.swf"));
 
 %><script>
     // Need to be loaded before angular-file-upload-shim(.min).js

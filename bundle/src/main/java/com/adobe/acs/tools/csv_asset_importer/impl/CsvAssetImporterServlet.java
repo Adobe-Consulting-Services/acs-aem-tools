@@ -66,10 +66,10 @@ import java.util.Map;
 
 @SlingServlet(
         label = "ACS AEM Tools - Excel to Asset Servlet",
-        methods = { "POST" },
-        resourceTypes = { "acs-tools/components/csv-asset-importer" },
-        selectors = { "import" },
-        extensions = { "json" }
+        methods = {"POST"},
+        resourceTypes = {"acs-tools/components/csv-asset-importer"},
+        selectors = {"import"},
+        extensions = {"json"}
 )
 public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
     private static final Logger log = LoggerFactory.getLogger(CsvAssetImporterServlet.class);
@@ -120,10 +120,12 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                     log.debug("Processing row {}", Arrays.asList(row));
 
                     try {
-                        batch.add(this.importAsset(request.getResourceResolver(),
-                                params,
-                                columns,
-                                row));
+                        if (!this.isSkippedRow(params, columns, row)) {
+                            batch.add(this.importAsset(request.getResourceResolver(),
+                                    params,
+                                    columns,
+                                    row));
+                        }
                     } catch (FileNotFoundException e) {
                         failures++;
                         log.error("Could not find file for row ", Arrays.asList(row), e);
@@ -254,8 +256,8 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
     private void updateProperties(final Map<String, Column> columns,
                                   final String[] row,
                                   final String[] ignoreProperties,
-                                  final Asset asset) {
-        final ModifiableValueMap properties = this.getMetadataProperties(asset);
+                                  final Asset asset) throws RepositoryException {
+
 
         // Copy properties
         for (final Map.Entry<String, Column> entry : columns.entrySet()) {
@@ -270,23 +272,25 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
 
             final Column column = entry.getValue();
             final String valueStr = row[column.getIndex()];
+            final ModifiableValueMap properties = this.getMetadataProperties(asset,
+                    column.getRelPropertyPath());
 
             if (StringUtils.isNotBlank(valueStr)) {
                 if (column.isMulti()) {
-                    properties.put(entry.getKey(), column.getMultiData(valueStr));
+                    properties.put(column.getPropertyName(), column.getMultiData(valueStr));
                     log.debug("Setting multi property [ {} ~> {} ]",
-                            entry.getKey(),
+                            column.getRelPropertyPath(),
                             Arrays.asList(column.getMultiData(valueStr)));
                 } else {
-                    properties.put(entry.getKey(), column.getData(valueStr));
+                    properties.put(column.getPropertyName(), column.getData(valueStr));
                     log.debug("Setting property [ {} ~> {} ]",
-                            entry.getKey(),
+                            column.getRelPropertyPath(),
                             column.getData(valueStr));
                 }
             } else {
-                if (properties.containsKey(entry.getKey())) {
-                    properties.remove(entry.getKey());
-                    log.debug("Removing property [ {} ]", entry.getKey());
+                if (properties.containsKey(column.getPropertyName())) {
+                    properties.remove(column.getPropertyName());
+                    log.debug("Removing property [ {} ]", column.getRelPropertyPath());
                 }
             }
         }
@@ -438,6 +442,7 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
         if (resource != null) {
             final ValueMap properties = resource.adaptTo(ValueMap.class);
             final String val = properties.get(uniquePropertyName, String.class);
+
             if (StringUtils.equals(val, uniqueId)) {
                 log.debug("Found  Asset at [ {} ] with matching unique property value of [ {} ]",
                         resource.getPath(), uniqueId);
@@ -519,12 +524,53 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
      * @param asset the asset to get the properties for
      * @return the ModifiableValueMap for the Asset's metadata node
      */
-    private ModifiableValueMap getMetadataProperties(final Asset asset) {
+    private ModifiableValueMap getMetadataProperties(final Asset asset,
+                                                     final String relPropertyPath) throws RepositoryException {
         Resource assetResource = asset.adaptTo(Resource.class);
         Resource metadataResource = assetResource.getChild(JcrConstants.JCR_CONTENT
                 + "/"
                 + DamConstants.METADATA_FOLDER);
-        return metadataResource.adaptTo(ModifiableValueMap.class);
+
+
+        if (!StringUtils.contains(relPropertyPath, "/")) {
+            return metadataResource.adaptTo(ModifiableValueMap.class);
+        } else {
+            ResourceResolver resourceResolver = assetResource.getResourceResolver();
+            String relPropertyPathPrefix = StringUtils.substringBeforeLast(relPropertyPath, "/");
+            String canonicalPath = com.day.text.Text.makeCanonicalPath(metadataResource.getPath() + "/" + relPropertyPathPrefix);
+
+            Node node = JcrUtils.getOrCreateByPath(canonicalPath,
+                    JcrConstants.NT_UNSTRUCTURED, resourceResolver.adaptTo(Session.class));
+
+            Resource relativeResource = resourceResolver.getResource(node.getPath());
+            return relativeResource.adaptTo(ModifiableValueMap.class);
+        }
+    }
+
+    /**
+     * Checks if the Row should be skipped
+     * *
+     * @param params  the CSV Asset Importer params
+     * @param columns the Columns of the CSV
+     * @param row     a row in the CSV
+     * @return true if the row should be skipped
+     */
+    private boolean isSkippedRow(final Parameters params,
+                                 final Map<String, Column> columns,
+                                 final String[] row) {
+
+        if (StringUtils.isNotBlank(params.getSkipProperty())) {
+            Column column = columns.get(params.getSkipProperty());
+            if(column != null) {
+                String value = StringUtils.stripToNull(row[column.getIndex()]);
+                log.debug(">>>>> {}", value);
+                return StringUtils.equalsIgnoreCase(Boolean.TRUE.toString(), value);
+            } else {
+                log.warn("Could not find the Skip column at key [ {} ]", params.getSkipProperty());
+            }
+        }
+        
+        return false;
     }
 
     /**

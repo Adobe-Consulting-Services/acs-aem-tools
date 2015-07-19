@@ -99,6 +99,17 @@
     </div>
 
     <div class="form-row">
+        <h4>Skip Column Name</h4>
+
+        <span>
+            <input type="text"
+                   name="skipProperty"
+                   ng-model="form.skipProperty"
+                   placeholder="[ Optional ] Column name indicating if a row should be skipped"/>
+        </span>
+    </div>
+    
+    <div class="form-row">
         <h4>Absolute Dest Path Column Name</h4>
 
         <span>

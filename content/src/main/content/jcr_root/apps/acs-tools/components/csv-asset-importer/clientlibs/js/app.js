@@ -37,10 +37,11 @@ angular.module('acs-tools-csv-asset-importer-app', ['ngFileUpload', 'ACS.Tools.n
         absTargetPathProperty: '',
         relSrcPathProperty: '',
         mimeTypeProperty: '',
+        skipProperty: '',
         batchSize: '',
         throttle: '',
         multiDelimiter: '',
-        ignoreProperties: 'absTargetPath,relSrcPath,mimeType'
+        ignoreProperties: 'absTargetPath,relSrcPath,mimeType,skip'
     };
 
     $scope.result = {
@@ -68,6 +69,7 @@ angular.module('acs-tools-csv-asset-importer-app', ['ngFileUpload', 'ACS.Tools.n
                 'absTargetPathProperty': $scope.form.absTargetPathProperty || 'absTargetPath',
                 'relSrcPathProperty': $scope.form.relSrcPathProperty || 'relSrcPath',
                 'mimeTypeProperty': $scope.form.mimeTypeProperty || 'mimeType',
+                'skipProperty': $scope.form.skipProperty || '',
                 'batchSize': $scope.form.batchSize || 1000,
                 'throttle': $scope.form.throttle || 0,
                 'ignoreProperties' : $scope.form.ignoreProperties || '',
