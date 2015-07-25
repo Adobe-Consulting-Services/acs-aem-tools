@@ -563,7 +563,6 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
             Column column = columns.get(params.getSkipProperty());
             if(column != null) {
                 String value = StringUtils.stripToNull(row[column.getIndex()]);
-                log.debug(">>>>> {}", value);
                 return StringUtils.equalsIgnoreCase(Boolean.TRUE.toString(), value);
             } else {
                 log.warn("Could not find the Skip column at key [ {} ]", params.getSkipProperty());
