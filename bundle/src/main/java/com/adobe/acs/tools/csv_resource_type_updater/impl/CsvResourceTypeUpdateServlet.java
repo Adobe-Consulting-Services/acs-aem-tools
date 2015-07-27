@@ -55,6 +55,10 @@ public class CsvResourceTypeUpdateServlet extends SlingAllMethodsServlet {
 
     private static final int DEFAULT_BATCH_SIZE = 1000;
 
+    // 3 to account for Line Termination
+    private static final int VALID_ROW_LENGTH = 3;
+
+
     @Override
     protected final void doPost(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
             throws IOException {
@@ -98,7 +102,7 @@ public class CsvResourceTypeUpdateServlet extends SlingAllMethodsServlet {
     }
 
     /**
-     * Update all resources that have matching property values with the new values in the CSV
+     * Update all resources that have matching property values with the new values in the CSV.
      * @param resourceResolver the resource resolver object
      * @param params the request params
      * @param rows the CSV rows
@@ -115,8 +119,7 @@ public class CsvResourceTypeUpdateServlet extends SlingAllMethodsServlet {
         while (rows.hasNext()) {
             String[] row = rows.next();
 
-            // Length is 3 because Line Termination was added
-            if (row.length == 3) {
+            if (row.length == VALID_ROW_LENGTH) {
                 map.put(row[0], row[1]);
                 log.debug("Adding type translation [ {} ] ~> [ {} ]", row[0], row[1]);
             } else {
@@ -145,14 +148,14 @@ public class CsvResourceTypeUpdateServlet extends SlingAllMethodsServlet {
             final Resource resource = resources.next();
             final ModifiableValueMap properties = resource.adaptTo(ModifiableValueMap.class);
 
-            String newValue = map.get(properties.get( params.getPropertyName(), String.class));
+            String newValue = map.get(properties.get(params.getPropertyName(), String.class));
 
             if (newValue != null) {
-                properties.put( params.getPropertyName(), newValue);
+                properties.put(params.getPropertyName(), newValue);
                 results.add(resource.getPath());
                 count++;
 
-                if(count == DEFAULT_BATCH_SIZE) {
+                if (count == DEFAULT_BATCH_SIZE) {
                     this.save(resourceResolver, count);
                     count = 0;
                 }
