@@ -20,10 +20,8 @@
 
 package com.adobe.acs.tools.csv_resource_type_updater.impl;
 
-import com.adobe.acs.tools.csv.impl
-        .CsvUtil;
+import com.adobe.acs.tools.csv.impl.CsvUtil;
 import org.apache.commons.lang.StringUtils;
-import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -34,7 +32,6 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
-import org.apache.sling.commons.mime.MimeTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,10 +55,6 @@ public class CsvResourceTypeUpdateServlet extends SlingAllMethodsServlet {
 
     private static final int DEFAULT_BATCH_SIZE = 1000;
 
-
-    @Reference
-    private MimeTypeService mimeTypeService;
-
     @Override
     protected final void doPost(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
             throws IOException {
@@ -78,18 +71,9 @@ public class CsvResourceTypeUpdateServlet extends SlingAllMethodsServlet {
             final Iterator<String[]> rows = CsvUtil.getRowsFromCsv(params);
 
             try {
-                // Process Asset row entries
-                final List<String> result = new ArrayList<String>();
-                final List<String> batch = new ArrayList<String>();
-                int failures = 0;
+                final List<String> paths = this.update(request.getResourceResolver(), params, rows);
 
-                List<String> paths = this.doWork(request.getResourceResolver(), params, rows);
-
-                // Final save to catch any non-modulo stragglers; will only invoke persist if there are changes
-                this.save(request.getResourceResolver(), DEFAULT_BATCH_SIZE);
-                result.addAll(batch);
-
-                log.info("Imported as TOTAL of [ {} ] assets in {} ms", result.size(),
+                log.info("Updated as TOTAL of [ {} ] resources in {} ms", paths.size(),
                         System.currentTimeMillis() - start);
 
                 try {
@@ -113,9 +97,17 @@ public class CsvResourceTypeUpdateServlet extends SlingAllMethodsServlet {
         response.getWriter().print(jsonResponse.toString());
     }
 
-    private List<String> doWork(final ResourceResolver resourceResolver,
-                        final Parameters params,
-                        final Iterator<String[]> rows) throws PersistenceException {
+    /**
+     * Update all resources that have matching property values with the new values in the CSV
+     * @param resourceResolver the resource resolver object
+     * @param params the request params
+     * @param rows the CSV rows
+     * @return a list of the resource paths updated
+     * @throws PersistenceException
+     */
+    private List<String> update(final ResourceResolver resourceResolver,
+                                final Parameters params,
+                                final Iterator<String[]> rows) throws PersistenceException {
 
         final List<String> results = new ArrayList<String>();
         final Map<String, String> map = new HashMap<String, String>();
@@ -123,9 +115,10 @@ public class CsvResourceTypeUpdateServlet extends SlingAllMethodsServlet {
         while (rows.hasNext()) {
             String[] row = rows.next();
 
+            // Length is 3 because Line Termination was added
             if (row.length == 3) {
                 map.put(row[0], row[1]);
-                log.debug("Adding translation [ {} ] ~> [ {} ]", row[0], row[1]);
+                log.debug("Adding type translation [ {} ] ~> [ {} ]", row[0], row[1]);
             } else {
                 log.warn("Row {} is malformed", Arrays.asList(row));
             }
