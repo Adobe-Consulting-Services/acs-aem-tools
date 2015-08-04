@@ -6,6 +6,7 @@
     <aem-fiddle/>
     <clientlibs-optimizer/>
     <csv-asset-importer/>
+    <csv-type-update/>
     <explain-query/>
     <jsp-code-display/>
     <query-editor/>

@@ -3,6 +3,8 @@
     jcr:primaryType="sling:OrderedFolder">
     <aem-fiddle/>
     <clientlibs-optimizer/>
+    <csv-resource-type-updater/>
+    <csv-asset-importer/>
     <jsp-code-display/>
     <query-editor/>
     <explain-query/>
