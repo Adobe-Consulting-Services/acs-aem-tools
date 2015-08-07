@@ -47,6 +47,10 @@ angular.module('ACS.Tools.notifications', []).factory('NotificationsService', ['
             return this.data.running.visible;
         },
 
+        isRunning: function() {
+            return this.data.running.visible;
+        },
+
         add: function (type, title, message) {
             var self = this,
                 notification = {
