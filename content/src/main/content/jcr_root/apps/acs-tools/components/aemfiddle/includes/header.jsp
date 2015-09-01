@@ -45,6 +45,11 @@
                placeholder="Absolute resource path"
                class="resource header-item"/>
 
+        <%-- Execute as Workflow --%>
+        <label><input
+                ng-model="data.src.runAsWorkflow"
+                type="checkbox"><span>Run as Workflow</span></label>
+
         <span class="divider"></span>
 
         <%-- Run Code Button --%>
