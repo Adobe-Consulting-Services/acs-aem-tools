@@ -24,7 +24,7 @@ angular.module('acs-tools-vlt-rcp-app', ['ACS.Tools.notifications']).controller(
     [ '$scope', '$http', '$timeout', '$interval', 'NotificationsService',
         function ($scope, $http, $timeout, $interval, NotificationsService) {
 
-    $scope.rcp_uris = ['/libs/granite/packaging/rcp', '/system/jackrabbit/filevault/rcp'];
+    $scope.rcp_uris = ['/system/jackrabbit/filevault/rcp', '/libs/granite/packaging/rcp'];
 
     $scope.task_src = 'http://admin:admin@localhost:4502/crx/server/-/jcr:root/content/dam/my-site';
 
@@ -43,7 +43,7 @@ angular.module('acs-tools-vlt-rcp-app', ['ACS.Tools.notifications']).controller(
     };
 
     $scope.app = {
-        uri: '/libs/granite/packaging/rcp',
+        uri: '/system/jackrabbit/filevault/rcp',
         running: false
     };
 
