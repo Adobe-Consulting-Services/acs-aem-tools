@@ -33,7 +33,8 @@ angular.module('acs-tools-csv-resource-type-updater-app', ['ngFileUpload', 'ACS.
         };
 
         $scope.result = {
-            paths: []
+            success: [],
+            failure: []
         };
 
         $scope.update = function () {
@@ -42,7 +43,8 @@ angular.module('acs-tools-csv-resource-type-updater-app', ['ngFileUpload', 'ACS.
             NotificationsService.running(true);
 
             $scope.result = {
-                paths: []
+                success: [],
+                failure: []
             };
 
             Upload.upload({
@@ -54,10 +56,22 @@ angular.module('acs-tools-csv-resource-type-updater-app', ['ngFileUpload', 'ACS.
                 file: $scope.files[0]
             }).success(function (data, status, headers, config) {
                 $scope.result = data;
-                if ($scope.result.paths && $scope.result.paths.length > 0) {
+
+                if ($scope.result.success && $scope.result.success.length > 0) {
                     NotificationsService.add('success',
-                        'Success', (data.message || ( $scope.result.paths.length + ' resources were updated' )));
-                } else {
+                        'Success', (data.message || ( $scope.result.success.length + ' resources were updated' )));
+                }
+
+                if ($scope.result.failure && $scope.result.failure.length > 0) {
+                    NotificationsService.add('notice',
+                        'Failure', (data.message || ( $scope.result.failure.length + ' resources were unable' +
+                        ' to be updated' )));
+                }
+
+
+                if ($scope.result.success && $scope.result.success.length > 0
+                        && $scope.result.failure && $scope.result.failure.length > 0) {
+
                     NotificationsService.add('notice',
                         'Notice', ('No matching resources could be found'));
                 }

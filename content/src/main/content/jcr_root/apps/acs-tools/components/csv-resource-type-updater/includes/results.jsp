@@ -18,11 +18,22 @@
   ~ #L%
   --%>
 
-<div ng-show="result.paths.length > 0" class="results">
+<div ng-show="result.success.length > 0 || result.failure.length > 0" class="results">
 
-    <h2>{{ result.paths.length }} resources processed</h2>
+  <div ng-show="result.success.length > 0">
+    <h2>{{ result.success.length }} resources successfully processed</h2>
 
-    <ul ng-repeat="path in result.paths track by $index">
+    <ul ng-repeat="path in result.success track by $index">
         <li>{{ path }}</li>
     </ul>
+  </div>
+
+  <div ng-show="result.failure.length > 0">
+    <h2>{{ result.failure.length }} resources failed to process</h2>
+
+    <ul ng-repeat="path in failure.paths track by $index">
+      <li>{{ path }}</li>
+    </ul>
+  </div>
+
 </div>
