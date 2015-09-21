@@ -18,22 +18,29 @@
   ~ #L%
   --%>
 
-<div ng-show="result.success.length > 0 || result.failure.length > 0" class="results">
+<div ng-show="result.processed && (result.success.length > 0 || result.failure.length > 0)"
+     class="results">
 
-  <div ng-show="result.success.length > 0">
-    <h2>{{ result.success.length }} resources successfully processed</h2>
+    <div ng-show="result.success.length > 0">
+        <h2>{{ result.success.length }} resources successfully processed</h2>
 
-    <ul ng-repeat="path in result.success track by $index">
-        <li>{{ path }}</li>
-    </ul>
-  </div>
+        <ul ng-repeat="path in result.success track by $index">
+            <li>{{ path }}</li>
+        </ul>
+    </div>
 
-  <div ng-show="result.failure.length > 0">
-    <h2>{{ result.failure.length }} resources failed to process</h2>
+    <div ng-show="result.failure.length > 0">
+        <h2>{{ result.failure.length }} resources failed to process</h2>
 
-    <ul ng-repeat="path in failure.paths track by $index">
-      <li>{{ path }}</li>
-    </ul>
-  </div>
+        <ul ng-repeat="path in failure.paths track by $index">
+            <li>{{ path }}</li>
+        </ul>
+    </div>
 
+</div>
+
+<div ng-show="result.processed && result.success.length === 0 && result.failure.length === 0" class="results">
+    <h2>No matching resources could be found to update</h2>
+
+    <p>Check to ensure the configuration parameters and the CSV file are correct.</p>
 </div>

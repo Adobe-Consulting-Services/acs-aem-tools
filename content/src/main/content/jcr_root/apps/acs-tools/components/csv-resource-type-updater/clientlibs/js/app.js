@@ -33,6 +33,7 @@ angular.module('acs-tools-csv-resource-type-updater-app', ['ngFileUpload', 'ACS.
         };
 
         $scope.result = {
+            processed: false,
             success: [],
             failure: []
         };
@@ -44,7 +45,8 @@ angular.module('acs-tools-csv-resource-type-updater-app', ['ngFileUpload', 'ACS.
 
             $scope.result = {
                 success: [],
-                failure: []
+                failure: [],
+                processed: false
             };
 
             Upload.upload({
@@ -56,6 +58,7 @@ angular.module('acs-tools-csv-resource-type-updater-app', ['ngFileUpload', 'ACS.
                 file: $scope.files[0]
             }).success(function (data, status, headers, config) {
                 $scope.result = data;
+                $scope.result.processed = true;
 
                 if ($scope.result.success && $scope.result.success.length > 0) {
                     NotificationsService.add('success',
@@ -63,14 +66,14 @@ angular.module('acs-tools-csv-resource-type-updater-app', ['ngFileUpload', 'ACS.
                 }
 
                 if ($scope.result.failure && $scope.result.failure.length > 0) {
-                    NotificationsService.add('notice',
-                        'Failure', (data.message || ( $scope.result.failure.length + ' resources were unable' +
+                    NotificationsService.add('error',
+                        'Error', (data.message || ( $scope.result.failure.length + ' resources were unable' +
                         ' to be updated' )));
                 }
 
 
-                if ($scope.result.success && $scope.result.success.length > 0
-                        && $scope.result.failure && $scope.result.failure.length > 0) {
+                if ((!$scope.result.success || $scope.result.success.length === 0)
+                        && (!$scope.result.failure && $scope.result.failure.length === 0)) {
 
                     NotificationsService.add('notice',
                         'Notice', ('No matching resources could be found'));

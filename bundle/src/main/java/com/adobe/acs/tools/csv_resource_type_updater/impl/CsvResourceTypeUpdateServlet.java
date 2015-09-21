@@ -104,15 +104,16 @@ public class CsvResourceTypeUpdateServlet extends SlingAllMethodsServlet {
 
     /**
      * Update all resources that have matching property values with the new values in the CSV.
+     *
      * @param resourceResolver the resource resolver object
-     * @param params the request params
-     * @param rows the CSV rows
+     * @param params           the request params
+     * @param rows             the CSV rows
      * @return a list of the resource paths updated
      * @throws PersistenceException
      */
     private Result update(final ResourceResolver resourceResolver,
-                                final Parameters params,
-                                final Iterator<String[]> rows) throws PersistenceException {
+                          final Parameters params,
+                          final Iterator<String[]> rows) throws PersistenceException {
 
         final Result result = new Result();
 
@@ -205,9 +206,12 @@ public class CsvResourceTypeUpdateServlet extends SlingAllMethodsServlet {
         }
     }
 
-
+    /**
+     * Result to expose success and failure paths to the JSON response.
+     */
     private class Result {
         private List<String> success;
+
         private List<String> failure;
 
         public Result() {
@@ -219,16 +223,16 @@ public class CsvResourceTypeUpdateServlet extends SlingAllMethodsServlet {
             return success;
         }
 
-        public void addSuccess(String success) {
-            this.success.add(success);
+        public void addSuccess(String path) {
+            this.success.add(path);
         }
 
         public List<String> getFailure() {
             return failure;
         }
 
-        public void addFailure(String failure) {
-            this.failure.add(failure);
+        public void addFailure(String path) {
+            this.failure.add(path);
         }
     }
 }
