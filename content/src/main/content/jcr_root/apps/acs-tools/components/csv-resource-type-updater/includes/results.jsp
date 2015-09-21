@@ -32,7 +32,7 @@
     <div ng-show="result.failure.length > 0">
         <h2>{{ result.failure.length }} resources failed to process</h2>
 
-        <ul ng-repeat="path in failure.paths track by $index">
+        <ul ng-repeat="path in result.failure track by $index">
             <li>{{ path }}</li>
         </ul>
     </div>
