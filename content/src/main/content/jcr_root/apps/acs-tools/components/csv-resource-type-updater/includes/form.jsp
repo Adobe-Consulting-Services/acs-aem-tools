@@ -18,6 +18,11 @@
   ~ #L%
   --%>
 
+<p>
+    The CSV file is in the format of
+    <code>&lt;source property value>,&lt;dest property value></code>
+</p>
+
 <form ng-submit="update()">
 
     <div class="form-row">
@@ -102,4 +107,3 @@
         <button class="primary">Update {{ form.propertyName }}</button>
     </div>
 </form>
-
