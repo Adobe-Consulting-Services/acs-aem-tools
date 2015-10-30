@@ -66,13 +66,14 @@ angular.module('acs-tools-vlt-rcp-app', ['ACS.Tools.notifications']).controller(
                 {
                     params: {ck: (new Date()).getTime()}
                 }
-            ).
-                success(function (data, status, headers, config) {
+            ).success(function (data, status, headers, config) {
                     if (status === 200) {
-                        $scope.app.uri = uri;
-                        $scope.vltMissing = false;
-                        $scope.tasks = data.tasks || [];
-
+                        if ($scope.vltMissing) {
+                            // Only set the app.uri if a valid end point has not been found
+                            $scope.app.uri = uri;
+                            $scope.vltMissing = false;
+                            $scope.tasks = data.tasks || [];
+                        }
                     }
                 });
         });
