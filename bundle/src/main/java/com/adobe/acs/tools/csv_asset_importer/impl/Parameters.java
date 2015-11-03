@@ -31,6 +31,11 @@ import java.util.List;
 
 public class Parameters {
 
+
+    public enum ImportStrategy {
+        FULL, DELTA;
+    };
+
     private static final String DEFAULT_CHARSET = "UTF-8";
 
     private static final long DEFAULT_THROTTLE = 0L;
@@ -53,8 +58,8 @@ public class Parameters {
 
     private String[] ignoreProperties;
 
-    private boolean fullImport;
-
+    private ImportStrategy importStrategy;
+    
     private Character separator;
 
     private Character delimiter = null;
@@ -66,6 +71,8 @@ public class Parameters {
     private Long throttle = DEFAULT_THROTTLE;
 
     private int batchSize = DEFAULT_BATCH_SIZE;
+    
+    private boolean updateBinary = false;
 
     public Parameters(SlingHttpServletRequest request) throws IOException {
 
@@ -75,7 +82,8 @@ public class Parameters {
         final RequestParameter multiDelimiterParam = request.getRequestParameter("multiDelimiter");
         final RequestParameter separatorParam = request.getRequestParameter("separator");
         final RequestParameter fileLocationParam = request.getRequestParameter("fileLocation");
-        final RequestParameter fullImportParam = request.getRequestParameter("fullImport");
+        final RequestParameter importStrategyParam = request.getRequestParameter("importStrategy");
+        final RequestParameter updateBinaryParam = request.getRequestParameter("updateBinary");
         final RequestParameter mimeTypePropertyParam = request.getRequestParameter("mimeTypeProperty");
         final RequestParameter skipPropertyParam = request.getRequestParameter("skipProperty");
         final RequestParameter absTargetPathPropertyParam = request.getRequestParameter("absTargetPathProperty");
@@ -104,11 +112,17 @@ public class Parameters {
         if (multiDelimiterParam != null && StringUtils.isNotBlank(multiDelimiterParam.toString())) {
             this.multiDelimiter = multiDelimiterParam.toString();
         }
-        this.fullImport = true;
-        if (fullImportParam != null && StringUtils.isNotBlank(fullImportParam.toString())) {
-            this.fullImport = StringUtils.equalsIgnoreCase(fullImportParam.toString(), "true");
+        
+        this.importStrategy = ImportStrategy.FULL;
+        if (importStrategyParam != null && StringUtils.isNotBlank(importStrategyParam.toString())) {
+            this.importStrategy = ImportStrategy.valueOf(importStrategyParam.toString());
         }
 
+        this.updateBinary = false;
+        if (updateBinaryParam != null && StringUtils.isNotBlank(updateBinaryParam.toString())) {
+            this.updateBinary = StringUtils.equalsIgnoreCase(updateBinaryParam.toString(), "true");
+        }
+        
         this.fileLocation = "/dev/null";
         if (fileLocationParam != null && StringUtils.isNotBlank(fileLocationParam.toString())) {
             this.fileLocation = fileLocationParam.toString();
@@ -208,9 +222,7 @@ public class Parameters {
         return fileLocation;
     }
 
-    public final boolean isFullImport() {
-        return fullImport;
-    }
+    public final ImportStrategy getImportStrategy() { return importStrategy; }
 
     public final Character getSeparator() {
         return separator;
@@ -242,5 +254,9 @@ public class Parameters {
 
     public final long getThrottle() {
         return throttle;
+    }
+
+    public boolean isUpdateBinary() {
+        return updateBinary;
     }
 }
