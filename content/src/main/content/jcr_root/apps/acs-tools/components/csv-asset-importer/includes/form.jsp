@@ -85,7 +85,7 @@
                     ng-model="form.updateBinary"
                     type="radio"
                     name="updateBinary"
-                    value="true"><span>True</span></label>
+                    value="true"><span>Yes</span></label>
             <label><input
                     ng-model="form.updateBinary"
                     type="radio"
