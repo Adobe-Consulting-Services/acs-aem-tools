@@ -89,7 +89,7 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
 
         final JSONObject jsonResponse = new JSONObject();
         final Parameters params = new Parameters(request);
-
+        
         if (params.getFile() != null) {
 
             final long start = System.currentTimeMillis();
@@ -114,7 +114,9 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                 final List<String> result = new ArrayList<String>();
                 final List<String> batch = new ArrayList<String>();
                 final List<String> failures = new ArrayList<String>();
-                
+
+                log.info(params.toString());
+
                 while (rows.hasNext()) {
                     final String[] row = rows.next();
 
@@ -258,7 +260,6 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                                   final String[] row,
                                   final String[] ignoreProperties,
                                   final Asset asset) throws RepositoryException {
-
         // Copy properties
         for (final Map.Entry<String, Column> entry : columns.entrySet()) {
             
@@ -332,10 +333,10 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                     + " ] is to a folder, not a file. Skipping");
         }
 
-        // Resolve the target abs path Asset
-        Asset asset = DamUtil.resolveToAsset(resourceResolver.getResource(absTargetPath));
+        // Resolve the absolute target path Asset
+        Asset asset = null;
 
-        // If match via uniqueProperty, then do this check; else use the absTargetPath
+        // If a uniqueProperty is specified, ensure the value matches
         if (StringUtils.isNotBlank(params.getUniqueProperty())
                 && StringUtils.isNotBlank(uniqueId)) {
             // Check for existing Assets
@@ -343,6 +344,8 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                     row[columns.get(params.getAbsTargetPathProperty()).getIndex()],
                     params.getUniqueProperty(),
                     uniqueId);
+        } else {
+            asset = DamUtil.resolveToAsset(resourceResolver.getResource(absTargetPath));            
         }
         
         final FileInputStream fileInputStream = new FileInputStream(srcPath);
@@ -500,9 +503,9 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
             final String val = properties.get(uniquePropertyName, String.class);
 
             if (StringUtils.equals(val, uniqueId)) {
-                log.debug("Found  Asset at [ {} ] with matching unique property value of [ {} ]",
+                log.debug("Found Asset at [ {} ] with matching unique property value of [ {} ]",
                         resource.getPath(), uniqueId);
-                // Good news! Found the Asset at the absolute target path
+                // Good news! Found the Asset w the same unique Id at the absolute target path
                 return DamUtil.resolveToAsset(resource);
             }
         }
@@ -521,8 +524,10 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                 "JCR-SQL2");
 
         if (resourceIterator.hasNext()) {
+            // Get the first result (there should only ever be 0 or 1 results)
             return DamUtil.resolveToAsset(resourceIterator.next());
         } else {
+            // Could not find any results; return null
             return null;
         }
     }

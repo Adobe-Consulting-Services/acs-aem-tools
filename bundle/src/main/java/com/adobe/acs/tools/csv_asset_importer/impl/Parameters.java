@@ -26,11 +26,13 @@ import org.apache.sling.api.request.RequestParameter;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Parameters {
-
 
     public enum ImportStrategy {
         FULL, DELTA;
@@ -258,5 +260,34 @@ public class Parameters {
 
     public boolean isUpdateBinary() {
         return updateBinary;
+    }
+    
+    
+    public String toString() {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        
+        pw.println();
+        pw.println("CSV Asset Importer Config");
+        pw.println("----------------------------------------");
+        pw.println("File Provided: " + String.valueOf(this.getFile() != null));
+        pw.println("Import Strategy: " + this.getImportStrategy());
+        if (ImportStrategy.DELTA.equals(this.getImportStrategy())) {
+            pw.println("Update Binary: " + this.isUpdateBinary());
+        }
+        pw.println("File Location: " + this.getFileLocation());
+        pw.println("Unique Property: " + this.getUniqueProperty());
+        pw.println("Absolute Target Path Property: " + this.getAbsTargetPathProperty());
+        pw.println("Relative Src Path Property: " + this.getRelSrcPathProperty());
+        pw.println("MIME Type Property: " + this.getMimeTypeProperty());
+        pw.println("Skip Property: " + this.getSkipProperty());
+        pw.println("Ignore Properties: " + Arrays.asList(this.getIgnoreProperties()));
+        pw.println("Batch Size: " + this.getBatchSize());
+        pw.println("Throttle: " + this.getThrottle());
+        pw.println("Charset: " + this.getCharset());
+        pw.println("Delimiter: " + this.getDelimiter());
+        pw.println("Separator: " + this.getSeparator());
+
+        return sw.toString();
     }
 }
