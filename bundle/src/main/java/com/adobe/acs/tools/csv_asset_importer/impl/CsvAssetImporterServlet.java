@@ -345,7 +345,10 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                     params.getUniqueProperty(),
                     uniqueId);
         } else {
-            asset = DamUtil.resolveToAsset(resourceResolver.getResource(absTargetPath));            
+            final Resource assetResource = resourceResolver.getResource(absTargetPath);
+            if (assetResource != null) {
+                asset = DamUtil.resolveToAsset(assetResource);
+            }
         }
         
         final FileInputStream fileInputStream = new FileInputStream(srcPath);
@@ -433,15 +436,13 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
      */
     private Asset createAsset(AssetManager assetManager, String absTargetPath, InputStream fileInputStream, 
                               String mimeType) throws CsvAssetImportException {
-        Asset asset = null;
         try {
-            asset = assetManager.createAsset(absTargetPath, fileInputStream, mimeType, true);
+            Asset asset = assetManager.createAsset(absTargetPath, fileInputStream, mimeType, true);
+            log.info("Created new asset [ {} ]", absTargetPath);
+            return asset;
         } catch (Exception e) {
             throw new CsvAssetImportException("Could not create Asset at [ " + absTargetPath + " ]", e);
         }
-        log.info("Created new asset [ {} ]", absTargetPath);
-        
-        return asset;
     }
         
     
