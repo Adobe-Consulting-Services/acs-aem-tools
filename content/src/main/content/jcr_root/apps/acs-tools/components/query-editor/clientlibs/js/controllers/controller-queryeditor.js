@@ -63,7 +63,7 @@ angular.module('qeControllers').
 
             function params(source) {
                 var o = {}; 
-                _.each(source.split(/\s/), function(line) {
+                _.each(source.split(/\n/), function(line) {
                     line.replace(/([\w\W]*?)=([\w\W]*)/, function($0, $1, $2) {
                         o[$1] = $2;
                     });
