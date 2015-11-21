@@ -71,6 +71,26 @@
     </div>
 
     <div class="form-row">
+        <h4>Bucket Type</h4>
+
+        <span>
+            <select ng-model="form.bucketType">
+                <option value="sling:Folder">Folder</option>
+                <option value="cq:Page">Page</option>
+            </select>
+        </span>
+    </div>
+
+    <div class="form-row"
+         ng-show="form.bucketType === 'cq:Page'">
+        <div class="instructions">
+            <p>
+                Bucket pages are NOT included in the total pages to generate.
+            </p>
+        </div>
+    </div>
+
+    <div class="form-row">
         <h4>Save Threshold</h4>
 
         <span>
