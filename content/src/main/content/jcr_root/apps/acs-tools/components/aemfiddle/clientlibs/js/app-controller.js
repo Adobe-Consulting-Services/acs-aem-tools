@@ -77,7 +77,8 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
         lastModifiedAt: 0,
         resource: '',
         scriptData: '',
-        scriptExt: $scope.data.defaults.scriptExt
+        scriptExt: $scope.data.defaults.scriptExt,
+        runAsWorkflow: false
     };
 
     /* Results; Drives output view */
@@ -152,7 +153,8 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
             data: $.param({
                 'scriptdata': aemFiddle.ace.input.editor.getValue(),
                 'scriptext' : $scope.data.src.scriptExt,
-                'resource': $scope.data.src.resource
+                'resource': $scope.data.src.resource,
+                'runAsWorkflow' : $scope.data.src.runAsWorkflow
             })
         }).success(function(data, status, headers, config) {
                 /*
