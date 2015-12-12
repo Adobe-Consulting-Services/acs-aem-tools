@@ -36,19 +36,19 @@
     </div>
 
     <div class="form-row">
-        <h4>Full Import</h4>
+        <h4>Import Strategy</h4>
 
         <div class="selector">
             <label><input
-                    ng-model="form.fullImport"
+                    ng-model="form.importStrategy"
                     type="radio"
-                    name="fullImport"
-                    value="true"><span>Yes</span></label>
+                    name="importStrategy"
+                    value="FULL"><span>Full</span></label>
             <label><input
-                    ng-model="form.fullImport"
+                    ng-model="form.importStrategy"
                     type="radio"
-                    name="fullImport"
-                    value="false"><span>No</span></label>
+                    name="importStrategy"
+                    value="DELTA"><span>Delta</span></label>
         </div>
     </div>
 
@@ -74,6 +74,24 @@
                    ng-model="form.relSrcPathProperty"
                    placeholder="Defaults to relSrcPath"/>
         </span>
+    </div>
+
+    <div class="form-row"
+            ng-show="form.importStrategy === 'DELTA'">
+        <h4>Update Binary</h4>
+
+        <div class="selector">
+            <label><input
+                    ng-model="form.updateBinary"
+                    type="radio"
+                    name="updateBinary"
+                    value="true"><span>Yes</span></label>
+            <label><input
+                    ng-model="form.updateBinary"
+                    type="radio"
+                    name="updateBinary"
+                    value="false"><span>No</span></label>
+        </div>
     </div>
 
     <div class="form-row">

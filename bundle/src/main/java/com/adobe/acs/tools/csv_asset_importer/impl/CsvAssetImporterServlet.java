@@ -60,6 +60,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -88,7 +89,7 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
 
         final JSONObject jsonResponse = new JSONObject();
         final Parameters params = new Parameters(request);
-
+        
         if (params.getFile() != null) {
 
             final long start = System.currentTimeMillis();
@@ -112,7 +113,9 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                 // Process Asset row entries
                 final List<String> result = new ArrayList<String>();
                 final List<String> batch = new ArrayList<String>();
-                int failures = 0;
+                final List<String> failures = new ArrayList<String>();
+
+                log.info(params.toString());
 
                 while (rows.hasNext()) {
                     final String[] row = rows.next();
@@ -127,10 +130,10 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                                     row));
                         }
                     } catch (FileNotFoundException e) {
-                        failures++;
+                        failures.add(row[columns.get(params.getAbsTargetPathProperty()).getIndex()]);
                         log.error("Could not find file for row ", Arrays.asList(row), e);
                     } catch (CsvAssetImportException e) {
-                        failures++;
+                        failures.add(row[columns.get(params.getAbsTargetPathProperty()).getIndex()]);
                         log.error("Could not import the row due to ", e.getMessage(), e);
                     }
 
@@ -257,10 +260,9 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                                   final String[] row,
                                   final String[] ignoreProperties,
                                   final Asset asset) throws RepositoryException {
-
-
         // Copy properties
         for (final Map.Entry<String, Column> entry : columns.entrySet()) {
+            
             if (ArrayUtils.contains(ignoreProperties, entry.getKey())) {
                 continue;
             }
@@ -313,7 +315,6 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                                    final Map<String, Column> columns,
                                    final String[] row)
             throws FileNotFoundException, RepositoryException, CsvAssetImportException {
-
         final AssetManager assetManager = resourceResolver.adaptTo(AssetManager.class);
 
         String uniqueId = null;
@@ -332,8 +333,10 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                     + " ] is to a folder, not a file. Skipping");
         }
 
+        // Resolve the absolute target path Asset
         Asset asset = null;
 
+        // If a uniqueProperty is specified, ensure the value matches
         if (StringUtils.isNotBlank(params.getUniqueProperty())
                 && StringUtils.isNotBlank(uniqueId)) {
             // Check for existing Assets
@@ -341,51 +344,108 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                     row[columns.get(params.getAbsTargetPathProperty()).getIndex()],
                     params.getUniqueProperty(),
                     uniqueId);
+        } else {
+            final Resource assetResource = resourceResolver.getResource(absTargetPath);
+            if (assetResource != null) {
+                asset = DamUtil.resolveToAsset(assetResource);
+            }
         }
-
+        
         final FileInputStream fileInputStream = new FileInputStream(srcPath);
 
-        boolean createAsset = false;
+        // Determine if a Asset Creation or Update is needed
+        
+        if (asset == null) {
+            log.info("Existing asset could not be found at [ {} ]", absTargetPath);
+            asset = this.createAsset(assetManager, absTargetPath, fileInputStream, mimeType);
+        } else {
+            // Asset exists
+            if (Parameters.ImportStrategy.DELTA.equals(params.getImportStrategy())) {
+                if (!StringUtils.equals(asset.getPath(), absTargetPath)) {
 
-        if (asset != null) {
-            if (!params.isFullImport() && !StringUtils.equals(asset.getPath(), absTargetPath)) {
-                // Moving the existing asset
-                final Session session = resourceResolver.adaptTo(Session.class);
+                    // If is metadata only then moving the existing asset
+                    final Session session = resourceResolver.adaptTo(Session.class);
 
-                if (!session.nodeExists(absTargetPath)) {
-                    JcrUtils.getOrCreateByPath(StringUtils.substringBeforeLast(absTargetPath, "/"),
-                            "sling:OrderedFolder", session);
+                    if (!session.nodeExists(absTargetPath)) {
+                        JcrUtils.getOrCreateByPath(StringUtils.substringBeforeLast(absTargetPath, "/"),
+                                "sling:OrderedFolder", session);
+                    }
+
+                    session.move(asset.getPath(), absTargetPath);
+                    log.info("Moved asset from [ {} ~> {} ]", asset.getPath(), absTargetPath);
+                    asset = DamUtil.resolveToAsset(resourceResolver.getResource(absTargetPath));
                 }
-
-                session.move(asset.getPath(), absTargetPath);
-                log.info("Moved asset from [ {} ~> {}]", asset.getPath(), absTargetPath);
-                asset = DamUtil.resolveToAsset(resourceResolver.getResource(absTargetPath));
-
-            } else if (params.isFullImport()) {
+                
+                // Partial Import, check if the original rendition should be updated
+                if (params.isUpdateBinary()) {
+                    asset = this.updateAssetOriginal(assetManager, asset, fileInputStream, mimeType);
+                }
+            } else if (Parameters.ImportStrategy.FULL.equals(params.getImportStrategy())) {
                 // Remove existing asset so it can be recreated
                 asset.adaptTo(Resource.class).adaptTo(Node.class).remove();
-                createAsset = true;
                 log.info("Removed existing asset so it can be re-created");
+                asset = this.createAsset(assetManager, absTargetPath, fileInputStream, mimeType);
             }
-        } else {
-            log.info("Existing asset could not be found at [ {} ]", absTargetPath);
-            createAsset = true;
-        }
-
-        if (createAsset) {
-            // Create new Asset
-            try {
-                asset = assetManager.createAsset(absTargetPath, fileInputStream, mimeType, true);
-            } catch (Exception e) {
-                log.error("Could not create Asset at [ {} ]", absTargetPath);
-                throw new CsvAssetImportException("Could not create Asset at [ " + absTargetPath + " ]", e);
-            }
-            log.info("Created new asset [ {} ]", asset.getPath());
         }
 
         return asset;
     }
 
+
+    /**
+     * Update the Assets original rendition.
+     *
+     * @param assetManager AssetManager used to created the Asset
+     * @param asset the Asset to update
+     * @param fileInputStream the new binary representation of the Asset
+     * @param mimeType the MIME Type of the asset
+     * @return the updated asset
+     * @throws CsvAssetImportException
+     */
+    private Asset updateAssetOriginal(AssetManager assetManager, Asset asset, InputStream fileInputStream,
+                                      String mimeType) throws CsvAssetImportException {
+            try {
+                if (asset != null) {
+                    final Node originalNode = asset.getOriginal().adaptTo(Node.class);
+                    if (originalNode != null) {
+                        JcrUtils.putFile(originalNode.getParent(), "original", mimeType, fileInputStream,
+                                Calendar.getInstance());
+                        log.info("Updated existing Asset's [ {} ] original rendition.", asset.getPath());
+                    } else {
+                        log.warn("Could not find original rendition for Asset [ {} ] to update.", asset.getPath());
+                    }
+                } else {
+                    log.warn("Could not update a null asset");
+                }
+            } catch (Exception e) {
+                throw new CsvAssetImportException("Could not update Asset at [ " + asset.getPath() + " ]", e);
+            }
+
+            return asset;
+    }
+
+    /**
+     * Create a new Asset in the DAM.
+     * * 
+     * @param assetManager AssetManager used to created the Asset
+     * @param absTargetPath the absolute path for the Asset that should be created
+     * @param fileInputStream the binary representation of the Asset
+     * @param mimeType the MIME Type of the asset
+     * @return the newly created asset
+     * @throws CsvAssetImportException
+     */
+    private Asset createAsset(AssetManager assetManager, String absTargetPath, InputStream fileInputStream, 
+                              String mimeType) throws CsvAssetImportException {
+        try {
+            Asset asset = assetManager.createAsset(absTargetPath, fileInputStream, mimeType, true);
+            log.info("Created new asset [ {} ]", absTargetPath);
+            return asset;
+        } catch (Exception e) {
+            throw new CsvAssetImportException("Could not create Asset at [ " + absTargetPath + " ]", e);
+        }
+    }
+        
+    
     /**
      * Gets the mimeType of the asset based on the filename of how it will be stored in the AEM DAM.
      * The destination filename is used since source files can be very messy (and may not even have extensions
@@ -444,9 +504,9 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
             final String val = properties.get(uniquePropertyName, String.class);
 
             if (StringUtils.equals(val, uniqueId)) {
-                log.debug("Found  Asset at [ {} ] with matching unique property value of [ {} ]",
+                log.debug("Found Asset at [ {} ] with matching unique property value of [ {} ]",
                         resource.getPath(), uniqueId);
-                // Good news! Found the Asset at the absolute target path
+                // Good news! Found the Asset w the same unique Id at the absolute target path
                 return DamUtil.resolveToAsset(resource);
             }
         }
@@ -465,8 +525,10 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                 "JCR-SQL2");
 
         if (resourceIterator.hasNext()) {
+            // Get the first result (there should only ever be 0 or 1 results)
             return DamUtil.resolveToAsset(resourceIterator.next());
         } else {
+            // Could not find any results; return null
             return null;
         }
     }
@@ -530,7 +592,6 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
         Resource metadataResource = assetResource.getChild(JcrConstants.JCR_CONTENT
                 + "/"
                 + DamConstants.METADATA_FOLDER);
-
 
         if (!StringUtils.contains(relPropertyPath, "/")) {
             return metadataResource.adaptTo(ModifiableValueMap.class);
