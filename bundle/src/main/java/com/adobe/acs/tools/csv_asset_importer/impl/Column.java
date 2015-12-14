@@ -109,7 +109,7 @@ public final class Column<T> {
         return list.toArray((T[]) Array.newInstance((this.getDataType()), 0));
     }
 
-    private <T> T toObjectType(String data, Class<T> klass) {
+    protected <T> T toObjectType(String data, Class<T> klass) {
         data = StringUtils.trim(data);
 
         if (Double.class.equals(klass)) {
@@ -130,9 +130,11 @@ public final class Column<T> {
             } catch (NumberFormatException ex) {
                 return null;
             }
-        } else if (StringUtils.equalsIgnoreCase("true", data)) {
+        } else if (StringUtils.equalsIgnoreCase("true", data)
+                && Boolean.class.equals(klass)) {
             return klass.cast(Boolean.TRUE);
-        } else if (StringUtils.equalsIgnoreCase("false", data)) {
+        } else if (StringUtils.equalsIgnoreCase("false", data)
+                && Boolean.class.equals(klass)) {
             return klass.cast(Boolean.FALSE);
         } else if ((Date.class.equals(Date.class)
                 || Calendar.class.equals(Calendar.class))
