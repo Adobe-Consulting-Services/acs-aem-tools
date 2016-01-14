@@ -46,6 +46,8 @@ public final class Column<T> {
 
     private String raw;
 
+    private String relPropertyPath;
+
     private String propertyName;
 
     private boolean multi = false;
@@ -64,9 +66,9 @@ public final class Column<T> {
         String[] params = StringUtils.split(paramsStr, ":");
 
         if (StringUtils.isBlank(paramsStr)) {
-            this.propertyName = this.getRaw();
+            this.relPropertyPath = this.getRaw();
         } else {
-            this.propertyName = StringUtils.trim(StringUtils.substringBefore(this.getRaw(), "{{"));
+            this.relPropertyPath = StringUtils.trim(StringUtils.substringBefore(this.getRaw(), "{{"));
 
             if (params.length == 2) {
                 this.dataType = nameToClass(StringUtils.stripToEmpty(params[0]));
@@ -81,6 +83,13 @@ public final class Column<T> {
                 }
             }
         }
+
+        if (StringUtils.contains(this.relPropertyPath, "/")) {
+            this.propertyName = StringUtils.trim(StringUtils.substringAfterLast(this.relPropertyPath, "/"));
+        } else {
+            this.propertyName = StringUtils.trim(this.relPropertyPath);
+        }
+
     }
 
     public T getData(String data) {
@@ -100,7 +109,7 @@ public final class Column<T> {
         return list.toArray((T[]) Array.newInstance((this.getDataType()), 0));
     }
 
-    private <T> T toObjectType(String data, Class<T> klass) {
+    protected <T> T toObjectType(String data, Class<T> klass) {
         data = StringUtils.trim(data);
 
         if (Double.class.equals(klass)) {
@@ -121,9 +130,11 @@ public final class Column<T> {
             } catch (NumberFormatException ex) {
                 return null;
             }
-        } else if (StringUtils.equalsIgnoreCase("true", data)) {
+        } else if (StringUtils.equalsIgnoreCase("true", data)
+                && Boolean.class.equals(klass)) {
             return klass.cast(Boolean.TRUE);
-        } else if (StringUtils.equalsIgnoreCase("false", data)) {
+        } else if (StringUtils.equalsIgnoreCase("false", data)
+                && Boolean.class.equals(klass)) {
             return klass.cast(Boolean.FALSE);
         } else if ((Date.class.equals(Date.class)
                 || Calendar.class.equals(Calendar.class))
@@ -157,6 +168,10 @@ public final class Column<T> {
 
     public String getPropertyName() {
         return propertyName;
+    }
+
+    public String getRelPropertyPath() {
+        return relPropertyPath;
     }
 
     public boolean isMulti() {

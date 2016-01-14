@@ -24,7 +24,7 @@ angular.module('acs-tools-vlt-rcp-app', ['ACS.Tools.notifications']).controller(
     [ '$scope', '$http', '$timeout', '$interval', 'NotificationsService',
         function ($scope, $http, $timeout, $interval, NotificationsService) {
 
-    $scope.rcp_uris = ['/libs/granite/packaging/rcp', '/system/jackrabbit/filevault/rcp'];
+    $scope.rcp_uris = ['/system/jackrabbit/filevault/rcp', '/libs/granite/packaging/rcp'];
 
     $scope.task_src = 'http://admin:admin@localhost:4502/crx/server/-/jcr:root/content/dam/my-site';
 
@@ -43,7 +43,7 @@ angular.module('acs-tools-vlt-rcp-app', ['ACS.Tools.notifications']).controller(
     };
 
     $scope.app = {
-        uri: '/libs/granite/packaging/rcp',
+        uri: '/system/jackrabbit/filevault/rcp',
         running: false
     };
 
@@ -66,13 +66,14 @@ angular.module('acs-tools-vlt-rcp-app', ['ACS.Tools.notifications']).controller(
                 {
                     params: {ck: (new Date()).getTime()}
                 }
-            ).
-                success(function (data, status, headers, config) {
+            ).success(function (data, status, headers, config) {
                     if (status === 200) {
-                        $scope.app.uri = uri;
-                        $scope.vltMissing = false;
-                        $scope.tasks = data.tasks || [];
-
+                        if ($scope.vltMissing) {
+                            // Only set the app.uri if a valid end point has not been found
+                            $scope.app.uri = uri;
+                            $scope.vltMissing = false;
+                            $scope.tasks = data.tasks || [];
+                        }
                     }
                 });
         });

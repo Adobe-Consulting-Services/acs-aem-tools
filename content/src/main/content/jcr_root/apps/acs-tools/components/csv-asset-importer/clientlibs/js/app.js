@@ -33,14 +33,16 @@ angular.module('acs-tools-csv-asset-importer-app', ['ngFileUpload', 'ACS.Tools.n
         uniqueProperty: '',
         converter: 'default',
         separator: '',
-        fullImport: 'false',
+        importStrategy: 'FULL',
+        updateBinary: 'false',
         absTargetPathProperty: '',
         relSrcPathProperty: '',
         mimeTypeProperty: '',
+        skipProperty: '',
         batchSize: '',
         throttle: '',
         multiDelimiter: '',
-        ignoreProperties: 'absTargetPath,relSrcPath,mimeType'
+        ignoreProperties: 'absTargetPath,relSrcPath,mimeType,skip'
     };
 
     $scope.result = {
@@ -62,12 +64,14 @@ angular.module('acs-tools-csv-asset-importer-app', ['ngFileUpload', 'ACS.Tools.n
                 'charset': $scope.form.charset || 'UTF-8',
                 'uniqueProperty' : $scope.form.uniqueProperty || '',
                 'fileLocation': $scope.form.fileLocation || '/dev/null',
-                'fullImport': $scope.form.fullImport || 'false',
+                'importStrategy': $scope.form.importStrategy || 'FULL',
+                'updateBinary': $scope.form.updateBinary || 'false',
                 'delimiter': $scope.form.delimiter || '',
                 'separator': $scope.form.separator || '',
                 'absTargetPathProperty': $scope.form.absTargetPathProperty || 'absTargetPath',
                 'relSrcPathProperty': $scope.form.relSrcPathProperty || 'relSrcPath',
                 'mimeTypeProperty': $scope.form.mimeTypeProperty || 'mimeType',
+                'skipProperty': $scope.form.skipProperty || '',
                 'batchSize': $scope.form.batchSize || 1000,
                 'throttle': $scope.form.throttle || 0,
                 'ignoreProperties' : $scope.form.ignoreProperties || '',

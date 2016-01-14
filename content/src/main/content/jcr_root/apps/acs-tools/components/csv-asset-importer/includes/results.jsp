@@ -18,15 +18,29 @@
   ~ #L%
   --%>
 
-<div ng-show="result.assets.length > 0"
+<div ng-show="result.assets.length > 0 || result.failures.length > 0"
      class="results">
 
     <h2>{{ result.assets.length }} Assets imported
-        <span ng-show="result.failures > 0"> with {{ result.failures }} failures</span>
+        <span ng-show="result.failures > 0"> with {{ result.failures.length }} failures</span>
     </h2>
 
-    <ul ng-repeat="asset in result.assets track by $index">
-        <li>{{ asset }}</li>
-    </ul>
+    <%-- Success paths --%>
+    <div ng-show="result.assets && result.assets.length > 0">
+        <h4>Success</h4>
+
+        <ul ng-repeat="asset in result.assets track by $index">
+            <li>{{ asset }}</li>
+        </ul>
+    </div>
+
+    <%-- Failures paths --%>
+    <div ng-show="result.failures && result.failures.length > 0">
+        <h4>Failures</h4>
+    
+        <ul ng-repeat="asset in result.failures track by $index">
+            <li>{{ asset }}</li>
+        </ul>
+    </div>
 </div>
 

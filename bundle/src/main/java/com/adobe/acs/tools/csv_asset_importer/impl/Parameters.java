@@ -26,10 +26,17 @@ import org.apache.sling.api.request.RequestParameter;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Parameters {
+
+    public enum ImportStrategy {
+        FULL, DELTA;
+    };
 
     private static final String DEFAULT_CHARSET = "UTF-8";
 
@@ -44,6 +51,8 @@ public class Parameters {
     private String absTargetPathProperty;
 
     private String mimeTypeProperty;
+    
+    private String skipProperty;
 
     private String multiDelimiter;
 
@@ -51,8 +60,8 @@ public class Parameters {
 
     private String[] ignoreProperties;
 
-    private boolean fullImport;
-
+    private ImportStrategy importStrategy;
+    
     private Character separator;
 
     private Character delimiter = null;
@@ -64,6 +73,8 @@ public class Parameters {
     private Long throttle = DEFAULT_THROTTLE;
 
     private int batchSize = DEFAULT_BATCH_SIZE;
+    
+    private boolean updateBinary = false;
 
     public Parameters(SlingHttpServletRequest request) throws IOException {
 
@@ -73,8 +84,10 @@ public class Parameters {
         final RequestParameter multiDelimiterParam = request.getRequestParameter("multiDelimiter");
         final RequestParameter separatorParam = request.getRequestParameter("separator");
         final RequestParameter fileLocationParam = request.getRequestParameter("fileLocation");
-        final RequestParameter fullImportParam = request.getRequestParameter("fullImport");
+        final RequestParameter importStrategyParam = request.getRequestParameter("importStrategy");
+        final RequestParameter updateBinaryParam = request.getRequestParameter("updateBinary");
         final RequestParameter mimeTypePropertyParam = request.getRequestParameter("mimeTypeProperty");
+        final RequestParameter skipPropertyParam = request.getRequestParameter("skipProperty");
         final RequestParameter absTargetPathPropertyParam = request.getRequestParameter("absTargetPathProperty");
         final RequestParameter relSrcPathPropertyParam = request.getRequestParameter("relSrcPathProperty");
         final RequestParameter uniquePropertyParam = request.getRequestParameter("uniqueProperty");
@@ -101,16 +114,27 @@ public class Parameters {
         if (multiDelimiterParam != null && StringUtils.isNotBlank(multiDelimiterParam.toString())) {
             this.multiDelimiter = multiDelimiterParam.toString();
         }
-        this.fullImport = true;
-        if (fullImportParam != null && StringUtils.isNotBlank(fullImportParam.toString())) {
-            this.fullImport = StringUtils.equalsIgnoreCase(fullImportParam.toString(), "true");
+        
+        this.importStrategy = ImportStrategy.FULL;
+        if (importStrategyParam != null && StringUtils.isNotBlank(importStrategyParam.toString())) {
+            this.importStrategy = ImportStrategy.valueOf(importStrategyParam.toString());
         }
 
+        this.updateBinary = false;
+        if (updateBinaryParam != null && StringUtils.isNotBlank(updateBinaryParam.toString())) {
+            this.updateBinary = StringUtils.equalsIgnoreCase(updateBinaryParam.toString(), "true");
+        }
+        
         this.fileLocation = "/dev/null";
         if (fileLocationParam != null && StringUtils.isNotBlank(fileLocationParam.toString())) {
             this.fileLocation = fileLocationParam.toString();
         }
 
+        this.skipProperty = null;
+        if (skipPropertyParam != null && StringUtils.isNotBlank(skipPropertyParam.toString())) {
+            skipProperty = StringUtils.stripToNull(skipPropertyParam.toString());
+        }
+        
         this.mimeTypeProperty = null;
         if (mimeTypePropertyParam != null && StringUtils.isNotBlank(mimeTypePropertyParam.toString())) {
             mimeTypeProperty = StringUtils.stripToNull(mimeTypePropertyParam.toString());
@@ -192,13 +216,15 @@ public class Parameters {
         return mimeTypeProperty;
     }
 
+    public final String getSkipProperty() {
+        return skipProperty;
+    }
+
     public final String getFileLocation() {
         return fileLocation;
     }
 
-    public final boolean isFullImport() {
-        return fullImport;
-    }
+    public final ImportStrategy getImportStrategy() { return importStrategy; }
 
     public final Character getSeparator() {
         return separator;
@@ -230,5 +256,38 @@ public class Parameters {
 
     public final long getThrottle() {
         return throttle;
+    }
+
+    public boolean isUpdateBinary() {
+        return updateBinary;
+    }
+    
+    
+    public String toString() {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        
+        pw.println();
+        pw.println("CSV Asset Importer Config");
+        pw.println("----------------------------------------");
+        pw.println("File Provided: " + String.valueOf(this.getFile() != null));
+        pw.println("Import Strategy: " + this.getImportStrategy());
+        if (ImportStrategy.DELTA.equals(this.getImportStrategy())) {
+            pw.println("Update Binary: " + this.isUpdateBinary());
+        }
+        pw.println("File Location: " + this.getFileLocation());
+        pw.println("Unique Property: " + this.getUniqueProperty());
+        pw.println("Absolute Target Path Property: " + this.getAbsTargetPathProperty());
+        pw.println("Relative Src Path Property: " + this.getRelSrcPathProperty());
+        pw.println("MIME Type Property: " + this.getMimeTypeProperty());
+        pw.println("Skip Property: " + this.getSkipProperty());
+        pw.println("Ignore Properties: " + Arrays.asList(this.getIgnoreProperties()));
+        pw.println("Batch Size: " + this.getBatchSize());
+        pw.println("Throttle: " + this.getThrottle());
+        pw.println("Charset: " + this.getCharset());
+        pw.println("Delimiter: " + this.getDelimiter());
+        pw.println("Separator: " + this.getSeparator());
+
+        return sw.toString();
     }
 }

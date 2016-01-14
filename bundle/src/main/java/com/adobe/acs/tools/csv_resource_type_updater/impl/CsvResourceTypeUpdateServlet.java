@@ -75,13 +75,14 @@ public class CsvResourceTypeUpdateServlet extends SlingAllMethodsServlet {
             final Iterator<String[]> rows = CsvUtil.getRowsFromCsv(params);
 
             try {
-                final List<String> paths = this.update(request.getResourceResolver(), params, rows);
+                final Result result = this.update(request.getResourceResolver(), params, rows);
 
-                log.info("Updated as TOTAL of [ {} ] resources in {} ms", paths.size(),
+                log.info("Updated as TOTAL of [ {} ] resources in {} ms", result.getSuccess().size(),
                         System.currentTimeMillis() - start);
 
                 try {
-                    jsonResponse.put("paths", paths);
+                    jsonResponse.put("success", result.getSuccess());
+                    jsonResponse.put("failure", result.getFailure());
                 } catch (JSONException e) {
                     log.error("Could not serialized results into JSON", e);
                     this.addMessage(jsonResponse, "Could not serialized results into JSON");
@@ -103,17 +104,19 @@ public class CsvResourceTypeUpdateServlet extends SlingAllMethodsServlet {
 
     /**
      * Update all resources that have matching property values with the new values in the CSV.
+     *
      * @param resourceResolver the resource resolver object
-     * @param params the request params
-     * @param rows the CSV rows
+     * @param params           the request params
+     * @param rows             the CSV rows
      * @return a list of the resource paths updated
      * @throws PersistenceException
      */
-    private List<String> update(final ResourceResolver resourceResolver,
-                                final Parameters params,
-                                final Iterator<String[]> rows) throws PersistenceException {
+    private Result update(final ResourceResolver resourceResolver,
+                          final Parameters params,
+                          final Iterator<String[]> rows) throws PersistenceException {
 
-        final List<String> results = new ArrayList<String>();
+        final Result result = new Result();
+
         final Map<String, String> map = new HashMap<String, String>();
 
         while (rows.hasNext()) {
@@ -151,9 +154,14 @@ public class CsvResourceTypeUpdateServlet extends SlingAllMethodsServlet {
             String newValue = map.get(properties.get(params.getPropertyName(), String.class));
 
             if (newValue != null) {
-                properties.put(params.getPropertyName(), newValue);
-                results.add(resource.getPath());
-                count++;
+                try {
+                    properties.put(params.getPropertyName(), newValue);
+                    result.addSuccess(resource.getPath());
+                    count++;
+                } catch (Exception e) {
+                    result.addFailure(resource.getPath());
+                    log.warn("Could not update [ {}@" + params.getPropertyName() + " ]", resource.getPath(), e);
+                }
 
                 if (count == DEFAULT_BATCH_SIZE) {
                     this.save(resourceResolver, count);
@@ -164,7 +172,7 @@ public class CsvResourceTypeUpdateServlet extends SlingAllMethodsServlet {
 
         this.save(resourceResolver, count);
 
-        return results;
+        return result;
     }
 
     /**
@@ -195,6 +203,36 @@ public class CsvResourceTypeUpdateServlet extends SlingAllMethodsServlet {
             jsonObject.put("message", message);
         } catch (JSONException e) {
             log.error("Could not formulate JSON Response", e);
+        }
+    }
+
+    /**
+     * Result to expose success and failure paths to the JSON response.
+     */
+    private class Result {
+        private List<String> success;
+
+        private List<String> failure;
+
+        public Result() {
+            success = new ArrayList<String>();
+            failure = new ArrayList<String>();
+        }
+
+        public List<String> getSuccess() {
+            return success;
+        }
+
+        public void addSuccess(String path) {
+            this.success.add(path);
+        }
+
+        public List<String> getFailure() {
+            return failure;
+        }
+
+        public void addFailure(String path) {
+            this.failure.add(path);
         }
     }
 }

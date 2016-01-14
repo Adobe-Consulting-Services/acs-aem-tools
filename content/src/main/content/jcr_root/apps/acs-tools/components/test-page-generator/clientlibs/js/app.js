@@ -33,6 +33,7 @@ angular.module('acs-tools-test-page-generator-app', ['ACS.Tools.notifications'])
         };
 
         $scope.form = {
+            bucketType: 'sling:Folder',
             properties: [
                 {name: '', value: '', multi: false}
             ]
