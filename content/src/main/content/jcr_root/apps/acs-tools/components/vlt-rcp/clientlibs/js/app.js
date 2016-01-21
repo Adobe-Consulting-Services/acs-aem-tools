@@ -20,7 +20,7 @@
 
 /*global angular: false */
 
-angular.module('acs-tools-vlt-rcp-app', ['ACS.Tools.notifications']).controller('MainCtrl',
+angular.module('acs-tools-vlt-rcp-app', ['acsCoral', 'ACS.Tools.notifications']).controller('MainCtrl',
     [ '$scope', '$http', '$timeout', '$interval', 'NotificationsService',
         function ($scope, $http, $timeout, $interval, NotificationsService) {
 

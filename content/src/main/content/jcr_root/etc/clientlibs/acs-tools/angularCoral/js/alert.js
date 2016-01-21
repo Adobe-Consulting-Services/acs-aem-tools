@@ -25,7 +25,8 @@ angular.module('acsCoral')
         restrict: 'A',
         link : function(scope, $element, attrs) {
             var iconName = 'alert',
-                message = attrs.alertMessage;
+                message = attrs.alertMessage,
+                dismissible = attrs.dismissible || "true";
             switch (attrs.alertType) {
             case 'success' :
                 iconName = 'checkCircle';
@@ -42,7 +43,9 @@ angular.module('acsCoral')
                 message = $element.html();
                 $element.html("");
             }
-            $element.append('<button type="button" class="coral-MinimalButton coral-Alert-closeButton" title="Close" data-dismiss="alert"><i class="coral-Icon coral-Icon--sizeXS coral-Icon--close coral-MinimalButton-icon"></i></button>');
+            if (dismissible !== "false") {
+                $element.append('<button type="button" class="coral-MinimalButton coral-Alert-closeButton" title="Close" data-dismiss="alert"><i class="coral-Icon coral-Icon--sizeXS coral-Icon--close coral-MinimalButton-icon"></i></button>');
+            }
             $element.append('<i class="coral-Alert-typeIcon coral-Icon coral-Icon--sizeS coral-Icon--' + iconName + '"></i>');
             $element.append('<strong class="coral-Alert-title">' + attrs.alertTitle + '</strong>');
             $element.append('<div class="coral-Alert-message">' + message + '</div>');
