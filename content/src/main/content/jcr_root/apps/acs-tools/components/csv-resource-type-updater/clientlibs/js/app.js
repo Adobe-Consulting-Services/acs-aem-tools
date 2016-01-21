@@ -20,7 +20,7 @@
 
 /*global angular: false, Upload: false */
 
-angular.module('acs-tools-csv-resource-type-updater-app', ['ngFileUpload', 'ACS.Tools.notifications']).controller('MainCtrl',
+angular.module('acs-tools-csv-resource-type-updater-app', ['acsCoral', 'ngFileUpload', 'ACS.Tools.notifications']).controller('MainCtrl',
     ['$scope', '$http', '$timeout', 'Upload', 'NotificationsService', function ($scope, $http, $timeout, Upload, NotificationsService) {
 
         $scope.app = {

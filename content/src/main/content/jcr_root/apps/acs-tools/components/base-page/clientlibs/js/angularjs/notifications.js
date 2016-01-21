@@ -84,18 +84,18 @@ angular.module('ACS.Tools.notifications', []).factory('NotificationsService', ['
         },
         template: '<div ng-show="data.notifications.length > 0 || data.running.visible"' +
         ' class="notifications">'
-        + '<div ng-show="data.running.visible" class="alert notice large running">'
-        + '<strong>{{ data.running.title }}</strong>'
-        + '<div>{{ data.running.message }}</div>'
+        + '<div ng-show="data.running.visible" class="coral-Alert coral-Alert--notice coral-Alert--large running">'
+        + '<i class="coral-Alert-typeIcon coral-Icon coral-Icon--sizeS coral-Icon--alert"></i>'
+        + '<strong class="coral-Alert-title">{{ data.running.title }}</strong>'
+        + '<div class="colra-alert-message">{{ data.running.message }}</div>'
         + '</div>'
-
-
         + '<div ng-repeat="notification in data.notifications">'
-        + '<div class="alert {{ notification.type }} {{ size }}">'
-        + '<button ng-hide="dismissible === \'false\'" class="close"'
-        + ' data-dismiss="alert">&times;</button>'
-        + '<strong>{{ notification.title }}</strong>'
-        + '<div>{{ notification.message }}</div>'
+        + '<div class="coral-Alert coral-Alert--{{ notification.type }} coral-Alert--{{ size }}">'
+        + '<button ng-hide="dismissible === \'false\'" type="button" class="coral-MinimalButton coral-Alert-closeButton" title="Close" data-dismiss="alert">'
+        + '<i class="coral-Icon coral-Icon--sizeXS coral-Icon--close coral-MinimalButton-icon"></i>'
+        + '</button>'
+        + '<strong class="coral-Alert-title>{{ notification.title }}</strong>'
+        + '<div class="colra-alert-message">{{ notification.message }}</div>'
         + '</div>'
         + '</div>'
         + '</div>',
