@@ -60,10 +60,6 @@
 
     <body class="coral--light acs-tools-page">
         <header class="endor-Panel-header endor-BreadcrumbBar is-closed">
-            <div class="logo">
-                <a href="/"><i class="icon-marketingcloud medium"></i></a>
-            </div>
-
             <nav class="endor-Crumbs">
                 <a class="endor-Crumbs-item" href="/">
                     <i class="endor-Crumbs-item-icon coral-Icon coral-Icon--adobeExperienceManager coral-Icon--sizeM"></i>
