@@ -24,7 +24,7 @@
         ng-submit="explain()">
 
     <div class="form-row">
-        <h4>Language</h4>
+        <h4 acs-coral-heading>Language</h4>
 
         <div class="select-wrapper">
             <select ng-model="form.language"
@@ -38,12 +38,13 @@
     </div>
 
     <div class="form-row">
-        <h4>Query</h4>
+        <h4 acs-coral-heading>Query</h4>
 
         <span>
             <textarea
                     ng-model="form.statement"
                     rows="4"
+                    class="coral-Textfield coral-Textfield--multiline"
                     cols="20"
                     ng-required="true"
                     placeholder="Query statement; must match the selected Language above"></textarea>
@@ -51,10 +52,10 @@
     </div>
 
     <div class="form-row">
-        <h4 class="no-height">Include execution time</h4>
+        <h4 acs-coral-heading class="no-height">Include execution time</h4>
 
         <span>
-            <label><input
+            <label acs-coral-checkbox><input
                     ng-model="form.executionTime"
                     type="checkbox"><span>
                 Run query and report execution time.
@@ -64,10 +65,10 @@
 
     <div class="form-row"
          ng-show="form.executionTime">
-        <h4>Include result count</h4>
+        <h4 acs-coral-heading>Include result count</h4>
 
         <span>
-            <label><input
+            <label acs-coral-checkbox><input
                 ng-model="form.resultCount"
                 type="checkbox"><span>
             Count the total number of results.
@@ -77,6 +78,6 @@
 
     <div class="form-row">
         <div class="form-left-cell">&nbsp;</div>
-        <button class="primary">Explain</button>
+        <button class="coral-Button coral-Button--primary">Explain</button>
     </div>
 </form>

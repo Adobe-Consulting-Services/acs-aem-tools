@@ -20,7 +20,7 @@
 
 %><div class="section result" ng-show="result.explain">
 
-    <h2>Query Explanation
+    <h2 acs-coral-heading>Query Explanation
         ( <a target="_blank"
              ng-href="data:application/json;,{{ exportAsJSON(result) }}"/>
         Download as JSON</a> )</h2>
