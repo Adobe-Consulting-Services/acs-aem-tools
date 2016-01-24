@@ -31,52 +31,55 @@
     <form ng-submit="optimize()">
 
         <div class="form-row">
-            <h4>Library Type</h4>
+            <h4 acs-coral-heading>Library Type</h4>
 
-            <div class="selector">
-                <label><input
+            <div class="coral-Selector">
+                <label class="coral-Selector-option"><input
                         ng-model="form.js"
                         ng-change="validateTypes()"
+                        class="coral-Selector-input"
                         ng-class="{ error : app.formErrors.types }"
-                        type="checkbox" name="js"><span>JavaScript</span></label>
-                <label><input
+                        type="checkbox" name="js"><span class="coral-Selector-description">JavaScript</span></label>
+                <label class="coral-Selector-option"><input
                         ng-model="form.css"
                         ng-change="validateTypes()"
+                        class="coral-Selector-input"
                         ng-class="{ error : app.formErrors.types }"
-                        type="checkbox" name="css"><span>CSS</span></label>
+                        type="checkbox" name="css"><span class="coral-Selector-description">CSS</span></label>
             </div>
 
             <span   ng-show="app.formErrors.types"
-                    class="form-error" data-init="quicktip" data-quicktip-arrow="left"
-                    data-quicktip-type="error">Select at least one Library Type</span>
+                    class="coral-Icon coral-Icon--alert" data-init="quicktip" data-quicktip-arrow="left"
+                    data-quicktip-type="error" data-quicktip-content="Select at least one Library Type"></span>
 
         </div>
 
         <div class="form-row">
-            <h4>Categories</h4>
+            <h4 acs-coral-heading>Categories</h4>
 
             <span>
                 <input  ng-model="form.categories"
                         ng-blur="validateCategories()"
                         ng-class="{ error : app.formErrors.categories }"
+                        class="coral-Textfield"
                         type="text" placeholder="Comma-delimited list of categories">
             </span>
 
             <%-- Cannot use pure CoralUI display as it destorys the span after first use --%>
             <span   ng-show="app.formErrors.categories"
-                    class="form-error" data-init="quicktip" data-quicktip-arrow="right"
-                    data-quicktip-type="error">Enter at least one category</span>
+                    class="coral-Icon coral-Icon--alert" data-init="quicktip" data-quicktip-arrow="right"
+                    data-quicktip-type="error" data-quicktip-content="Enter at least one category"></span>
 
         </div>
 
         <div class="form-row">
             <div class="form-left-cell">&nbsp;</div>
-            <button class="primary">Optimize</button>
+            <button class="coral-Button coral-Button--primary">Optimize</button>
         </div>
     </form>
 
     <div class="results" ng-show="result.categories">
-        <h2>Optimized Client Library Definition</h2>
+        <h2 acs-coral-heading>Optimized Client Library Definition</h2>
 
         <section class="well">
 
