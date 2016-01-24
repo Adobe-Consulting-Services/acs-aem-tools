@@ -44,7 +44,7 @@
     final String faviconPath = resourceResolver.map(slingRequest, component.getPath() + "/clientlibs/images/favicon.png");
 %>
 <!doctype html>
-<html>
+<html class="coral-App">
     <head>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -56,27 +56,15 @@
     </head>
 
 
-    <body>
-        <div id="acs-tools-aemfiddle-app"
-             ng-controller="MainCtrl">
-            <div ng-click="ui.hideNewPopover()"
-                 ng-show="data.ui.newPopover.visible"
-                 id="popover-new-blanket"></div>
-            <div id="app-data"
+    <body class="endor-Panel coral--light" id="acs-tools-aemfiddle-app" ng-controller="MainCtrl">
+        <%@include file = "includes/header.jsp" %>
 
-                 data-ace-editor-base-path="<%= aceBasePath %>"
-                 data-run-url="<%= runURL %>"
-                 data-resource-path="<%= resourcePath %>"
-                 data-myfiddles-path="<%= myFiddlesPath %>"
-                 data-current-page-path="<%= currentPagePath %>"
-            ></div>
+        <div class="js-endor-page endor-Panel-content endor-Panel-content--breadcrumbBarHeight endor-Page">
+            <%@include file="includes/rail.jsp" %>
 
-            <%@include file = "includes/header.jsp" %>
-
-            <div class="page" role="main">
-                <%@include file="includes/rail.jsp" %>
-
-                <div class="content">
+            <div class="endor-Page-content endor-Panel">
+                <%@include file="includes/blackbar.jsp" %>
+                <div class="endor-Panel-content endor-Panel-content--blackBarHeight endor-Page" role="main">
                     <div id="left-pane">
                         <%@include file="includes/input.jsp" %>
 
@@ -89,15 +77,35 @@
                     </div>
                 </div>
             </div>
-
-            <%@include file="includes/notifications.jsp" %>
-
-            <cq:includeClientLib js="jquery,jquery-ui,aemfiddle.app"/>
-
-            <%-- Register angular app; Decreases chances of collisions w other angular apps on the page (ex. via injection) --%>
-            <script type="text/javascript">
-                angular.bootstrap(document.getElementById('acs-tools-aemfiddle-app'), ['aemFiddle']);
-            </script>
         </div>
+
+        <%@include file="includes/notifications.jsp" %>
+
+        <cq:includeClientLib js="jquery,jquery-ui,aemfiddle.app"/>
+
+        <div id="popover-new" class="coral-Popover">
+            <div class="coral-Popover-content u-coral-padding">
+                <ul class="coral-List coral-List--minimal">
+                    <li  class="coral-List-item" ng-repeat="option in data.ui.scriptExtOptions">
+                        <a ng-click="app.new(option.value, false)"
+                           href="#new-{{option.value}}">{{option.label}} <span
+                                class="script-extension">.{{option.value}}</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div id="app-data"
+
+             data-ace-editor-base-path="<%= aceBasePath %>"
+             data-run-url="<%= runURL %>"
+             data-resource-path="<%= resourcePath %>"
+             data-myfiddles-path="<%= myFiddlesPath %>"
+             data-current-page-path="<%= currentPagePath %>"
+        ></div>
+        <%-- Register angular app; Decreases chances of collisions w other angular apps on the page (ex. via injection) --%>
+
+        <script type="text/javascript">
+            angular.bootstrap(document.getElementById('acs-tools-aemfiddle-app'), ['aemFiddle']);
+        </script>
     </body>
 </html>
