@@ -20,7 +20,7 @@
 <form ng-submit="makeTags()">
 
     <div class="form-row">
-        <h4>Primary Converter</h4>
+        <h4 acs-coral-heading>Primary Converter</h4>
 
         <span>
             <select
@@ -36,7 +36,7 @@
     </div>
 
     <div class="form-row">
-        <h4>Fallback Converter</h4>
+        <h4 acs-coral-heading>Fallback Converter</h4>
 
         <span>
             <select
@@ -50,7 +50,7 @@
     </div>
 
     <div class="form-row">
-        <h4>CSV File</h4>
+        <h4 acs-coral-heading>CSV File</h4>
 
         <span>
             <input
@@ -66,11 +66,12 @@
     </div>
 
     <div class="form-row">
-        <h4>Field Separator</h4>
+        <h4 acs-coral-heading>Field Separator</h4>
 
         <span>
             <input type="text"
                    name="separator"
+                   class="coral-Textfield"
                    ng-model="form.separator"
                    placeholder="Defaults to ,"/>
         </span>
@@ -78,47 +79,51 @@
 
 
     <div class="form-row">
-        <h4>Field Delimiter</h4>
+        <h4 acs-coral-heading>Field Delimiter</h4>
 
         <span>
             <input type="text"
                    name="delimiter"
+                   class="coral-Textfield"
                    ng-model="form.delimiter"
                    placeholder="Defaults to &quot;"/>
         </span>
     </div>
 
     <div class="form-row">
-        <h4>Charset</h4>
+        <h4 acs-coral-heading>Charset</h4>
 
         <span>
             <input type="text"
                    name="charset"
+                   class="coral-Textfield"
                    ng-model="form.charset"
                    placeholder="Defaults to UTF-8"/>
         </span>
     </div>
 
     <div class="form-row">
-        <h4>Auto-clean CSV</h4>
+        <h4 acs-coral-heading>Auto-clean CSV</h4>
 
-        <div class="selector">
-            <label><input
+        <div class="coral-Selector">
+            <label class="coral-Selector-option"><input
                     ng-model="form.clean"
                     type="radio"
+                    class="coral-Selector-input"
                     name="clean"
-                    value="true"><span>Yes</span></label>
-            <label><input
+                    value="true"><span class="coral-Selector-description">Yes</span></label>
+            <label class="coral-Selector-option"><input
                     ng-model="form.clean"
                     type="radio"
+                    class="coral-Selector-input"
                     name="clean"
-                    value="false"><span>No</span></label>
+                    value="false"><span class="coral-Selector-description">No</span></label>
         </div>
     </div>
 
     <div class="form-row">
         <div class="form-left-cell">&nbsp;</div>
-        <button class="primary">Make Tags</button>
+        <button class="coral-Button coral-Button--primary">Make Tags</button>
     </div>
 </form>
 

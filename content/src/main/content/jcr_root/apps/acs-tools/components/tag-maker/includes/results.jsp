@@ -21,7 +21,7 @@
 <div ng-show="result.tagIds.length > 0"
      class="results">
 
-    <h2>{{ result.tagIds.length }} Tags processed</h2>
+    <h2 acs-coral-heading>{{ result.tagIds.length }} Tags processed</h2>
 
     <p>
         Please review these tags for correctness using the <a href="/tagging" tarsget="_blank"/>AEM Tagging console</a>.
