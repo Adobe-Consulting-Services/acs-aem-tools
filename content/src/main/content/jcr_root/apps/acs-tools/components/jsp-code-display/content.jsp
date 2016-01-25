@@ -26,20 +26,20 @@
 %><div ng-controller="MainCtrl"
      ng-init="app.uri='${resourcePath}.fetch.json'">
 
-    <form class="vertical">
-        <section class="fieldset">
+    <form class="coral-Form coral-Form--vertical">
+        <section class="coral-Form-fieldset">
 
-            <label class="fieldlabel" for="line">Enter a line from a stack trace like:
+            <label class="coral-Form-fieldlabel" for="line">Enter a line from a stack trace like:
                 <br/>
                 <code>  org.apache.jsp.apps.geometrixx.components.contentpage.content_jsp._jspService(content_jsp.java:75)</code>
                 <br/>
                 and see the Java code below
             </label>
 
-            <input class="field" type="text" name="line" ng-model="line"/>
+            <input class="coral-Form-field coral-Textfield" type="text" name="line" ng-model="line"/>
 
             <div>
-                <button class="primary" ng-click="debug()">Go</button>
+                <button class="coral-Button coral-Button--primary" ng-click="debug()">Go</button>
             </div>
         </section>
     </form>
