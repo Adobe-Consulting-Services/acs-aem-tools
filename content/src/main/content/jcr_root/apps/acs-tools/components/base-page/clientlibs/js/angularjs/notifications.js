@@ -21,6 +21,17 @@
 /*global angular: false */
 
 angular.module('ACS.Tools.notifications', []).factory('NotificationsService', ['$timeout', function ($timeout) {
+    var mapIcon = function(type) {
+        switch (type) {
+        case 'success':
+            return 'checkCircle';
+        case 'info':
+            return 'infoCircle';
+        default:
+            return 'alert';
+        }
+    };
+
     return {
         data: {
             timeout: 20 * 1000,
@@ -59,6 +70,7 @@ angular.module('ACS.Tools.notifications', []).factory('NotificationsService', ['
                 message: message,
                 timestamp: (new Date().getTime() / 1000)
             };
+            notification.icon = mapIcon(notification.type);
 
             if (notification.title) {
                 // Add notification
@@ -87,15 +99,16 @@ angular.module('ACS.Tools.notifications', []).factory('NotificationsService', ['
         + '<div ng-show="data.running.visible" class="coral-Alert coral-Alert--notice coral-Alert--large running">'
         + '<i class="coral-Alert-typeIcon coral-Icon coral-Icon--sizeS coral-Icon--alert"></i>'
         + '<strong class="coral-Alert-title">{{ data.running.title }}</strong>'
-        + '<div class="colra-alert-message">{{ data.running.message }}</div>'
+        + '<div class="coral-Alert-message">{{ data.running.message }}</div>'
         + '</div>'
         + '<div ng-repeat="notification in data.notifications">'
         + '<div class="coral-Alert coral-Alert--{{ notification.type }} coral-Alert--{{ size }}">'
         + '<button ng-hide="dismissible === \'false\'" type="button" class="coral-MinimalButton coral-Alert-closeButton" title="Close" data-dismiss="alert">'
         + '<i class="coral-Icon coral-Icon--sizeXS coral-Icon--close coral-MinimalButton-icon"></i>'
         + '</button>'
+        + '<i class="coral-Alert-typeIcon coral-Icon coral-Icon--sizeS coral-Icon--{{ notification.icon }}"></i>'
         + '<strong class="coral-Alert-title>{{ notification.title }}</strong>'
-        + '<div class="colra-alert-message">{{ notification.message }}</div>'
+        + '<div class="coral-Alert-message">{{ notification.message }}</div>'
         + '</div>'
         + '</div>'
         + '</div>',
