@@ -28,12 +28,13 @@
 
     angular.module('qeApp', [
         'ngAnimate',
+        'acsCoral',
         'ui.ace',
         'qeControllers',
         'qeServices',
         'qeDirectives'
     ]);
 
-    angular.bootstrap(document.querySelector('#qeApp'), ['qeApp']);
+    angular.bootstrap(document.querySelector('#acs-tools-query-editor'), ['qeApp']);
 
 }());

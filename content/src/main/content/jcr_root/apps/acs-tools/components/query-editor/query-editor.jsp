@@ -41,7 +41,7 @@
             resourceResolver.map(slingRequest, "/bin/acs-tools/qe/predicates.json"));
 
 %><!doctype html>
-<html>
+<html class="coral-App">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -54,76 +54,72 @@
 
 </head>
 
-<body id="acs-tools-query-editor">
-
-<div id="qeApp"
-     ng-controller="QueryEditorCtrl"
+<body id="acs-tools-query-editor" class="endor-Panel coral--light"
+    ng-controller="QueryEditorCtrl"
      ng-init="init({
                     queryBuilderPath: '${queryBuilderPath}',
                     nodeTypesPath: '${nodeTypesPath}',
                     fileSearchPath: '${fileSearchPath}',
                     predicatesPath: '${predicatesPath}'
                 }); running = true; refresh();">
-    <header class="top">
+    <div class="endor-Panel-header endor-BreadcrumbBar">
 
-        <div class="logo">
-            <a href="/"><i class="icon-marketingcloud medium"></i></a>
-            <span ng-hide="running" class="spinner icon-spinner medium"></span>
-        </div>
-
-        <nav class="crumbs">
-            <a href="/miscadmin">Tools</a>
-            <a href="${currentPage.path}.html">Query Editor</a>
+        <nav class="endor-Crumbs">
+            <a class="endor-Crumbs-item" href="/">
+                <i class="endor-Crumbs-item-icon coral-Icon coral-Icon--adobeExperienceManager coral-Icon--sizeM"></i>
+            </a>
+            <a class="endor-Crumbs-item" href="/miscadmin">Tools</a>
+            <a class="endor-Crumbs-item" href="${currentPage.path}.html">Query Editor</a>
         </nav>
 
-        <div class="drawer theme-dark">
-
-            <span class="auto-query-wrapper">
-                <label>
-                    <input type="checkbox" ng-model="autoQuery" ng-change="refresh()"/>
-                    <span>Auto Query</span>
-                </label>
-                <div ng-show="showAutoQueryWarning"
-                     class="auto-query-warning tooltip notice arrow-top">
-
-                    Enabling Auto Query may result in long running queries that
-                    can cause unresponsiveness.
+    </div>
+    <div class="js-endor-page endor-Panel-content endor-Panel-content--breadcrumbBarHeight endor-Page">
+        <div class="endor-Page-content endor-Panel">
+            <nav class="endor-Panel-header endor-BlackBar">
+                <div class="endor-BlackBar-right">
+                    <span class="auto-query-wrapper">
+                        <label acs-coral-checkbox>
+                            <input type="checkbox" ng-model="autoQuery" ng-change="refresh()"/>
+                            <span>Auto Query</span>
+                        </label>
+                        <div ng-show="showAutoQueryWarning"
+                             class="auto-query-warning tooltip notice arrow-top">
+        
+                            Enabling Auto Query may result in long running queries that
+                            can cause unresponsiveness.
+                        </div>
+                    </span>
+                    <button class="coral-Button coral-Button--primary" ng-click="query()" ng-disabled="autoQuery">
+                        <span ng-show="!status.requesting">Run Query</span>
+                        <span ng-show="status.requesting">Querying...</span>
+                    </button>
                 </div>
-            </span>
+            </nav>
+            <div class="endor-Panel-content endor-Panel-content--blackBarHeight endor-Page" role="main">
+ 
+                    <pre id="ace-input"
+                         ui-ace="{
+                              mode: 'querybuilder',
+                              theme: 'vibrant_ink',
+                              onLoad: initEditor,
+                              onChange: $parent.refresh
+                         }"
+                         ng-init="aceEditorBasePath='${aceEditorBasePath}'"
+                         ng-model="$parent.source"
+                         ng-controller="QueryInputCtrl"></pre>
 
-            <button class="primary" ng-click="query()" ng-disabled="autoQuery">
-                <span ng-show="!status.requesting">Run Query</span>
-                <span ng-show="status.requesting">Querying...</span>
-            </button>
-        </div>
+                    <pre id="ace-output"
+                         ui-ace="{
+                              mode: 'json',
+                              theme: 'vibrant_ink',
+                              onLoad: initEditor
+                         }"
+                         readonly="true"
+                         ng-init="aceEditorBasePath='${aceEditorBasePath}'"
+                         ng-model="$parent.json"
+                         ng-controller="QueryOutputCtrl"></pre>
 
-    </header>
-
-    <div class="page" role="main">
-        <div class="content">
-
-            <pre id="ace-input"
-                 ui-ace="{
-                      mode: 'querybuilder',
-                      theme: 'vibrant_ink',
-                      onLoad: initEditor,
-                      onChange: $parent.refresh
-                 }"
-                 ng-init="aceEditorBasePath='${aceEditorBasePath}'"
-                 ng-model="$parent.source"
-                 ng-controller="QueryInputCtrl"></pre>
-
-            <pre id="ace-output"
-                 ui-ace="{
-                      mode: 'json',
-                      theme: 'vibrant_ink',
-                      onLoad: initEditor
-                 }"
-                 readonly="true"
-                 ng-init="aceEditorBasePath='${aceEditorBasePath}'"
-                 ng-model="$parent.json"
-                 ng-controller="QueryOutputCtrl"></pre>
-
+            </div>
         </div>
     </div>
 
@@ -135,7 +131,6 @@
         <span ng-show="status.requesting" class="loader"></span>
         <span ng-hide="status.requesting">Query took {{status.duration / 1000 | number}} seconds</span>
     </footer>
-</div>
 
 <cq:includeClientLib js="query-editor.app"/>
 </body>
