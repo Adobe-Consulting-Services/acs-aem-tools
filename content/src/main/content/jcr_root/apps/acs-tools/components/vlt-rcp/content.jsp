@@ -21,10 +21,10 @@
 <%@include file="/libs/foundation/global.jsp" %><%
 
     pageContext.setAttribute("rcpPath",
-            resourceResolver.map(slingRequest, "/libs/granite/packaging/rcp"));
+            resourceResolver.map(slingRequest, "/system/jackrabbit/filevault/rcp"));
 
     pageContext.setAttribute("legacyRcpPath",
-            resourceResolver.map(slingRequest, "/system/jackrabbit/filevault/rcp"));
+            resourceResolver.map(slingRequest, "/libs/granite/packaging/rcp"));
 
 %><div  ng-controller="MainCtrl"
         ng-init="init(['${rcpPath}', '${legacyRcpPath}']);">
