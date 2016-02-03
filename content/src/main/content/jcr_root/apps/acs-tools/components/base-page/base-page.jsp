@@ -58,15 +58,14 @@
         <cq:include script="includes/head-libs.jsp"/>
     </head>
 
-    <body class="acs-tools-page">
-        <header class="top">
-            <div class="logo">
-                <a href="/"><i class="icon-marketingcloud medium"></i></a>
-            </div>
-
-            <nav class="crumbs">
-                <a href="/miscadmin">Tools</a>
-                <a href="${pagePath}.html">${pageTitle}</a>
+    <body class="coral--light acs-tools-page">
+        <header class="endor-Panel-header endor-BreadcrumbBar is-closed">
+            <nav class="endor-Crumbs">
+                <a class="endor-Crumbs-item" href="/">
+                    <i class="endor-Crumbs-item-icon coral-Icon coral-Icon--adobeExperienceManager coral-Icon--sizeM"></i>
+                </a>
+                <a class="endor-Crumbs-item" href="/miscadmin">Tools</a>
+                <a class="endor-Crumbs-item" href="${pagePath}.html">${pageTitle}</a>
             </nav>
         </header>
 
@@ -78,7 +77,7 @@
                     <div class="content-container">
                         <div class="content-container-inner">
 
-                            <h1>${pageTitle}</h1>
+                            <h1 acs-coral-heading>${pageTitle}</h1>
 
                             <cq:include script="content.jsp"/>
                         </div>

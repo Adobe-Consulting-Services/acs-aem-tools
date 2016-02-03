@@ -20,7 +20,7 @@
 
 /*global angular: false, ace: false */
 
-var jspCodeDisplay = angular.module('acs-tools-jsp-code-display-app', ['ACS.Tools.notifications']);
+var jspCodeDisplay = angular.module('acs-tools-jsp-code-display-app', ['acsCoral','ACS.Tools.notifications']);
 
 jspCodeDisplay.controller('MainCtrl', ['$scope', '$http', 'NotificationsService', function($scope, $http, NotificationsService) {
 

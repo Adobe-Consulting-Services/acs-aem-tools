@@ -20,7 +20,7 @@
 
 /*global angular: false, window: false */
 
-angular.module('acs-tools-explain-query-app', ['ACS.Tools.notifications']).config([
+angular.module('acs-tools-explain-query-app', ['ACS.Tools.notifications', 'acsCoral']).config([
 
     '$compileProvider',
     function ($compileProvider) {

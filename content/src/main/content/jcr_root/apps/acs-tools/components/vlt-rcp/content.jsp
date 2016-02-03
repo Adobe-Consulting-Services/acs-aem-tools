@@ -31,15 +31,13 @@
 
     <%-- VLT-RCP Not installed --%>
     <div ng-show="vltMissing">
-        <div class="alert error large">
-            <strong>VLT-RCP servlet missing, inactive or unreachable</strong>
-
-            <div>
+        <div acs-coral-alert data-alert-type="error" data-alert-size="large"
+            data-alert-title="VLT-RCP servlet missing, inactive or unreachable">
                 VLT-RCP endpoint could not be reached.
 
                 <ol>
                     <li>
-                        <a href="http://mirrors.ibiblio.org/maven2/org/apache/jackrabbit/vault/org.apache.jackrabbit.vault.rcp"
+                        <a href="http://search.maven.org/#search%7Cga%7C1%7Corg.apache.jackrabbit.vault.rcp"
                            target="_blank">Download and install</a>
                         VLT-RCP on this AEM instance.
                     </li>
@@ -54,19 +52,22 @@
                         &quot;/libs/granite/packaging/rcp&quot; in VLT-RCP 3.1.6.
                     </li>
                 </ol>
-            </div>
         </div>
     </div>
 
-    <div ng-show="!vltMissing">
+    <div ng-show="!vltMissing" class="auto-refresh-section">
 
-        <div class="button-group top-button-group">
-            <div class="selector">
-                <label class="auto-refresh-label"><input type="checkbox" ng-model="checkboxModel.autoRefresh"><span>
-                    <i class="icon-refresh"></i>Auto Refresh</span></label>
+        <div class="coral-ButtonGroup top-button-group">
+            <div class="coral-Selector">
+                <label class="coral-Selector-option auto-refresh-label">
+                    <input class="coral-Selector-input" type="checkbox" ng-model="checkboxModel.autoRefresh">
+                    <span class="coral-Selector-description">
+                        <i class="coral-Icon coral-Icon--refresh coral-Selector-icon"></i>Auto Refresh
+                    </span>
+                </label>
             </div>
 
-            <button
+            <button class="coral-Button"
                     data-target="#create-new-task-modal"
                     data-toggle="modal"><i class="icon-add"></i> Add Task</button>
         </div>
@@ -75,9 +76,8 @@
         <div class="section" ng-show="tasks.length == 0">
 
             <%-- No Tasks Defined --%>
-            <div class="alert notice large">
-                <strong>No tasks defined</strong>
-                <div>
+            <div acs-coral-alert data-alert-type="notice" data-alert-size="large"
+                 data-alert-title="No tasks defined" data-dismissible="false">
                     No VLT-RCP tasks have been defined.
 
                     <ul>
@@ -86,7 +86,6 @@
                                  data-toggle="modal">Create a new VLT-RCP task.</a></li>
                     </ul>
 
-                </div>
             </div>
 
         </div>
@@ -94,30 +93,30 @@
         <%-- Tasks Defined --%>
         <div class="section" ng-show="tasks.length > 0">
 
-            <h2>Current Tasks</h2>
+            <h2 acs-coral-heading>Current Tasks</h2>
 
             <p>
-                Click on the <i class="icon-treeexpand"></i> to view the details for each Task.
+                Click on the <i class="coral-Icon coral-Icon--treeExpand"></i> to view the details for each Task.
             </p>
 
-            <table class="data tasks">
+            <table class="coral-Table data tasks">
                 <thead>
-                    <tr>
-                        <th>Task Id</th>
-                        <th>Status</th>
-                        <th>Settings</th>
-                        <th>Actions</th>
+                    <tr class="coral-Table-row">
+                        <th class="coral-Table-headerCell">Task Id</th>
+                        <th class="coral-Table-headerCell">Status</th>
+                        <th class="coral-Table-headerCell">Settings</th>
+                        <th class="coral-Table-headerCell">Actions</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    <tr ng-repeat="task in tasks"
+                    <tr class="coral-Table-row" ng-repeat="task in tasks"
                         ng-class="{ expanded : task.expanded }">
-                        <td>
+                        <td class="coral-Table-cell">
                             {{ task.id }}
                         </td>
 
-                        <td>
+                        <td class="coral-Table-cell">
                             <div>{{ task.status.state }}</div>
                             <div ng-show="task.expanded">
 
@@ -132,7 +131,7 @@
                                 </ul>
                             </div>
                         </td>
-                        <td>
+                        <td class="coral-Table-cell">
                             <ul>
                                 <li>Source: {{ task.src }}</li>
                                 <li>Destination: {{ task.dst }}</li>
@@ -150,36 +149,30 @@
                                 <li ng-show="task.excludes.length > 0">
                                     Excludes:
                                     <ul>
-                                        <li ng-repeat="exclude in task.excludes track by $index">{{exclude
-                                            }}</li>
+                                        <li ng-repeat="exclude in task.excludes track by $index">{{exclude}}</li>
                                     </ul>
                                 </li>
                             </ul>
                         </td>
-                        <td class="actions">
-
-                            <div class="action-button">
-                                <a href="#" ng-click="task.expanded = !task.expanded"
-                                   ng-class="task.expanded ? 'icon-treecollapse' : 'icon-treeexpand'"></a>
-                            </div>
-
-                            <div class="action-button">
-                                <a href="#" ng-show="task.status.state == 'NEW'"
-                                   ng-click="start(task)"
-                                   class="icon-play-circle"></a>
-                            </div>
-
-                            <div class="action-button">
-                                <a href="#" ng-show="task.status.state == 'RUNNING'"
-                                   ng-click="stop(task)"
-                                   class="icon-stop"></a>
-                            </div>
-
-                            <div class="action-button">
-                                <a href="#" ng-click="remove(task)"
-                                   class="icon-delete">
-                                </a>
-                            </div>
+                        <td class="coral-Table-cell actions">
+                            <button class="coral-Button coral-Button--square coral-Button--quiet"
+                                ng-click="task.expanded = !task.expanded">
+                              <i class="coral-Icon" ng-class="task.expanded ? 'coral-Icon--treeCollapse' : 'coral-Icon--treeExpand'"></i>
+                            </button>
+                            <button class="coral-Button coral-Button--square coral-Button--quiet"
+                                ng-show="task.status.state == 'NEW'"
+                                ng-click="start(task)">
+                              <i class="coral-Icon coral-Icon--playCircle"></i>
+                            </button>
+                            <button class="coral-Button coral-Button--square coral-Button--quiet"
+                                ng-show="task.status.state == 'RUNNING'"
+                                ng-click="stop(task)">
+                              <i class="coral-Icon coral-Icon--stopCircle"></i>
+                            </button>
+                            <button class="coral-Button coral-Button--square coral-Button--quiet"
+                                ng-click="remove(task)">
+                              <i class="coral-Icon coral-Icon--delete"></i>
+                            </button>
                         </td>
                     </tr>
                 </tbody>

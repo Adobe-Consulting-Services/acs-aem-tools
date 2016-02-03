@@ -23,12 +23,13 @@
     <code>&lt;source property value>,&lt;dest property value></code>
 </p>
 
-<form ng-submit="update()">
+<form class="coral-Form coral-Form--vertical" ng-submit="update()">
 
-    <div class="form-row">
-        <h4>CSV File</h4>
+<section class="coral-Form-fieldset">
 
-        <span>
+    <div class="coral-Form-fieldwrapper">
+        <label class="coral-Form-fieldlabel">CSV File</label>
+
             <input
                     accept="*/*"
                     type="file"
@@ -38,72 +39,68 @@
                     ng-required="true"
                     required
                     placeholder="Select a CSV file"/>
-        </span>
     </div>
 
-    <div class="form-row">
-        <h4>Path Restriction</h4>
+    <div class="coral-Form-fieldwrapper">
+        <label class="coral-Form-fieldlabel">Path Restriction</label>
 
-        <span>
             <input type="text"
                    name="path"
+                   class="coral-Form-field coral-Textfield"
                    ng-model="form.path"
                    placeholder="Defaults to /content"/>
-        </span>
     </div>
 
 
-    <div class="form-row">
-        <h4>Property Name</h4>
+    <div class="coral-Form-fieldwrapper">
+        <label class="coral-Form-fieldlabel">Property Name</label>
 
-        <span>
             <select
                     name="propertyName"
                     ng-model="form.propertyName">
                 <option value="sling:resourceType">sling:resourceType</option>
                 <option value="cq:template">cq:template</option>
             </select>
-        </span>
+        
     </div>
 
 
-    <div class="form-row">
-        <h4>Field Separator</h4>
+    <div class="coral-Form-fieldwrapper">
+        <label class="coral-Form-fieldlabel">Field Separator</label>
 
-        <span>
             <input type="text"
+                   class="coral-Form-field coral-Textfield"
                    name="separator"
                    ng-model="form.separator"
                    placeholder="Defaults to ,"/>
-        </span>
     </div>
 
 
-    <div class="form-row">
-        <h4>Field Delimiter</h4>
+    <div class="coral-Form-fieldwrapper">
+        <label class="coral-Form-fieldlabel">Field Delimiter</label>
 
-        <span>
             <input type="text"
+                   class="coral-Form-field coral-Textfield"
                    name="delimiter"
                    ng-model="form.delimiter"
                    placeholder="Defaults to &quot;"/>
-        </span>
     </div>
 
-    <div class="form-row">
-        <h4>Charset</h4>
+    <div class="coral-Form-fieldwrapper">
+        <label class="coral-Form-fieldlabel">Charset</label>
 
-        <span>
             <input type="text"
+                   class="coral-Form-field coral-Textfield"
                    name="charset"
                    ng-model="form.charset"
                    placeholder="Defaults to UTF-8"/>
-        </span>
     </div>
 
 
-    <div class="form-row">
+    <div class="coral-Form-fieldwrapper">
         <div class="form-left-cell">&nbsp;</div>
-        <button class="primary">Update {{ form.propertyName }}</button>
+        <button class="coral-Button coral-Button--primary">Update {{ form.propertyName }}</button>
     </div>
+
+</section>
 </form>

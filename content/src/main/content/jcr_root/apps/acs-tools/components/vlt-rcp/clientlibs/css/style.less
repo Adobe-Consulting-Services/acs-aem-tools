@@ -37,14 +37,9 @@
     }
   }
 
-  .auto-refresh-label {
-    font-size: 15px;
-  }
-
   .top-button-group {
     float: right;
   }
-
 }
 
 #create-new-task-modal {
@@ -53,43 +48,25 @@
   margin-bottom: 50px;
   position: absolute;
 
-  .label-col {
-    width: 10em;
-    padding-right: 1em;
-    font-weight: bold;
-    text-align: right;
-
-    label {
-      line-height: 1.5em;
-    }
-  }
-
-  .field-col {
-    text-align: left;
-    width: 82%;
-  }
-
   input[type=text] {
-    width: 100%;
+      width: 75%;
+  }
+  
+  .excludes {
+      width: 75%;
+      input[type=text] {
+          width: 80%;
+      }
+  }
+
+  a.removeButton, a.addButton {
+    margin-left: .5em;
+    i {
+        padding-top: .5em;
+    }
   }
 
   .add-remove-list {
-    .add {
-      margin-top: 5px;
-
-      a {
-        color: #000;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-    }
-
-    .remove {
-      margin: 10px
-    }
-
     ul {
       list-style: none;
       margin: 1em 0;
@@ -99,9 +76,6 @@
         margin: 0;
         padding: 0 0 .5em 0;
 
-        input[type=text] {
-          width: 90%;
-        }
       }
     }
   }

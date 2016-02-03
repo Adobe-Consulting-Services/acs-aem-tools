@@ -23,41 +23,42 @@
 %><%-- Popular Queries --%>
 <div class="section" ng-show="queries.popular.length > 0">
 
-    <h2>Popular Queries</h2>
+    <h2 acs-coral-heading>Popular Queries</h2>
 
     <p>Click on a query below to load into explanation form above</p>
 
-    <table class="data">
+    <table class="data coral-Table coral-Table--hover">
         <thead>
-        <tr>
-            <th>Duration (ms)</th>
-            <th>Occurrence Count</th>
-            <th>Language</th>
-            <th>Statement</th>
-            <th></th>
+        <tr class="coral-Table-row">
+            <th class="coral-Table-headerCell">Duration (ms)</th>
+            <th class="coral-Table-headerCell">Occurrence Count</th>
+            <th class="coral-Table-headerCell">Language</th>
+            <th class="coral-Table-headerCell">Statement</th>
+            <th class="coral-Table-headerCell"></th>
         </tr>
         </thead>
         <tbody>
         <tr ng-repeat="query in queries.popular track by $index"
+            class="coral-Table-row"
             ng-class="{ expanded : query.expanded }">
-            <td class="num"
+            <td class="coral-Table-cell num"
                 ng-click="load(query)">
                 <div>{{ query.duration }}</div>
             </td>
-            <td class="num"
+            <td class="coral-Table-cell num"
                 ng-click="load(query)">
                 <div>{{ query.occurrenceCount }}</div>
             </td>
-            <td ng-click="load(query)">
+            <td class="coral-Table-cell" ng-click="load(query)">
                 <div>{{ query.language }}</div>
             </td>
-            <td ng-click="load(query)">
+            <td class="coral-Table-cell" ng-click="load(query)">
                 <div>{{ query.statement }}</div>
             </td>
-            <td>
-                <a href="#"
-                   ng-click="query.expanded = !query.expanded"
-                   ng-class="query.expanded ? 'icon-treecollapse' : 'icon-treeexpand'">
+            <td class="coral-Table-cell">
+                <a ng-click="query.expanded = !query.expanded"
+                   class="coral-Icon"
+                   ng-class="query.expanded ? 'coral-Icon--treeCollapse' : 'coral-Icon--treeExpand'">
                 </a>
             </td>
         </tr>

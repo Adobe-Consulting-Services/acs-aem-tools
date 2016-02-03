@@ -22,78 +22,75 @@
 
 <%-- Rail --%>
 
-<div class="rail right" ng-show="data.ui.rail.visible" role="complementary">
-    <div class="wrap">
-
+<div class="js-endor-navrail endor-Page-sidepanel endor-Page-sidepanel--navigation endor-Page-sidepanel--right coral--dark is-closed" role="complementary">
+    <div class="coral-ColumnView coral-ColumnView--navigation">
+        
         <%-- Title --%>
-        <section>
-            <span ng-class="data.myfiddles.list.length < 1 ? 'empty' : ''"
-                  class="myfiddles-count badge">{{data.myfiddles.list.length}}</span>
-            <h4>My Fiddles</h4>
-        </section>
+        <section class="coral-ColumnView-column is-active">
+            <div class="coral-ColumnView-item">
+                <span ng-class="data.myfiddles.list.length < 1 ? 'empty' : ''"
+                    class="myfiddles-count endor-Badge">{{data.myfiddles.list.length}}</span>
+                <h4 acs-coral-heading>My Fiddles</h4>
+            </div>
+            
+            <%-- Controls --%>
+            <div class="coral-ColumnView-item">
+                <a href="#update"
+                    ng-disabled="!data.myfiddles.current || data.ui.myfiddles.createFiddle.visible"
+                    ng-click="myfiddles.update(data.myfiddles.current)"
+                    class="icon-link"
+                    title="Update"><i class="coral-Icon coral-Icon--download"></i></a>
 
-        <%-- Controls --%>
-        <section>
-            <a href="#update"
-               ng-disabled="!data.myfiddles.current || data.ui.myfiddles.createFiddle.visible"
-               ng-click="myfiddles.update(data.myfiddles.current)"
-               class="icon-download"
-               title="Update">Update</a>
+                <span class="divider"></span>
 
-            <span class="divider"></span>
-
-            <a href="#create"
-               ng-disabled="data.ui.myfiddles.createFiddle.visible"
-               ng-click="ui.showCreateFiddle()"
-               class="icon-add"
-               title="Create">Create</a>
-
-        </section>
-
-        <%-- Create Fiddle Form --%>
-        <section class="create-fiddle" ng-show="data.ui.myfiddles.createFiddle.visible">
-            <h4>Save code as new Fiddle?</h4>
-
-            <div class="fields">
-                <label>Name:</label>
-                <input ng-model="data.myfiddles.new.title" type="text"/>
+                <a href="#create"
+                    ng-disabled="data.ui.myfiddles.createFiddle.visible"
+                    ng-click="ui.showCreateFiddle()"
+                    class="icon-link"
+                    title="Create"><i class="coral-Icon coral-Icon--add"></i></a>
             </div>
 
-            <div class="footer">
-                <a ng-click="ui.hideCreateFiddle()"
-                   class="button"
-                   role="button"
-                   href="#cancel-create">Cancel</a>
-
-                <a ng-click="myfiddles.create('<%= myFiddlesPath %>')"
-                   class="button primary"
-                   role="button"
-                   href="#confirm-create">Save</a>
+            <%-- Create Fiddle Form --%>
+            <div class="coral-ColumnView-item create-fiddle" ng-show="data.ui.myfiddles.createFiddle.visible">
+                <h4 acs-coral-heading>Save code as new Fiddle?</h4>
+    
+                <div class="fields">
+                    <label>Name:</label>
+                    <input ng-model="data.myfiddles.new.title" type="text" class="coral-Textfield"/>
+                </div>
+    
+                <div class="footer">
+                    <button ng-click="ui.hideCreateFiddle()"
+                       class="coral-Button"
+                       role="button"
+                       href="#cancel-create">Cancel</button>
+    
+                    <button ng-click="myfiddles.create('<%= myFiddlesPath %>')"
+                       class="coral-Button coral-Button--primary"
+                       role="button"
+                       href="#confirm-create">Save</button>
+                </div>
             </div>
-        </section>
 
-        <%-- My Fiddles List --%>
-        <section class="myfiddles-list" ng-hide="data.ui.myfiddles.createFiddle.visible">
-            <ul ng-show="data.myfiddles.list.length > 0">
-                <li ng-repeat="fiddle in data.myfiddles.list"
-                    ng-class="fiddle.active?'active':''">
+            <%-- My Fiddles List --%>
+            <div class="coral-ColumnView-item myfiddles"
+                ng-repeat="fiddle in data.myfiddles.list"
+                ng-class="fiddle.active ? 'active' : ''">
 
-                    <a ng-click="myfiddles.delete(fiddle)"
-                       class="delete-button icon-close"
-                       href="#delete">Delete</a>
+                <a ng-click="myfiddles.delete(fiddle)"
+                   class="delete-button"
+                   href="#delete"><i class="coral-Icon coral-Icon--close"></i></a>
 
-                    <a ng-click="myfiddles.load(fiddle)"
-                       href="#load">{{fiddle.title}}<span class="script-extension">.{{fiddle.scriptExt}}</span></a>
+                <a ng-click="myfiddles.load(fiddle)"
+                   href="#load">{{fiddle.title}}<span class="script-extension">.{{fiddle.scriptExt}}</span></a>
 
-                </li>
-            </ul>
-            <div ng-hide="data.myfiddles.list.length > 0">
+            </div>
+            <div class="coral-Columnview-item" ng-hide="data.myfiddles.list.length > 0">
                 <br/><br/>
                 <div class="greyText" style="text-align:center">No Saved Fiddles</div>
 
             </div>
         </section>
-
     </div>
 </div>
 <%-- End Rail --%>

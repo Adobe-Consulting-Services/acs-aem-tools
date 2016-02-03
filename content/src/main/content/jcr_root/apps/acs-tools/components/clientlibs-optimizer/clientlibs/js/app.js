@@ -20,7 +20,7 @@
 
 /*global angular: false, ACS: false */
 
-angular.module('acs-tools-clientlibs-optimizer-app', ['ACS.Tools.notifications']).controller('MainCtrl',
+angular.module('acs-tools-clientlibs-optimizer-app', ['ACS.Tools.notifications', 'acsCoral']).controller('MainCtrl',
 
     ['$scope', '$http', 'NotificationsService', function($scope, $http, NotificationsService) {
 

@@ -28,9 +28,9 @@
     <nav class="toolbar">
         <div class="icongroup">
             <a  ng-click="ui.toggleOutput()"
-                class="toggle-output-icon icon-reply"
+                class="toggle-output-icon"
                 href="#toggle-output"
-                title="Toggle Output/HTML">Toggle Output/HTML</a>
+                title="Toggle Output/HTML"><i class="coral-Icon coral-Icon--reply" data-init="quicktip" data-quicktip-content="Toggle Output/HTML"></i></a>
         </div>
         <span class="output-status">
 
@@ -79,7 +79,7 @@
 
                 <p>
                     You can also Create, Load, Update and Delete code snippets by clicking on
-                    <span class="icon-navigation"></span>
+                    <span class="coral-Icon coral-Icon--navigation coral-Icon--sizeS"></span>
                     in the header!
                 </p>
             </div>

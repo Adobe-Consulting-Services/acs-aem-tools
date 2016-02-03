@@ -1,15 +1,15 @@
 /*
  * #%L
- * ACS AEM Tools Package
+ * ACS AEM Commons Bundle
  * %%
  * Copyright (C) 2013 Adobe
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,37 +17,19 @@
  * limitations under the License.
  * #L%
  */
+/*global angular: false */
+angular.module('acsCoral')
+.directive("acsCoralCheckbox", function() {
+    return {
+        restrict: 'A',
+        link : function(scope, $element, attrs) {
+            var $span = $element.find("span"),
+                $input = $element.find("input");
 
-/* Resizable Handles */
-
-#left-pane,
-#right-pane {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-}
-
-#left-pane {
-    left: 0;
-    right: 50%;
-}
-
-#right-pane {
-    left: 50%;
-    right: 0;
-}
-
-#handle {
-    width: 6px;
-    z-index: 999;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    /* Push handle outside editor for Ace scrollbar */
-    right: -2px;
-    background-color: #4097DC;
-}
-
-.ui-resizable-e {
-    cursor: ew-resize;
-}
+            $element.addClass("coral-Checkbox");
+            $input.addClass("coral-Checkbox-input");
+            $span.before('<span class="coral-Checkbox-checkmark"></span>');
+            $span.addClass("coral-Checkbox-description");
+        }
+    };
+});

@@ -1,5 +1,4 @@
 #base=css
 
 app.less
-split-pane.css
 scrollbars.css

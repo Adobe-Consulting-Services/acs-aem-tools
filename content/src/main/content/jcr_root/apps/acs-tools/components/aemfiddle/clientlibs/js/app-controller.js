@@ -52,12 +52,6 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
         hasData: false,
         htmlView: false
     };
-    $scope.data.ui.rail = {
-        visible: false
-    };
-    $scope.data.ui.newPopover = {
-        visible: false
-    };
     $scope.data.ui.myfiddles = {
         createFiddle: {
             visible: false
@@ -182,9 +176,12 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
 
     /* Core App Methods */
     $scope.app['new'] = function(scriptExt, skipConfirm) {
-        var resetConfirmed = false;
+        var resetConfirmed = false,
+            newPopover = $("#popover-new").data("popover");
 
-        $scope.ui.hideNewPopover();
+        if (newPopover) {
+            newPopover.toggleVisibility();
+        }
 
         if(skipConfirm || !aemFiddle.ace.input.isDirty()) {
             resetConfirmed = true;
@@ -373,15 +370,6 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
         }
     };
 
-    /* UI Methods */
-    $scope.ui.toggleRail = function() {
-        var visible = $scope.data.ui.rail.visible;
-        if(visible) {
-            $scope.ui.hideCreateFiddle();
-        }
-        $scope.data.ui.rail.visible = !visible;
-    };
-
     $scope.ui.toggleOutput = function() {
         $scope.data.ui.output.htmlView = !($scope.data.ui.output.htmlView);
         aemFiddle.ace.output.reload();
@@ -394,14 +382,6 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
     $scope.ui.hideCreateFiddle = function() {
         $scope.data.ui.myfiddles.createFiddle.visible = false;
         $scope.data.myfiddles['new'].title = '';
-    };
-
-    $scope.ui.toggleNewPopover = function() {
-        $scope.data.ui.newPopover.visible = !$scope.data.ui.newPopover.visible;
-    };
-
-    $scope.ui.hideNewPopover = function() {
-        $scope.data.ui.newPopover.visible = false;
     };
 
     $scope.ui.updateCursor = function(row, column) {
@@ -514,6 +494,7 @@ aemFiddle.controller('MainCtrl', ['$scope', '$http', '$timeout', function($scope
         /* Store initial input src for use during reset */
 
         /* Update input cursor location */
+
         aemFiddle.ace.input.editor.getSession().selection.on('changeCursor', function(e) {
             var cursor = aemFiddle.ace.input.editor.getCursorPosition();
 

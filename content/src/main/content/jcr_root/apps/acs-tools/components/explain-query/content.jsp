@@ -44,12 +44,9 @@
         </c:when>
         <c:otherwise>
 
-            <div class="alert notice large">
-                <strong>Incompatible version of AEM</strong>
-
-                <div>Explain Query is only supported on AEM installs running Apache Jackrabbit Oak based
+            <div acs-coral-alert data-alert-type="notice" data-alert-size="large" data-alert-title="Incompatible version of AEM">
+                Explain Query is only supported on AEM installs running Apache Jackrabbit Oak based
                     repositories.
-                </div>
             </div>
 
         </c:otherwise>

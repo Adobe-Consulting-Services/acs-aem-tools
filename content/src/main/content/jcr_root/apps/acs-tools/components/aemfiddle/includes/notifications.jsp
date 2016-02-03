@@ -23,10 +23,13 @@
 <div id="notifications">
     <ul>
         <li ng-repeat="notification in data.notifications">
-            <div class="alert {{notification.type}}">
-                <button class="close" data-dismiss="alert">&times;</button>
-                <strong>{{notification.title}}</strong>
-                <div>{{notification.message}}</div>
+            <div class="coral-Alert coral-Alert--{{notification.type}}">
+                <button type="button" class="coral-MinimalButton coral-Alert-closeButton" title="Close" data-dismiss="alert">
+                    <i class="coral-Icon coral-Icon--sizeXS coral-Icon--close coral-MinimalButton-icon"></i>
+                </button>
+                <i class="coral-Alert-typeIcon coral-Icon coral-Icon--sizeS coral-Icon--alert"></i>
+                <strong class='coral-Alert-title'>{{notification.title}}</strong>
+                <div class='coral-Alert-message'>{{notification.message}}</div>
             </div>
         </li>
     </ul>

@@ -17,166 +17,108 @@
   ~ limitations under the License.
   ~ #L%
   --%>
-<div id="create-new-task-modal" class="modal">
+<div id="create-new-task-modal" class="coral-Modal">
 
-    <div class="modal-header">
-        <h2>Create a new task</h2>
-        <button type="button"
-                class="close"
-                data-dismiss="modal"
-                ng-click="reset();">&times;</button>
+    <div class="coral-Modal-header">
+        <i class="coral-Modal-typeIcon coral-Icon coral-Icon--sizeS"></i>
+        <h2 class="coral-Modal-title coral-Heading coral-Heading--2">Create a new task</h2>
+        <button type="button" class="coral-MinimalButton coral-Modal-closeButton" title="Close" data-dismiss="modal" ng-click="reset();">
+            <i class="coral-Icon coral-Icon--sizeXS coral-Icon--close coral-MinimalButton-icon "></i>
+        </button>
     </div>
 
-    <div class="modal-body">
+    <div class="coral-Modal-body">
 
-        <form name="myForm">
-            <table class="create-new-task">
-                <tr>
-                    <td class="label-col">
-                        <label>Task Id</label>
-                    </td>
-                    <td class="field-col">
-                        <input type="text"
+        <form name="myForm" class="coral-Form coral-Form--aligned">
+            <section class="create-new-task">
+
+                <label class="coral-Form-fieldlabel">Task Id</label>
+                <input class="coral-Form-field coral-Textfield" type="text"
                                ng-model="task_id"
                                name="id"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="label-col">
-                        <label>Source</label>
-                    </td>
-                    <td class="field-col">
-                        <input type="text"
+
+                <label class="coral-Form-fieldlabel">Source</label>
+                <input class="coral-Form-field coral-Textfield" type="text"
                                ng-model="task_src"
                                name="src"
                                placeholder="http://admin:admin@localhost:4502/crx/server/-/jcr:root/content/dam/my-site"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="label-col">
-                        <label>Destination</label>
-                    </td>
-                    <td class="field-col">
-                        <input type="text"
+
+                <label class="coral-Form-fieldlabel">Destination</label>
+                <input class="coral-Form-field coral-Textfield" type="text"
                                ng-model="task_dst"
                                name="dst"
-                               placeholder="/content/dam/my-site"/></td>
-                </tr>
-                <tr>
-                    <td class="label-col">
-                        <label>Recursive</label>
-                    </td>
-                    <td class="field-col">
-                        <label class="switch">
-                            <input type="checkbox"
-                                   name="recursive"
-                                   ng-model="checkboxModel.recursive"><span>No</span><span>Yes</span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="label-col">
-                        <label>Update</label>
-                    </td>
-                    <td class="field-col">
-                        <label class="switch">
-                            <input type="checkbox"
-                                   name="update"
-                                   ng-model="checkboxModel.update"><span>No</span><span>Yes</span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="label-col">
-                        <label>Only newer</label>
-                    </td>
-                    <td class="field-col">
-                        <label class="switch">
-                            <input type="checkbox"
-                                   name="onlyNewer"
-                                   ng-model="checkboxModel.onlyNewer"><span>No</span><span>Yes</span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="label-col">
-                        <label>No ordering</label>
-                    </td>
-                    <td class="field-col">
-                        <label class="switch">
-                            <input type="checkbox"
-                                   name="noOrdering"
-                                   ng-model="checkboxModel.noOrdering"><span>No</span><span>Yes</span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="label-col">
-                        <label>Resume from</label>
-                    </td>
-                    <td class="field-col">
-                        <input type="text"
+                               placeholder="/content/dam/my-site"/>
+
+                <label class="coral-Form-fieldlabel">Recursive</label>
+                <span class="coral-Form-field coral-Switch">
+                    <input class="coral-Switch-input" type="checkbox"
+                           name="recursive"
+                           ng-model="checkboxModel.recursive"><span class="coral-Switch-offLabel">No</span><span class="coral-Switch-onLabel">Yes</span>
+                </span>
+
+                <label class="coral-Form-fieldlabel">Update</label>
+                <span class="coral-Form-field coral-Switch">
+                    <input class="coral-Switch-input" type="checkbox"
+                           name="update"
+                           ng-model="checkboxModel.update"><span class="coral-Switch-offLabel">No</span><span class="coral-Switch-onLabel">Yes</span>
+                </span>
+
+                <label class="coral-Form-fieldlabel">Only newer</label>
+                <span class="coral-Form-field coral-Switch">
+                    <input class="coral-Switch-input" type="checkbox"
+                           name="onlyNewer"
+                           ng-model="checkboxModel.onlyNewer"><span class="coral-Switch-offLabel">No</span><span class="coral-Switch-onLabel">Yes</span>
+                </span>
+
+                <label class="coral-Form-fieldlabel">No ordering</label>
+                <span class="coral-Form-field coral-Switch">
+                    <input class="coral-Switch-input" type="checkbox"
+                           name="noOrdering"
+                           ng-model="checkboxModel.noOrdering"><span class="coral-Switch-offLabel">No</span><span class="coral-Switch-onLabel">Yes</span>
+                </span>
+
+                <label class="coral-Form-fieldlabel">Resume from</label>
+                <input class="coral-Form-field coral-Textfield" type="text"
                                ng-model="task_resumeFrom"
                                name="resumeFrom"
                                placeholder="/content/dam/my-site"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="label-col">
-                        <label>Batch size</label>
-                    </td>
-                    <td class="field-col">
-                        <input type="text"
+
+                <label class="coral-Form-fieldlabel">Batch size</label>
+                <input class="coral-Form-field coral-Textfield" type="text"
                                ng-model="task_batchSize"
-                               name="resumeFrom"
+                               name="batchSize"
                                placeholder="1024"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="label-col">
-                        <label>Throttle</label>
-                    </td>
-                    <td class="field-col">
-                        <input type="text"
+
+                <label class="coral-Form-fieldlabel">Throttle</label>
+                <input class="coral-Form-field coral-Textfield" type="text"
                                ng-model="task_throttle"
                                name="throttle"
                                placeholder="in seconds"/>
-                    </td>
-                </tr>
 
-                <tr>
-                    <td class="label-col" valign="top">
-                        <label>Excludes</label>
-                    </td>
+                <label class="coral-Form-fieldlabel">Excludes</label>
+                 <div class="coral-Form-field excludes">
+                    <a class="addButton" ng-click="addExclude()">
+                        <i class="coral-Icon coral-Icon--addCircle"></i>
+                    </a>
+                    <div class="add-remove-list" ng-show="excludes.length > 0">
+                        <ul ng-repeat="exclude in excludes track by $index">
+                            <li>
+                                <input class="coral-Form-field coral-Textfield" type="text"
+                                        ng-model="exclude.value"
+                                        placeholder="/content/dam/my-site/(en|fr)/documents(/.*)?"/>
 
-                    <td class="field-col" style="padding-top: .75em">
-
-                        <div>
-                            <a class="add" ng-click="addExclude()">
-                                <i class="icon-add-circle withLabel">Add exclude rule</i>
-                            </a>
-                        </div>
-
-                        <div class="add-remove-list" ng-show="excludes.length > 0">
-                            <ul ng-repeat="exclude in excludes track by $index">
-                                <li>
-                                    <input type="text"
-                                            ng-model="exclude.value"
-                                            placeholder="/content/dam/my-site/(en|fr)/documents(/.*)?"/>
-
-                                    <a ng-click="removeExclude($index)" class="remove icon-minus-circle"></a>
-                                </li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-            </table>
+                                <a class="removeButton" ng-click="removeExclude($index)"><i class="coral-Icon coral-Icon--minusCircle"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
         </form>
     </div>
 
-    <div class="modal-footer">
-        <button class="primary" ng-click="create();">Create New Task</button>
-        <button data-dismiss="modal" ng-click="reset();">Cancel</button>
+    <div class="coral-Modal-footer">
+        <button class="coral-Button coral-Button--primary" data-dismiss="modal" ng-click="create();">Create New Task</button>
+        <button class="coral-Button" data-dismiss="modal" ng-click="reset();">Cancel</button>
     </div>
 
 </div>

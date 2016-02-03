@@ -1,8 +1,8 @@
 /*
  * #%L
- * ACS AEM Tools Package
+ * ACS AEM Commons Bundle
  * %%
- * Copyright (C) 2014 Adobe
+ * Copyright (C) 2013 Adobe
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,24 +17,5 @@
  * limitations under the License.
  * #L%
  */
-
-/*global angular: false, ace: false */
-
-(function () {
-
-    'use strict';
-
-    ace.require("ace/ext/language_tools");
-
-    angular.module('qeApp', [
-        'ngAnimate',
-        'acsCoral',
-        'ui.ace',
-        'qeControllers',
-        'qeServices',
-        'qeDirectives'
-    ]);
-
-    angular.bootstrap(document.querySelector('#acs-tools-query-editor'), ['qeApp']);
-
-}());
+/*global angular: false */
+angular.module('acsCoral', []);

@@ -20,7 +20,7 @@
 <form ng-submit="importAssets()">
 
     <div class="form-row">
-        <h4>CSV File</h4>
+        <h4 acs-coral-heading>CSV File</h4>
 
         <span>
             <input
@@ -36,28 +36,31 @@
     </div>
 
     <div class="form-row">
-        <h4>Import Strategy</h4>
+        <h4 acs-coral-heading>Import Strategy</h4>
 
-        <div class="selector">
-            <label><input
+        <div class="coral-Selector">
+            <label class="coral-Selector-option"><input
                     ng-model="form.importStrategy"
                     type="radio"
+                    class="coral-Selector-input"
                     name="importStrategy"
-                    value="FULL"><span>Full</span></label>
-            <label><input
+                    value="FULL"><span class="coral-Selector-description">Full</span></label>
+            <label class="coral-Selector-option"><input
                     ng-model="form.importStrategy"
                     type="radio"
+                    class="coral-Selector-input"
                     name="importStrategy"
-                    value="DELTA"><span>Delta</span></label>
+                    value="DELTA"><span class="coral-Selector-description">Delta</span></label>
         </div>
     </div>
 
     <div class="form-row">
-        <h4>Absolute File Dump Location</h4>
+        <h4 acs-coral-heading>Absolute File Dump Location</h4>
 
         <span>
             <input type="text"
                    name="fileLocation"
+                   class="coral-Textfield"
                    ng-model="form.fileLocation"
                    ng-required="true"
                    required
@@ -66,11 +69,12 @@
     </div>
 
     <div class="form-row">
-        <h4>Relative FS Path Column Name</h4>
+        <h4 acs-coral-heading>Relative FS Path Column Name</h4>
 
         <span>
             <input type="text"
                    name="relSrcPathProperty"
+                   class="coral-Textfield"
                    ng-model="form.relSrcPathProperty"
                    placeholder="Defaults to relSrcPath"/>
         </span>
@@ -78,83 +82,91 @@
 
     <div class="form-row"
             ng-show="form.importStrategy === 'DELTA'">
-        <h4>Update Binary</h4>
+        <h4 acs-coral-heading>Update Binary</h4>
 
-        <div class="selector">
-            <label><input
+        <div class="coral-Selector">
+            <label class="coral-Selector-option"><input
                     ng-model="form.updateBinary"
                     type="radio"
+                    class="coral-Selector-input"
                     name="updateBinary"
-                    value="true"><span>Yes</span></label>
-            <label><input
+                    value="true"><span class="coral-Selector-description">Yes</span></label>
+            <label class="coral-Selector-option"><input
                     ng-model="form.updateBinary"
                     type="radio"
+                    class="coral-Selector-input"
                     name="updateBinary"
-                    value="false"><span>No</span></label>
+                    value="false"><span class="coral-Selector-description">No</span></label>
         </div>
     </div>
 
     <div class="form-row">
-        <h4>Asset Uniqueness Column Name</h4>
+        <h4 acs-coral-heading>Asset Uniqueness Column Name</h4>
         
         <span>
             <input type="text"
                    name="uniqueProperty"
+                   class="coral-Textfield"
                    ng-model="form.uniqueProperty"
                    placeholder="CSV Column name that uniquely identifies an Asset"/>
         </span>
     </div>
     
     <div class="form-row">
-        <h4>Mime-Type Column Name</h4>
+        <h4  acs-coral-heading>Mime-Type Column Name</h4>
 
         <span>
             <input type="text"
                    name="mimeTypeProperty"
+                   class="coral-Textfield"
                    ng-model="form.mimeTypeProperty"
                    placeholder="Defaults to mimeType"/>
         </span>
     </div>
 
     <div class="form-row">
-        <h4>Skip Column Name</h4>
+        <h4  acs-coral-heading>Skip Column Name</h4>
 
         <span>
             <input type="text"
                    name="skipProperty"
+                   class="coral-Textfield"
                    ng-model="form.skipProperty"
                    placeholder="[ Optional ] Column name indicating if a row should be skipped"/>
         </span>
     </div>
     
     <div class="form-row">
-        <h4>Absolute Dest Path Column Name</h4>
+        <h4  acs-coral-heading>Absolute Dest Path Column Name</h4>
 
         <span>
             <input type="text"
                    name="absTargetPathProperty"
+                   class="coral-Textfield"
                    ng-model="form.absTargetPathProperty"
                    placeholder="Defaults to absTargetPath"/>
         </span>
     </div>
 
     <div class="form-row">
-        <h4>Multi-value Delimiter</h4>
+        <h4  acs-coral-heading>Multi-value Delimiter</h4>
 
         <span>
             <input type="text"
                    name="multiDelimiter"
+                   class="coral-Textfield"
                    ng-model="form.multiDelimiter"
                    placeholder="Defaults to |"/>
         </span>
     </div>
 
     <div class="form-row">
-        <h4>Field Separator</h4>
+        <h4  acs-coral-heading>Field Separator</h4>
 
         <span>
             <input type="text"
                    name="separator"
+                   class="coral-Textfield"
                    ng-model="form.separator"
                    placeholder="Defaults to ,"/>
         </span>
@@ -162,55 +174,60 @@
 
 
     <div class="form-row">
-        <h4>Field Delimiter</h4>
+        <h4  acs-coral-heading>Field Delimiter</h4>
 
         <span>
             <input type="text"
                    name="delimiter"
+                   class="coral-Textfield"
                    ng-model="form.delimiter"
                    placeholder="Defaults to &quot;"/>
         </span>
     </div>
 
     <div class="form-row">
-        <h4>Ignore Columns</h4>
+        <h4  acs-coral-heading>Ignore Columns</h4>
 
         <span>
             <input type="text"
                    name="ignoreProperties"
+                   class="coral-Textfield"
                    ng-model="form.ignoreProperties"
                    placeholder="[ Optional ] Comma separated; Usually set to absTargetPath,relSrcPath,mimeType"/>
         </span>
     </div>
 
     <div class="form-row">
-        <h4>Charset</h4>
+        <h4  acs-coral-heading>Charset</h4>
 
         <span>
             <input type="text"
                    name="charset"
+                   class="coral-Textfield"
                    ng-model="form.charset"
                    placeholder="Defaults to UTF-8"/>
         </span>
     </div>
 
     <div class="form-row">
-        <h4>Batch Size</h4>
+        <h4  acs-coral-heading>Batch Size</h4>
 
         <span>
             <input type="text"
                    name="batchSize"
+                   class="coral-Textfield"
                    ng-model="form.batchSize"
                    placeholder="Defaults to 1000"/>
         </span>
     </div>
 
     <div class="form-row">
-        <h4>Throttle in MS</h4>
+        <h4  acs-coral-heading>Throttle in MS</h4>
 
         <span>
             <input type="text"
                    name="throttle"
+                   class="coral-Textfield"
                    ng-model="form.throttle"
                    placeholder="Milliseconds to wait after saving a Batch. Defaults to 0"/>
         </span>
@@ -218,7 +235,7 @@
 
     <div class="form-row">
         <div class="form-left-cell">&nbsp;</div>
-        <button class="primary">Import Assets</button>
+        <button class="coral-Button coral-Button--primary">Import Assets</button>
     </div>
 </form>
 

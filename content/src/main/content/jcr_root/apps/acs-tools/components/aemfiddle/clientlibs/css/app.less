@@ -17,362 +17,285 @@
  * limitations under the License.
  * #L%
  */
-/* Z-Indexes */
-#notifications {
-  z-index: 10000;
-}
-
-.rail {
-  z-index: 100;
-}
-
-#output {
-  z-index: 90;
-}
-
-#popover-new-blanket {
-  z-index: 1000;
-}
-
-#status-bar {
-  z-index: 99;
-}
-
-.output-status {
-  z-index: 999;
-}
-
-
-/* Header */
-
-header.top {
-  .logo i.medium {
-    width: 1.625rem !important;
-    height: 1.625rem !important;
-    font-size: 1.4rem !important;
-    line-height: 1.2 !important;
-  }
-
-  .crumbs .script-extension {
-    background: #333;
-    color: #999;
-    padding: 4px .5rem;
-    font-size: .95rem;
-    margin-left: .25rem;
-
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-  }
-
-  .drawer {
-
-    .divider {
-      margin: 0 .25rem;
-      border-left: inherit;
+.endor-BlackBar {
+    .endor-BlackBar-title {
+        display: inline;
+        margin-left: 1em;
     }
 
-    .header-item {
-      height: 35px;
-      margin-top: 4px;
+    .endor-BlackBar-item {
+        float: inherit;
     }
 
-    /* Resource text field input */
+    .endor-BlackBar-right {
+        .endor-BlackBar-item {
+            float: left;
+        }
+    }
 
     input.resource {
-      background-color: #333;
-      border-width: 0;
-      color: #aaa;
-      font-size: 0.85rem;
-      width: 250px;
-
-      &:focus {
-        width: 500px;
-      }
-    }
-
-    /* Run code button */
-    .run-code-button {
-      padding: 4px .5rem;
-    }
-
-    .action-icon-medium {
-      vertical-align: middle;
-      height: auto;
-      line-height: 1em;
-    }
-  }
-
-  #popover-new {
-    position: absolute;
-    right: 2.1rem;
-
-    .popover {
-      display: block;
-      position: relative;
-      top: inherit;
-      left: inherit;
-    }
-
-    .popover.arrow-top:before {
-      right: 10%;
-      left: auto;
-    }
-
-    ul,
-    li {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    a {
-      color: #333;
-      display: block;
-      padding: 0 1rem;
-
-      &:hover {
-        color: #000;
-        background-color: #ccc;
-        text-decoration: none;
-
-        .script-extension {
-          background: #ccc;
+        background-color: #333;
+        border-width: 0;
+        color: #aaa;
+        font-size: 0.85rem;
+        width: 250px;
+        display: inline;
+        &:focus {
+            width: 500px;
         }
-      }
+    }
 
-      .script-extension {
-        background: #ddd;
-        color: #666;
+    .run-code-button {
+        padding: 4px .5rem;
+    }
+
+    .coral-Button--quiet {
+        color: white;
+    }
+
+    .script-extension {
+        background: #333;
+        color: #999;
         padding: 4px .5rem;
         font-size: .95rem;
         margin-left: .25rem;
-
         -webkit-border-radius: 3px;
         -moz-border-radius: 3px;
         border-radius: 3px;
-      }
     }
-  }
 }
 
+#popover-new {
+    a {
+        line-height: 2.875rem;
+        color: #333;
+        display: block;
+        padding: 0 1rem;
+        text-decoration: none;
+        &:hover {
+            color: #000;
+            background-color: #ccc;
+            text-decoration: none;
+            .script-extension {
+                background: #ccc;
+            }
+        }
 
-#popover-new-blanket {
-  background: #000;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-
-  opacity: 0.5;
-  filter: alpha(opacity=50);
-}
-
-
-/* Rail */
-
-.rail {
-  position: absolute;
-  top: 0;
-  right: 0;;
-}
-
-.rail .badge {
-  margin-top: -3px;
-  float: right;
-}
-
-.rail section .divider {
-  margin: 0 .75em 0 .5em;
-  padding: 0;
-  width: 1px;
-  border-right: solid 1px #666;
-  border-left: solid 1px #333;
-}
-
-/* Rail Controls */
-.rail {
-  border-left: solid 1px #444;
-
-  h4 {
-    color: #ccc;
-  }
-
-  .create-fiddle .fields {
-    margin: .5em 0;
-
-
-    label {
-      display: block;
-      margin-bottom: .25em;
+        .script-extension {
+            background: #ddd;
+            color: #666;
+            padding: 4px .5rem;
+            font-size: .95rem;
+            margin-left: .25rem;
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+        }
     }
-
-    input[type=text] {
-      width: 17em;
-    }
-
-    .button {
-      min-width: 5rem;
-    }
-  }
 }
 
-
-
-/* MyFiddles List */
-
-.rail .myfiddles-list-wrapper {
-  position: relative;
+#left-pane , #right-pane {
+    position: absolute;
+    top: 0;
+    bottom: 0;
 }
 
-.rail .myfiddles-list {
-  position: absolute;
-  top: 4.25rem;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow-y: auto;
+#left-pane {
+    left: 0;
+    right: 50%;
+}
 
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-
-    li {
-      font-size: 1rem;
-      margin: 0;
-      padding: .6rem .5rem .5rem .5rem;
-      border-bottom: dotted 1px #333;
-
-      a {
-        color: #ccc;
-      }
-
-      &.active {
-        background-color: #333;
-      }
-    }
-  }
-
-  .script-extension {
-    color: #999;
-  }
-
-  a.delete-button {
+#right-pane {
+    left: 50%;
+    right: 0;
     float: right;
-    color: red;
-  }
 }
 
-#ace-input,
-#output {
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  position: absolute;
+#handle {
+    width: 6px;
+    z-index: 999;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: -2px;
+    background-color: #4097DC;
 }
 
-#ace-input {
-  bottom: 1.25rem;
-
-  .ace_scrollbar {
-    background-color: #0F0F0F;
-  }
+.ui-resizable-e {
+    cursor: ew-resize;
 }
 
 #input .status-bar {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  height: 1.25rem;
-  text-align: right;
-  left: 0;
-  background-color: #222;
-  color: #999;
-  padding: 0 1rem;
-  font-size: .8rem;
-  line-height: 1.25rem;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 1.25rem;
+    text-align: right;
+    left: 0;
+    background-color: #222;
+    color: #999;
+    padding: 0 1rem;
+    font-size: .8rem;
+    line-height: 1.25rem;
 }
 
-/* Output */
+#ace-input , #output {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+}
 
-.output-rendered,
-#ace-output {
-  top: 51px;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  position: absolute;
+#ace-input {
+    bottom: 1.25rem;
+    .ace_scrollbar {
+        background-color: #0F0F0F;
+    }
 }
 
 #output {
-  .toolbar {
-    background-color: #EEEEEE;
-    border-bottom: solid 1px #D7D7D7;
-    margin: 0;
-    padding: 0;
-    vertical-align: middle;
-    line-height: 1em;
-    height: 50px;
-
-    .icongroup {
-      display: table-cell;
-      padding-right: .5em;
-      padding-left: .75em;
-      height: 50px;
-      vertical-align: middle;
-
-      .toggle-output-icon {
-        float: left;
-      }
+    .toolbar {
+        background-color: #EEEEEE;
+        border-bottom: solid 1px #D7D7D7;
+        margin: 0;
+        padding: 0;
+        vertical-align: middle;
+        line-height: 1em;
+        height: 50px;
+        .icongroup {
+            display: table-cell;
+            padding-right: .5em;
+            padding-left: .75em;
+            height: 50px;
+            vertical-align: middle;
+            .toggle-output-icon {
+                float: left;
+            }
+        }
     }
-  }
 
-  .output-status {
-    width: auto;
-    white-space: nowrap;
-    overflow: hidden;
-    padding-left: 1em;
-    border-left: solid 1px #EEE;
-    display: table-cell;
-    border-left: solid 1px #CCC;
-    line-height: 2em;
-    vertical-align: middle;
-    height: 50px;
-  }
-
-  .output-rendered {
-    background-color: #fff;
-    overflow: auto;
-    padding: 2rem;
-  }
-
-  .welcome {
-    padding: 2rem 5rem;
-    color: #999;
-  }
-
-  .output-error .output-rendered {
-    font-size: .9rem;
-
-    h1 {
-      font-size: 1.25rem;
+    .output-rendered , #ace-output {
+        top: 51px;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        position: absolute;
     }
-  }
+
+    .output-status {
+        width: auto;
+        white-space: nowrap;
+        overflow: hidden;
+        padding-left: 1em;
+        border-left: solid 1px #EEE;
+        display: table-cell;
+        line-height: 2em;
+        vertical-align: middle;
+        height: 50px;
+    }
+
+    .output-rendered {
+        background-color: #fff;
+        overflow: auto;
+        padding: 2rem;
+    }
+
+    .welcome {
+        padding: 2rem 5rem;
+        color: #999;
+    }
+
+    .output-error .output-rendered {
+        font-size: .9rem;
+        h1 {
+            font-size: 1.25rem;
+        }
+    }
 }
 
-/* Notifications */
+.endor-Page-sidepanel {
+    .endor-Badge {
+        margin-top: 0 ! important;
+        float: right;
+    }
+
+    .coral-Columnview-item {
+        margin: 0;
+        padding: 0.5rem;
+    }
+
+    a.icon-link {
+        color: white;
+        display: inline-block;
+        width: 1.125em;
+        height: 1.125em;
+        text-decoration: none;
+    }
+
+    a.icon-link[disabled] {
+        color: grey;
+    }
+
+    .divider {
+        margin: 0 .75em 0 .5em;
+        padding: 0;
+        width: 1px;
+        border-right: solid 1px #666;
+        border-left: solid 1px #333;
+    }
+
+    .create-fiddle {
+        height: inherit;
+        .fields {
+            margin: .5em 0;
+            label {
+                display: block;
+                margin-bottom: .25em;
+            }
+
+            input[type=text] {
+                width: 17em;
+            }
+
+            .button {
+                min-width: 5rem;
+            }
+        }
+    }
+
+    .myfiddles {
+        a {
+            color: #ccc;
+            text-decoration: none;
+        }
+
+        &.active {
+            background-color: #333;
+            text-decoration: none;
+        }
+
+        a.delete-button {
+            float: right;
+        }
+    }
+
+    &.active {
+        background-color: #333;
+    }
+
+    .script-extension {
+        color: #999;
+    }
+}
+
 #notifications {
-  position: absolute;
-  bottom: 15px;
-  right: 25px;
-  width: 500px;
-
-  ul {
-    list-style: none;
-  }
+    position: absolute;
+    bottom: 15px;
+    right: 25px;
+    width: 500px;
+    ul {
+        list-style: none;
+    }
 }
-
 

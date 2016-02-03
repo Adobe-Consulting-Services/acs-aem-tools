@@ -20,7 +20,7 @@
 
 /*global JSON: false, angular: false */
 
-angular.module('acs-tools-test-page-generator-app', ['ACS.Tools.notifications']).controller('MainCtrl',
+angular.module('acs-tools-test-page-generator-app', ['acsCoral','ACS.Tools.notifications']).controller('MainCtrl',
     ['$scope', '$http', '$timeout', 'NotificationsService', function ($scope, $http, $timeout, NotificationsService) {
 
         NotificationsService.init(
