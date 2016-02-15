@@ -68,6 +68,9 @@ angular.module('acs-tools-tag-maker-app', ['ngFileUpload', 'acsCoral', 'ACS.Tool
                 tagIds: []
             };
 
+            NotificationsService.add('info',
+                        'Info', 'Import initiated, please be patient.');
+
             Upload.upload({
                 url: $scope.app.uri + '.make-tags.json',
                 fields: {
