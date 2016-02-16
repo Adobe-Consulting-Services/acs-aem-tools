@@ -69,7 +69,8 @@ angular.module('acs-tools-tag-maker-app', ['ngFileUpload', 'acsCoral', 'ACS.Tool
             };
 
             NotificationsService.add('info',
-                        'Info', 'Import initiated, please be patient.');
+                        'Info', 'Import initiated.');
+            NotificationsService.running(true);
 
             Upload.upload({
                 url: $scope.app.uri + '.make-tags.json',
@@ -83,6 +84,7 @@ angular.module('acs-tools-tag-maker-app', ['ngFileUpload', 'acsCoral', 'ACS.Tool
                 },
                 file: $scope.files[0]
             }).success(function (data, status, headers, config) {
+                NotificationsService.running(false);
                 $scope.result = data;
                 if ($scope.result.tagIds.length === 0) {
                     NotificationsService.add('notice',
@@ -92,6 +94,7 @@ angular.module('acs-tools-tag-maker-app', ['ngFileUpload', 'acsCoral', 'ACS.Tool
                         'Success', (data.message || 'Your tags have been created' ));
                 }
             }).error(function (data, status, headers, config) {
+                NotificationsService.running(false);
                 NotificationsService.add('error',
                     'Error ' + (data.message || 'An unknown error occurred' ));
             });
