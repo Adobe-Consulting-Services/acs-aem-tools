@@ -48,10 +48,12 @@
                         <Import-Package>
                             org.apache.sling.hc.*;resolution:=optional,
                             ch.qos.logback.*;resolution:=optional,
+                            !org.joda.convert,
                             *
                         </Import-Package>
                         <Embed-Dependency>
-                            acs-aem-commons-bundle;inline=com/adobe/acs/commons/util/ResourceDataUtil.class|com/adobe/acs/commons/util/OsgiPropertyUtil.class
+                            acs-aem-commons-bundle;inline=com/adobe/acs/commons/util/ResourceDataUtil.class|com/adobe/acs/commons/util/OsgiPropertyUtil.class,
+                            joda-time
                         </Embed-Dependency>
                     </instructions>
                 </configuration>
@@ -241,9 +243,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.day.commons.osgi.wrapper</groupId>
-            <artifactId>com.day.commons.osgi.wrapper.joda-time</artifactId>
-            <version>1.6-0002</version>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.9.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
