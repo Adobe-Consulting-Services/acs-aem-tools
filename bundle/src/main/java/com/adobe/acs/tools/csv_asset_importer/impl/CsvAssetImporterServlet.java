@@ -464,8 +464,9 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
             mimeType = row[columns.get(params.getMimeTypeProperty()).getIndex()];
         }
 
-        if (StringUtils.isNotBlank(mimeType)) {
-            // Get the tar
+        //Issue 127: When using AEM mimeType sometimes equals _LINE_TERMINATED instead of being empty
+        //Just added second exception in following if:
+        if (mimeType.isEmpty() || TERMINATED.equals(mimeType)) {
             final Column destColumn = columns.get(params.getAbsTargetPathProperty());
             final String fileName = Text.getName(row[destColumn.getIndex()]);
             mimeType = mimeTypeService.getMimeType(fileName);
