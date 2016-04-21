@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,6 +48,7 @@ import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.ServletException;
 import java.io.ByteArrayInputStream;
@@ -286,6 +287,15 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
                 }
 
                 final Tag tag = tagManager.createTag(tagId, tagData.getTitle(), tagData.getDescription());
+                
+                if(tagData.getTranslations()!=null){
+	                Map<String,String> translationsMap = tagData.getTranslations();
+	                Node node = tag.adaptTo(Node.class);
+	                for (Map.Entry<String, String> entry : translationsMap.entrySet()) {
+						node.setProperty("jcr:title."+entry.getKey(), entry.getValue());
+	                }
+	                node.getSession().save();
+                }
                 log.trace("Created Tag [ {} ] with Title [ {} ]", tag.getTagID(), tagData.getTitle());
 
                 result.add(tagId);

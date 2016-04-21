@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,7 @@
 package com.adobe.acs.tools.tag_maker;
 
 import org.apache.commons.lang.StringUtils;
+import java.util.Map;
 
 public final class TagData {
 
@@ -30,7 +31,8 @@ public final class TagData {
     private String title;
     private String locale;
     private String description;
-
+	private Map<String, String> translationsMap;
+	
     public TagData(String name) {
         this.name = name;
     }
@@ -66,6 +68,15 @@ public final class TagData {
     public void setDescription(final String description) {
         this.description = description;
     }
+    
+    public Map<String, String> getTranslations() {
+        return this.translationsMap;
+    }
+    
+    public void setTranslations(Map<String, String> translationsMap) {
+        this.translationsMap = translationsMap;
+    }
+
 
     public boolean isValid() {
         return StringUtils.isNotBlank(this.getTitle()) && StringUtils.isNotBlank(this.getName());
