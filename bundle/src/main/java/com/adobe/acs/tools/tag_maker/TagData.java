@@ -31,7 +31,7 @@ public final class TagData {
     private String title;
     private String locale;
     private String description;
-	private Map<String, String> translationsMap;
+	private Map<String, String> localizedTitles;
 	
     public TagData(String name) {
         this.name = name;
@@ -69,14 +69,13 @@ public final class TagData {
         this.description = description;
     }
     
-    public Map<String, String> getTranslations() {
-        return this.translationsMap;
+    public Map<String, String> getLocalizedTitles() {
+        return this.localizedTitles;
     }
     
-    public void setTranslations(Map<String, String> translationsMap) {
-        this.translationsMap = translationsMap;
+    public void setLocalizedTitles(Map<String, String> localizedTitles) {
+        this.localizedTitles = localizedTitles;
     }
-
 
     public boolean isValid() {
         return StringUtils.isNotBlank(this.getTitle()) && StringUtils.isNotBlank(this.getName());

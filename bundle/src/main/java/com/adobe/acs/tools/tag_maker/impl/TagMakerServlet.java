@@ -288,8 +288,8 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
 
                 final Tag tag = tagManager.createTag(tagId, tagData.getTitle(), tagData.getDescription());
                 
-                if(tagData.getTranslations()!=null){
-	                Map<String,String> translationsMap = tagData.getTranslations();
+                if(tagData.getLocalizedTitles()!=null){
+	                Map<String,String> translationsMap = tagData.getLocalizedTitles();
 	                Node node = tag.adaptTo(Node.class);
 	                for (Map.Entry<String, String> entry : translationsMap.entrySet()) {
 						node.setProperty("jcr:title."+entry.getKey(), entry.getValue());
