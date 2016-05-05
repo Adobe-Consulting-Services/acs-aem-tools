@@ -7,7 +7,7 @@
 
     <groupId>com.adobe.acs</groupId>
     <artifactId>acs-aem-tools</artifactId>
-    <version>0.0.25-SNAPSHOT</version>
+    <version>0.0.27-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>ACS AEM Tools - Reactor Project</name>
@@ -432,9 +432,9 @@
 
      <distributionManagement>
          <repository>
-             <id>${releaseRepository-Id}</id>
-             <name>${releaseRepository-Name}</name>
-             <url>${releaseRepository-URL}</url>
+             <id>bintray</id>
+             <name>acs-releases-acs-aem-tools</name>
+             <url>https://api.bintray.com/maven/acs/releases/acs-aem-tools</url>
          </repository>
          <snapshotRepository>
              <id>${snapshotRepository-Id}</id>
