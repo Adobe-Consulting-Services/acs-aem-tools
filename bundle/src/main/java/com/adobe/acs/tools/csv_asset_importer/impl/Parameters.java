@@ -18,7 +18,7 @@
  * #L%
  */
 
-package com.adobe.acs.tools.csv_asset_importer.impl;
+    package com.adobe.acs.tools.csv_asset_importer.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -261,8 +261,7 @@ public class Parameters {
     public boolean isUpdateBinary() {
         return updateBinary;
     }
-    
-    
+
     public String toString() {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
