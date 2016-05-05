@@ -305,7 +305,9 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
         if (tagManager.getSession().hasPendingChanges()) {
             final long start = System.currentTimeMillis();
             tagManager.getSession().save();
-            log.info("Persisting tags to JCR in {} ms", System.currentTimeMillis() - start);
+            if (log.isInfoEnabled()) {
+                log.info("Persisting tags to JCR in {} ms", System.currentTimeMillis() - start);
+            }
         }
 
         return new ArrayList<String>(result);

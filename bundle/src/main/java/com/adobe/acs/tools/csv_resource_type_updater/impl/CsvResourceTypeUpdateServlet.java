@@ -77,8 +77,10 @@ public class CsvResourceTypeUpdateServlet extends SlingAllMethodsServlet {
             try {
                 final Result result = this.update(request.getResourceResolver(), params, rows);
 
-                log.info("Updated as TOTAL of [ {} ] resources in {} ms", result.getSuccess().size(),
-                        System.currentTimeMillis() - start);
+                if (log.isInfoEnabled()) {
+                    log.info("Updated as TOTAL of [ {} ] resources in {} ms", result.getSuccess().size(),
+                            System.currentTimeMillis() - start);
+                }
 
                 try {
                     jsonResponse.put("success", result.getSuccess());
@@ -186,7 +188,9 @@ public class CsvResourceTypeUpdateServlet extends SlingAllMethodsServlet {
         if (resourceResolver.hasChanges()) {
             final long start = System.currentTimeMillis();
             resourceResolver.commit();
-            log.info("Imported a BATCH of [ {} ] assets in {} ms", size, System.currentTimeMillis() - start);
+            if (log.isInfoEnabled()) {
+                log.info("Imported a BATCH of [ {} ] assets in {} ms", size, System.currentTimeMillis() - start);
+            }
         } else {
             log.debug("Nothing to save");
         }
