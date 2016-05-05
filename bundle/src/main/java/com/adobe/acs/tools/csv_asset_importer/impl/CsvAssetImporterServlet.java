@@ -157,8 +157,10 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                 this.save(request.getResourceResolver(), batch.size());
                 result.addAll(batch);
 
-                log.info("Imported as TOTAL of [ {} ] assets in {} ms", result.size(),
-                        System.currentTimeMillis() - start);
+                if (log.isInfoEnabled()) {
+                    log.info("Imported as TOTAL of [ {} ] assets in {} ms", result.size(),
+                            System.currentTimeMillis() - start);
+                }
 
                 try {
                     jsonResponse.put("assets", result);
@@ -604,7 +606,9 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
         if (resourceResolver.hasChanges()) {
             final long start = System.currentTimeMillis();
             resourceResolver.commit();
-            log.info("Imported a BATCH of [ {} ] assets in {} ms", size, System.currentTimeMillis() - start);
+            if (log.isInfoEnabled()) {
+                log.info("Imported a BATCH of [ {} ] assets in {} ms", size, System.currentTimeMillis() - start);
+            }
         } else {
             log.debug("Nothing to save");
         }
