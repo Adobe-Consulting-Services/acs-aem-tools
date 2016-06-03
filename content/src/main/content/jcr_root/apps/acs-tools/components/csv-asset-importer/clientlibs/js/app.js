@@ -98,7 +98,7 @@ angular.module('acs-tools-csv-asset-importer-app', ['ngFileUpload', 'acsCoral', 
                 }
             } else {
                 NotificationsService.add('success',
-                    'Success! ', (data.message || 'Your assets have been created.' )
+                    'Success! ', (data.message || 'Your assets have been imported.' )
                     + ' Scroll down to see details.');
             }
 

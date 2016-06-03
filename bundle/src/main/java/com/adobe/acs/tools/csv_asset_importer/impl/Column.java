@@ -39,9 +39,6 @@ public final class Column<T> {
 
     private static final String MULTI = "multi";
 
-    private static final Pattern ISO_DATE_PATTERN =
-            Pattern.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}[-+]{1}[0-9]{2}[:]{0,1}[0-9]{2}$");
-
     private String multiDelimiter = "|";
 
     private String raw;
@@ -136,9 +133,8 @@ public final class Column<T> {
         } else if (StringUtils.equalsIgnoreCase("false", data)
                 && Boolean.class.equals(klass)) {
             return klass.cast(Boolean.FALSE);
-        } else if ((Date.class.equals(Date.class)
-                || Calendar.class.equals(Calendar.class))
-                && ISO_DATE_PATTERN.matcher(data).matches()) {
+        } else if (Date.class.equals(klass)
+                || Calendar.class.equals(klass)) {
             return klass.cast(ISODateTimeFormat.dateTimeParser().parseDateTime(data).toCalendar(Locale.US));
         } else {
             return klass.cast(data);

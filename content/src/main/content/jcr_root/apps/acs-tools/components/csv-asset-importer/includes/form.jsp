@@ -54,6 +54,17 @@
         </div>
     </div>
 
+    <div class="form-row"
+         ng-hide="form.fileLocation">
+        <h4 acs-coral-heading>&nbsp;</h4>
+        <span>
+            <div class="coral-Alert coral-Alert--info">
+                <i class="coral-Alert-typeIcon coral-Icon coral-Icon--sizeS coral-Icon--infoCircle"></i>
+                <div class="coral-Alert-message">If no source files are available, the importer will <strong>only update properties</strong> on existing assets.</div>
+            </div>
+        </span>
+    </div>
+
     <div class="form-row">
         <h4 acs-coral-heading>Absolute File Dump Location</h4>
 
@@ -62,9 +73,7 @@
                    name="fileLocation"
                    class="coral-Textfield"
                    ng-model="form.fileLocation"
-                   ng-required="true"
-                   required
-                   placeholder="[ Required ] Absolute path on AEM file system where files can be located"/>
+                   placeholder="[ Optional ] Absolute path on AEM file system where files can be located"/>
         </span>
     </div>
 
@@ -76,7 +85,7 @@
                    name="relSrcPathProperty"
                    class="coral-Textfield"
                    ng-model="form.relSrcPathProperty"
-                   placeholder="Defaults to relSrcPath"/>
+                   placeholder="[ Optional ] Defaults to relSrcPath"/>
         </span>
     </div>
 
@@ -100,6 +109,18 @@
         </div>
     </div>
 
+    <div class="form-row"
+         ng-show="form.uniqueProperty">
+        <h4 acs-coral-heading>&nbsp;</h4>
+        <span>
+            <div class="coral-Alert coral-Alert--notice">
+                <i class="coral-Alert-typeIcon coral-Icon coral-Icon--sizeS coral-Icon--alert"></i>
+                <strong class="coral-Alert-title">Attention</strong>
+                <div class="coral-Alert-message">An Oak index <strong>must</strong> exist for this property, otherwise <strong>very long</strong> query times, per row, will execute.</div>
+            </div>
+        </span>
+    </div>
+
     <div class="form-row">
         <h4 acs-coral-heading>Asset Uniqueness Column Name</h4>
         
@@ -111,7 +132,7 @@
                    placeholder="CSV Column name that uniquely identifies an Asset"/>
         </span>
     </div>
-    
+
     <div class="form-row">
         <h4  acs-coral-heading>Mime-Type Column Name</h4>
 
@@ -160,30 +181,6 @@
         </span>
     </div>
 
-    <div class="form-row">
-        <h4  acs-coral-heading>Field Separator</h4>
-
-        <span>
-            <input type="text"
-                   name="separator"
-                   class="coral-Textfield"
-                   ng-model="form.separator"
-                   placeholder="Defaults to ,"/>
-        </span>
-    </div>
-
-
-    <div class="form-row">
-        <h4  acs-coral-heading>Field Delimiter</h4>
-
-        <span>
-            <input type="text"
-                   name="delimiter"
-                   class="coral-Textfield"
-                   ng-model="form.delimiter"
-                   placeholder="Defaults to &quot;"/>
-        </span>
-    </div>
 
     <div class="form-row">
         <h4  acs-coral-heading>Ignore Columns</h4>
@@ -194,18 +191,6 @@
                    class="coral-Textfield"
                    ng-model="form.ignoreProperties"
                    placeholder="[ Optional ] Comma separated; Usually set to absTargetPath,relSrcPath,mimeType"/>
-        </span>
-    </div>
-
-    <div class="form-row">
-        <h4  acs-coral-heading>Charset</h4>
-
-        <span>
-            <input type="text"
-                   name="charset"
-                   class="coral-Textfield"
-                   ng-model="form.charset"
-                   placeholder="Defaults to UTF-8"/>
         </span>
     </div>
 
@@ -232,6 +217,44 @@
                    placeholder="Milliseconds to wait after saving a Batch. Defaults to 0"/>
         </span>
     </div>
+
+    <div class="form-row">
+        <h4  acs-coral-heading>Charset</h4>
+
+        <span>
+            <input type="text"
+                   name="charset"
+                   class="coral-Textfield"
+                   ng-model="form.charset"
+                   placeholder="Defaults to UTF-8"/>
+        </span>
+    </div>
+
+    <div class="form-row">
+        <h4  acs-coral-heading>Field Separator</h4>
+
+        <span>
+            <input type="text"
+                   name="separator"
+                   class="coral-Textfield"
+                   ng-model="form.separator"
+                   placeholder="Defaults to ,"/>
+        </span>
+    </div>
+
+
+    <div class="form-row">
+        <h4  acs-coral-heading>Field Delimiter</h4>
+
+        <span>
+            <input type="text"
+                   name="delimiter"
+                   class="coral-Textfield"
+                   ng-model="form.delimiter"
+                   placeholder="Defaults to &quot;"/>
+        </span>
+    </div>
+
 
     <div class="form-row">
         <div class="form-left-cell">&nbsp;</div>
