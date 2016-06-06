@@ -94,7 +94,7 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
         final Parameters params = new Parameters(request);
         ResourceResolver rr = null;
         try {
-            rr = resourceResolverFactory.getAdministrativeResourceResolver(null);
+            rr = request.getResourceResolver().clone(null);
             if (params.getFile() != null) {
 
                 final long start = System.currentTimeMillis();
