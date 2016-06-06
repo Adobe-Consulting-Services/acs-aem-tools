@@ -21,6 +21,7 @@
 package com.adobe.acs.tools.csv_asset_importer.impl;
 
 import com.day.cq.commons.jcr.JcrConstants;
+import com.day.cq.commons.jcr.JcrUtil;
 import com.day.cq.dam.api.Asset;
 import com.day.cq.dam.api.AssetManager;
 import com.day.cq.dam.api.DamConstants;
@@ -36,7 +37,6 @@ import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.util.Text;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -49,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import java.io.ByteArrayInputStream;
@@ -64,8 +65,6 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import static aQute.bnd.maven.Pom.Scope.provided;
 
 @SlingServlet(
         label = "ACS AEM Tools - Excel to Asset Servlet",
@@ -91,7 +90,6 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
 
         final JSONObject jsonResponse = new JSONObject();
         final Parameters params = new Parameters(request);
-        
         if (params.getFile() != null) {
 
             final long start = System.currentTimeMillis();
@@ -280,24 +278,33 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
 
             final Column column = entry.getValue();
             final String valueStr = row[column.getIndex()];
-            final ModifiableValueMap properties = this.getMetadataProperties(asset,
-                    column.getRelPropertyPath());
+            final Node metaProps = this.getMetadataProperties(asset, column.getRelPropertyPath());
+            final String propName = column.getPropertyName();
 
             if (StringUtils.isNotBlank(valueStr)) {
+                if (metaProps.hasProperty(propName)) {
+                    Property prop = metaProps.getProperty(propName);
+                    if ((column.isMulti() && !prop.isMultiple()) || (!column.isMulti() && prop.isMultiple())) {
+                        prop.remove();
+                    }
+                }
+
                 if (column.isMulti()) {
-                    properties.put(column.getPropertyName(), column.getMultiData(valueStr));
+                    Object val = column.getMultiData(valueStr);
+                    JcrUtil.setProperty(metaProps, propName, val);
                     log.debug("Setting multi property [ {} ~> {} ]",
                             column.getRelPropertyPath(),
-                            Arrays.asList(column.getMultiData(valueStr)));
+                            Arrays.asList(val));
                 } else {
-                    properties.put(column.getPropertyName(), column.getData(valueStr));
+                    Object val = column.getData(valueStr);
+                    JcrUtil.setProperty(metaProps, propName, val);
                     log.debug("Setting property [ {} ~> {} ]",
                             column.getRelPropertyPath(),
                             column.getData(valueStr));
                 }
             } else {
-                if (properties.containsKey(column.getPropertyName())) {
-                    properties.remove(column.getPropertyName());
+                if (metaProps.hasProperty(propName)) {
+                    metaProps.getProperty(propName).remove();
                     log.debug("Removing property [ {} ]", column.getRelPropertyPath());
                 }
             }
@@ -620,7 +627,7 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
      * @param asset the asset to get the properties for
      * @return the ModifiableValueMap for the Asset's metadata node
      */
-    private ModifiableValueMap getMetadataProperties(final Asset asset,
+    private Node getMetadataProperties(final Asset asset,
                                                      final String relPropertyPath) throws RepositoryException, CsvAssetImportException {
         String metadataResourcePath = JcrConstants.JCR_CONTENT + "/" + DamConstants.METADATA_FOLDER;
 
@@ -632,7 +639,7 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                     +  assetResource.getPath() + "/" + metadataResourcePath
                     + " ]. This is very strange. Skipping row as failure however some dam:Asset nodes for this asset may have been created.");
         } else if (!StringUtils.contains(relPropertyPath, "/")) {
-            return metadataResource.adaptTo(ModifiableValueMap.class);
+            return metadataResource.adaptTo(Node.class);
         } else {
             ResourceResolver resourceResolver = assetResource.getResourceResolver();
             String relPropertyPathPrefix = StringUtils.substringBeforeLast(relPropertyPath, "/");
@@ -642,7 +649,7 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                     JcrConstants.NT_UNSTRUCTURED, resourceResolver.adaptTo(Session.class));
 
             Resource relativeResource = resourceResolver.getResource(node.getPath());
-            return relativeResource.adaptTo(ModifiableValueMap.class);
+            return relativeResource.adaptTo(Node.class);
         }
     }
 
