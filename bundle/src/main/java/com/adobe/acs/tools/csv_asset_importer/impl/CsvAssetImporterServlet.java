@@ -38,13 +38,13 @@ import org.apache.jackrabbit.util.Text;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.PersistenceException;
-import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
 import org.apache.sling.commons.mime.MimeTypeService;
-import org.apache.sling.jcr.api.SlingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,9 +80,6 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
     public static final String TERMINATED = "_LINE_TERMINATED";
 
     @Reference
-    private ResourceResolverFactory resourceResolverFactory;
-
-    @Reference
     private MimeTypeService mimeTypeService;
 
     @Override
@@ -94,108 +91,99 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
 
         final JSONObject jsonResponse = new JSONObject();
         final Parameters params = new Parameters(request);
-        ResourceResolver rr = null;
-        try {
-            rr = request.getResourceResolver().clone(null);
-            if (params.getFile() != null) {
+        if (params.getFile() != null) {
 
-                final long start = System.currentTimeMillis();
-                final Iterator<String[]> rows = this.getRowsFromCsv(params);
+            final long start = System.currentTimeMillis();
+            final Iterator<String[]> rows = this.getRowsFromCsv(params);
 
-                try {
-                    // First row is property names
+            try {
+                // First row is property names
 
-                    // Get the required properties for this tool (source and dest)
-                    final String[] requiredProperties = new String[]{
-                            //params.getRelSrcPathProperty(),
-                            params.getAbsTargetPathProperty()
-                    };
+                // Get the required properties for this tool (source and dest)
+                final String[] requiredProperties = new String[]{
+                        //params.getRelSrcPathProperty(),
+                        params.getAbsTargetPathProperty()
+                };
 
-                    // Get the columns from the first row of the CSV
-                    final Map<String, Column> columns = Column.getColumns(rows.next(),
-                            params.getMultiDelimiter(),
-                            params.getIgnoreProperties(),
-                            requiredProperties);
+                // Get the columns from the first row of the CSV
+                final Map<String, Column> columns = Column.getColumns(rows.next(),
+                        params.getMultiDelimiter(),
+                        params.getIgnoreProperties(),
+                        requiredProperties);
 
-                    // Process Asset row entries
-                    final List<String> result = new ArrayList<String>();
-                    final List<String> batch = new ArrayList<String>();
-                    final List<String> failures = new ArrayList<String>();
+                // Process Asset row entries
+                final List<String> result = new ArrayList<String>();
+                final List<String> batch = new ArrayList<String>();
+                final List<String> failures = new ArrayList<String>();
 
-                    log.info(params.toString());
-                    while (rows.hasNext()) {
-                        final String[] row = rows.next();
+                log.info(params.toString());
+                while (rows.hasNext()) {
+                    final String[] row = rows.next();
 
-                        log.debug("Processing row {}", Arrays.asList(row));
-
-                        try {
-                            if (!this.isSkippedRow(params, columns, row)) {
-                                batch.add(this.importAsset(rr,
-                                        params,
-                                        columns,
-                                        row));
-                            }
-                        } catch (FileNotFoundException e) {
-                            failures.add(row[columns.get(params.getAbsTargetPathProperty()).getIndex()]);
-                            log.error("Could not find file for row ", Arrays.asList(row), e);
-                        } catch (CsvAssetImportException e) {
-                            failures.add(row[columns.get(params.getAbsTargetPathProperty()).getIndex()]);
-                            log.error("Could not import the row due to ", e.getMessage(), e);
-                        }
-
-                        log.debug("Processed row {}", Arrays.asList(row));
-
-                        if (batch.size() % params.getBatchSize() == 0) {
-                            this.save(rr, batch.size());
-                            result.addAll(batch);
-                            batch.clear();
-
-                            // Throttle saves
-                            if (params.getThrottle() > 0) {
-                                log.info("Throttling CSV Asset Importer batch processing for {} ms", params.getThrottle());
-                                Thread.sleep(params.getThrottle());
-                            }
-                        }
-                    }
-
-                    // Final save to catch any non-modulo stragglers; will only invoke persist if there are changes
-                    this.save(rr, batch.size());
-                    result.addAll(batch);
-
-                    if (log.isInfoEnabled()) {
-                        log.info("Imported as TOTAL of [ {} ] assets in {} ms", result.size(),
-                                System.currentTimeMillis() - start);
-                    }
+                    log.debug("Processing row {}", Arrays.asList(row));
 
                     try {
-                        jsonResponse.put("assets", result);
-                        jsonResponse.put("failures", failures);
-                    } catch (JSONException e) {
-                        log.error("Could not serialized Excel Importer results into JSON", e);
-                        this.addMessage(jsonResponse, "Could not serialized Excel Importer results into JSON");
-                        response.setStatus(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                        if (!this.isSkippedRow(params, columns, row)) {
+                            batch.add(this.importAsset(request.getResourceResolver(),
+                                    params,
+                                    columns,
+                                    row));
+                        }
+                    } catch (FileNotFoundException e) {
+                        failures.add(row[columns.get(params.getAbsTargetPathProperty()).getIndex()]);
+                        log.error("Could not find file for row ", Arrays.asList(row), e);
+                    } catch (CsvAssetImportException e) {
+                        failures.add(row[columns.get(params.getAbsTargetPathProperty()).getIndex()]);
+                        log.error("Could not import the row due to ", e.getMessage(), e);
                     }
-                } catch (RepositoryException e) {
-                    log.error("Could not save Assets to JCR", e);
-                    this.addMessage(jsonResponse, "Could not save assets. " + e.getMessage());
-                    response.setStatus(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                } catch (Exception e) {
-                    log.error("Could not process CSV import", e);
-                    this.addMessage(jsonResponse, "Could not process CSV import. " + e.getMessage());
+
+                    log.debug("Processed row {}", Arrays.asList(row));
+
+                    if (batch.size() % params.getBatchSize() == 0) {
+                        this.save(request.getResourceResolver(), batch.size());
+                        result.addAll(batch);
+                        batch.clear();
+
+                        // Throttle saves
+                        if (params.getThrottle() > 0) {
+                            log.info("Throttling CSV Asset Importer batch processing for {} ms", params.getThrottle());
+                            Thread.sleep(params.getThrottle());
+                        }
+                    }
+                }
+
+                // Final save to catch any non-modulo stragglers; will only invoke persist if there are changes
+                this.save(request.getResourceResolver(), batch.size());
+                result.addAll(batch);
+
+                if (log.isInfoEnabled()) {
+                    log.info("Imported as TOTAL of [ {} ] assets in {} ms", result.size(),
+                            System.currentTimeMillis() - start);
+                }
+
+                try {
+                    jsonResponse.put("assets", result);
+                    jsonResponse.put("failures", failures);
+                } catch (JSONException e) {
+                    log.error("Could not serialized Excel Importer results into JSON", e);
+                    this.addMessage(jsonResponse, "Could not serialized Excel Importer results into JSON");
                     response.setStatus(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
-            } else {
-                log.error("Could not find CSV file in request.");
-                this.addMessage(jsonResponse, "CSV file is missing");
+            } catch (RepositoryException e) {
+                log.error("Could not save Assets to JCR", e);
+                this.addMessage(jsonResponse, "Could not save assets. " + e.getMessage());
+                response.setStatus(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } catch (Exception e) {
+                log.error("Could not process CSV import", e);
+                this.addMessage(jsonResponse, "Could not process CSV import. " + e.getMessage());
                 response.setStatus(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-        } catch (LoginException ex) {
-            log.error("Unable to log into the repository with admin login.", ex);
-        } finally {
-            if (rr != null && rr.isLive()) {
-                rr.close();
-            }
+        } else {
+            log.error("Could not find CSV file in request.");
+            this.addMessage(jsonResponse, "CSV file is missing");
+            response.setStatus(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
+
         response.getWriter().print(jsonResponse.toString());
     }
 
