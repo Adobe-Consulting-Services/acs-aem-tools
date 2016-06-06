@@ -289,36 +289,34 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
 
             final Column column = entry.getValue();
             final String valueStr = row[column.getIndex()];
-            final Node node = this.getMetadataProperties(asset, column.getRelPropertyPath());
-//            final Node node = asset.adaptTo(Node.class);
+            final Node metaProps = this.getMetadataProperties(asset, column.getRelPropertyPath());
             final String propName = column.getPropertyName();
 
             if (StringUtils.isNotBlank(valueStr)) {
                 Property prop = null;
-                if (node.hasProperty(propName)) {
-                    prop = node.getProperty(propName);
+                if (metaProps.hasProperty(propName)) {
+                    prop = metaProps.getProperty(propName);
                 }
 
                 if ((column.isMulti() && !prop.isMultiple()) || (!column.isMulti() && prop.isMultiple())) {
                     prop.remove();
-                    node.getSession().save();
                 }
                 if (column.isMulti()) {
                     Object val = column.getMultiData(valueStr);
-                    JcrUtil.setProperty(node, propName, val);
+                    JcrUtil.setProperty(metaProps, propName, val);
                     log.debug("Setting multi property [ {} ~> {} ]",
                             column.getRelPropertyPath(),
                             Arrays.asList(val));
                 } else {
                     Object val = column.getData(valueStr);
-                    JcrUtil.setProperty(node, propName, val);
+                    JcrUtil.setProperty(metaProps, propName, val);
                     log.debug("Setting property [ {} ~> {} ]",
                             column.getRelPropertyPath(),
                             column.getData(valueStr));
                 }
             } else {
-                if (node.hasProperty(propName)) {
-                    node.getProperty(propName).remove();
+                if (metaProps.hasProperty(propName)) {
+                    metaProps.getProperty(propName).remove();
                     log.debug("Removing property [ {} ]", column.getRelPropertyPath());
                 }
             }
