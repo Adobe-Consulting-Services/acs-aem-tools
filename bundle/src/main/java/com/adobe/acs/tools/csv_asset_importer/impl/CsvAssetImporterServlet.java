@@ -66,7 +66,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
 @SlingServlet(
         label = "ACS AEM Tools - Excel to Asset Servlet",
         methods = {"POST"},
@@ -283,14 +282,13 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
             final String propName = column.getPropertyName();
 
             if (StringUtils.isNotBlank(valueStr)) {
-                Property prop = null;
                 if (metaProps.hasProperty(propName)) {
-                    prop = metaProps.getProperty(propName);
+                    Property prop = metaProps.getProperty(propName);
+                    if ((column.isMulti() && !prop.isMultiple()) || (!column.isMulti() && prop.isMultiple())) {
+                        prop.remove();
+                    }
                 }
 
-                if ((column.isMulti() && !prop.isMultiple()) || (!column.isMulti() && prop.isMultiple())) {
-                    prop.remove();
-                }
                 if (column.isMulti()) {
                     Object val = column.getMultiData(valueStr);
                     JcrUtil.setProperty(metaProps, propName, val);
