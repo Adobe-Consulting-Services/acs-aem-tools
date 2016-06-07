@@ -296,7 +296,7 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                     JcrUtil.setProperty(metaProps, propName, val);
                     log.debug("Setting multi property [ {} ~> {} ]",
                             column.getRelPropertyPath(),
-                            Arrays.asList(val));
+                            Arrays.asList(column.getMultiData(valueStr)));
                 } else {
                     Object val = column.getData(valueStr);
                     JcrUtil.setProperty(metaProps, propName, val);
