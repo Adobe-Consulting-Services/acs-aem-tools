@@ -284,7 +284,9 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
             if (StringUtils.isNotBlank(valueStr)) {
                 if (metaProps.hasProperty(propName)) {
                     Property prop = metaProps.getProperty(propName);
-                    if ((column.isMulti() && !prop.isMultiple()) || (!column.isMulti() && prop.isMultiple())) {
+
+                    if ((prop.getType() != column.getJcrPropertyType()) ||
+                            (column.isMulti() && !prop.isMultiple()) || (!column.isMulti() && prop.isMultiple())) {
                         prop.remove();
                     }
                 }
