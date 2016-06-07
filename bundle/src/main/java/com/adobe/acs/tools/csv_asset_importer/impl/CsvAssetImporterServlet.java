@@ -284,7 +284,9 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
             if (StringUtils.isNotBlank(valueStr)) {
                 if (metaProps.hasProperty(propName)) {
                     Property prop = metaProps.getProperty(propName);
-                    if ((column.isMulti() && !prop.isMultiple()) || (!column.isMulti() && prop.isMultiple())) {
+
+                    if ((prop.getType() != column.getJcrPropertyType()) ||
+                            (column.isMulti() && !prop.isMultiple()) || (!column.isMulti() && prop.isMultiple())) {
                         prop.remove();
                     }
                 }
@@ -294,7 +296,7 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                     JcrUtil.setProperty(metaProps, propName, val);
                     log.debug("Setting multi property [ {} ~> {} ]",
                             column.getRelPropertyPath(),
-                            Arrays.asList(val));
+                            Arrays.asList(column.getMultiData(valueStr)));
                 } else {
                     Object val = column.getData(valueStr);
                     JcrUtil.setProperty(metaProps, propName, val);

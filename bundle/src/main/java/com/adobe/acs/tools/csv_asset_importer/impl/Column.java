@@ -24,6 +24,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.format.ISODateTimeFormat;
 
+import javax.jcr.PropertyType;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -104,6 +105,20 @@ public final class Column<T> {
         }
 
         return list.toArray((T[]) Array.newInstance((this.getDataType()), 0));
+    }
+
+    public int getJcrPropertyType() {
+        if (Calendar.class.equals(dataType)) {
+            return PropertyType.DATE;
+        } else if (Double.class.equals(dataType)) {
+            return PropertyType.DOUBLE;
+        } else if (Long.class.equals(dataType)) {
+            return PropertyType.LONG;
+        } else if (Boolean.class.equals(dataType)) {
+            return PropertyType.BOOLEAN;
+        } else {
+            return PropertyType.STRING;
+        }
     }
 
     protected <T> T toObjectType(String data, Class<T> klass) {
