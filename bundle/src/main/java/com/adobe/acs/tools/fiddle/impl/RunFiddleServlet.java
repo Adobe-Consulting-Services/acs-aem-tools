@@ -19,6 +19,7 @@
  */
 package com.adobe.acs.tools.fiddle.impl;
 
+import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingConstants;
@@ -29,6 +30,10 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.api.wrappers.SlingHttpServletRequestWrapper;
+import org.apache.sling.settings.SlingSettingsService;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
@@ -36,9 +41,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
@@ -53,8 +58,19 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
 
     private static final String COMPILED_JSP = "org/apache/jsp/apps/acs_002dtools/components/aemfiddle";
 
+    private static final String[] COMPILED_JSP_FILES = new String[]{
+            "org/apache/jsp/apps/acs_002dtools/components/aemfiddle_jsp.class",
+            "org/apache/jsp/apps/acs_002dtools/components/aemfiddle_jsp.deps",
+            "org/apache/jsp/apps/acs_002dtools/components/aemfiddle_jsp.java"
+    };
+
+    private File fileRoot;
+
     @Reference
     private EventAdmin eventAdmin;
+
+    @Reference
+    private SlingSettingsService slingSettingsService;
 
     @Override
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response)
@@ -119,6 +135,16 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
                 this.removeResource(varClass.getChild(COMPILED_JSP));
             }
         }
+
+        if (this.fileRoot != null) {
+            // AEM 6.1+
+            for (String fileName : COMPILED_JSP_FILES) {
+                File file = new File(fileRoot, fileName);
+                if (file.exists()) {
+                    file.delete();
+                }
+            }
+        }
     }
 
     private void removeResource(final Resource resource) {
@@ -146,6 +172,19 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
         @Override
         public String getMethod() {
             return "GET";
+        }
+    }
+
+    @Activate
+    protected void activate(ComponentContext ctx) {
+        BundleContext bundleContext = ctx.getBundleContext();
+
+        // this is less than ideal, but there's no better way to get to the fs classloader's data directory
+        for (Bundle bundle : bundleContext.getBundles()) {
+            if (bundle.getSymbolicName().equals("org.apache.sling.commons.fsclassloader")) {
+                this.fileRoot = new File(slingSettingsService.getSlingHomePath(), "launchpad/felix/bundle" + bundle.getBundleId() + "/data/classes");
+                break;
+            }
         }
     }
 
