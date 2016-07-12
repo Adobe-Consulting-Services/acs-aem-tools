@@ -82,6 +82,8 @@ public class TestPageGeneratorServlet extends SlingAllMethodsServlet {
         response.setCharacterEncoding("UTF-8");
 
         try {
+            request.getResourceResolver().adaptTo(Session.class).getWorkspace().getObservationManager().setUserData("acs-aem-tools.test-page-generator");
+
             final JSONObject json = this.generatePages(request.getResourceResolver(), new Parameters(request));
             response.getWriter().write(json.toString(2));
         } catch (JSONException e) {

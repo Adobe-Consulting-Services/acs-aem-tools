@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import java.io.File;
@@ -99,6 +100,12 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
 
         // Suppress ACS AEM Commons - Component Error Handler from capturing errors
         request.setAttribute("com.adobe.acs.commons.wcm.component-error-handler.suppress", true);
+
+        try {
+            request.getResourceResolver().adaptTo(Session.class).getWorkspace().getObservationManager().setUserData("acs-aem-tools.aem-fiddle");
+        } catch (RepositoryException e) {
+            log.warn("Unable to set [ user-event-data = acs-aem-tools.test-page-generator ] for fiddle execution.", e);
+        }
 
         RequestDispatcher dispatcher = request.getRequestDispatcher(resource, options);
         GetRequest getRequest = new GetRequest(request);

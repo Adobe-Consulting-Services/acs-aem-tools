@@ -116,6 +116,9 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                 final List<String> failures = new ArrayList<String>();
 
                 log.info(params.toString());
+
+                request.getResourceResolver().adaptTo(Session.class).getWorkspace().getObservationManager().setUserData("acs-aem-tools.csv-asset-importer");
+
                 while (rows.hasNext()) {
                     final String[] row = rows.next();
 

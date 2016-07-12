@@ -50,6 +50,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.ServletException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -211,6 +212,8 @@ public class TagMakerServlet extends SlingAllMethodsServlet {
             final Iterator<String[]> rows = csv.read(is, charset);
 
             try {
+                request.getResourceResolver().adaptTo(Session.class).getWorkspace().getObservationManager().setUserData("acs-aem-tools.tag-maker");
+
                 final List<String> result = this.makeTags(tagManager, tagDataConverters, rows);
 
                 try {
