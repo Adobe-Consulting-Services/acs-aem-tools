@@ -35,6 +35,7 @@ import org.apache.sling.commons.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.Session;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,6 +76,8 @@ public class CsvResourceTypeUpdateServlet extends SlingAllMethodsServlet {
             final Iterator<String[]> rows = CsvUtil.getRowsFromCsv(params);
 
             try {
+                request.getResourceResolver().adaptTo(Session.class).getWorkspace().getObservationManager().setUserData("acs-aem-tools.csv-resource-type-updater");
+
                 final Result result = this.update(request.getResourceResolver(), params, rows);
 
                 if (log.isInfoEnabled()) {
