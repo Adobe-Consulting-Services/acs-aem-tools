@@ -91,8 +91,11 @@ public class InMemoryScript {
         public <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
             if (type == InputStream.class) {
                 return (AdapterType) new ByteArrayInputStream(data.getBytes(charset));
+            } else if (type == ValueMap.class) {
+                return (AdapterType) ValueMapDecorator.EMPTY;
+            } else {
+                return super.adaptTo(type);
             }
-            return super.adaptTo(type);
         }
 
         @Override
