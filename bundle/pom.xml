@@ -206,6 +206,7 @@
             <artifactId>acs-aem-commons-bundle</artifactId>
             <version>1.10.2</version>
             <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
