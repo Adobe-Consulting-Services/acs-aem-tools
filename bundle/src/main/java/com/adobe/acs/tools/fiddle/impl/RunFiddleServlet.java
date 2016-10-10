@@ -60,9 +60,9 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
     private static final String COMPILED_JSP = "org/apache/jsp/apps/acs_002dtools/components/aemfiddle";
 
     private static final String[] COMPILED_JSP_FILES = new String[]{
-            "org/apache/jsp/apps/acs_002dtools/components/aemfiddle_jsp.class",
-            "org/apache/jsp/apps/acs_002dtools/components/aemfiddle_jsp.deps",
-            "org/apache/jsp/apps/acs_002dtools/components/aemfiddle_jsp.java"
+            "org/apache/jsp/apps/acs_002dtools/components/aemfiddle/fiddle/fiddle_jsp.class",
+            "org/apache/jsp/apps/acs_002dtools/components/aemfiddle/fiddle/fiddle_jsp.deps",
+            "org/apache/jsp/apps/acs_002dtools/components/aemfiddle/fiddle/fiddle_jsp.java"
     };
 
     private File fileRoot;
