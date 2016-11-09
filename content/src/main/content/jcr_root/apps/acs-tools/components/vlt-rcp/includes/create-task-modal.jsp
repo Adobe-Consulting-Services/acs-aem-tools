@@ -34,20 +34,29 @@
 
                 <label class="coral-Form-fieldlabel">Task Id</label>
                 <input class="coral-Form-field coral-Textfield" type="text"
-                               ng-model="task_id"
-                               name="id"/>
+                       ng-model="task_id"
+                       name="id"/>
 
                 <label class="coral-Form-fieldlabel">Source</label>
                 <input class="coral-Form-field coral-Textfield" type="text"
-                               ng-model="task_src"
-                               name="src"
-                               placeholder="http://admin:admin@localhost:4502/crx/server/-/jcr:root/content/dam/my-site"/>
+                       ng-model="task_src"
+                       name="src"
+                       placeholder="http://localhost:4502/crx/server/-/jcr:root/content/dam/my-site"/>
+                <div class="coral-Form-fieldwrapper">
+                    <label class="coral-Form-fieldlabel">Source Credentials
+                    </label>
+                    <input class="coral-Form-field coral-Textfield" type="password"
+                           ng-model="task_src_credentials"
+                           name="src_password"
+                    /> <span class="coral-Form-fieldinfo coral-Icon coral-Icon--infoCircle coral-Icon--sizeS" data-init="quicktip" data-quicktip-type="info" data-quicktip-arrow="right" data-quicktip-content="userid:password"></span>
+                </div>
+
 
                 <label class="coral-Form-fieldlabel">Destination</label>
                 <input class="coral-Form-field coral-Textfield" type="text"
-                               ng-model="task_dst"
-                               name="dst"
-                               placeholder="/content/dam/my-site"/>
+                       ng-model="task_dst"
+                       name="dst"
+                       placeholder="/content/dam/my-site"/>
 
                 <label class="coral-Form-fieldlabel">Recursive</label>
                 <span class="coral-Form-field coral-Switch">
@@ -79,24 +88,24 @@
 
                 <label class="coral-Form-fieldlabel">Resume from</label>
                 <input class="coral-Form-field coral-Textfield" type="text"
-                               ng-model="task_resumeFrom"
-                               name="resumeFrom"
-                               placeholder="/content/dam/my-site"/>
+                       ng-model="task_resumeFrom"
+                       name="resumeFrom"
+                       placeholder="/content/dam/my-site"/>
 
                 <label class="coral-Form-fieldlabel">Batch size</label>
                 <input class="coral-Form-field coral-Textfield" type="text"
-                               ng-model="task_batchSize"
-                               name="batchSize"
-                               placeholder="1024"/>
+                       ng-model="task_batchSize"
+                       name="batchSize"
+                       placeholder="1024"/>
 
                 <label class="coral-Form-fieldlabel">Throttle</label>
                 <input class="coral-Form-field coral-Textfield" type="text"
-                               ng-model="task_throttle"
-                               name="throttle"
-                               placeholder="in seconds"/>
+                       ng-model="task_throttle"
+                       name="throttle"
+                       placeholder="in seconds"/>
 
                 <label class="coral-Form-fieldlabel">Excludes</label>
-                 <div class="coral-Form-field excludes">
+                <div class="coral-Form-field excludes">
                     <a class="addButton" ng-click="addExclude()">
                         <i class="coral-Icon coral-Icon--addCircle"></i>
                     </a>
@@ -104,8 +113,8 @@
                         <ul ng-repeat="exclude in excludes track by $index">
                             <li>
                                 <input class="coral-Form-field coral-Textfield" type="text"
-                                        ng-model="exclude.value"
-                                        placeholder="/content/dam/my-site/(en|fr)/documents(/.*)?"/>
+                                       ng-model="exclude.value"
+                                       placeholder="/content/dam/my-site/(en|fr)/documents(/.*)?"/>
 
                                 <a class="removeButton" ng-click="removeExclude($index)"><i class="coral-Icon coral-Icon--minusCircle"></i></a>
                             </li>
