@@ -52,6 +52,7 @@
                     <embeddeds>
                         <embedded>
                             <groupId>${project.groupId}</groupId>
+                            <artifactId>acs-aem-tools-bundle</artifactId>
                             <target>/apps/acs-tools/install</target>
                         </embedded>
                     </embeddeds>
