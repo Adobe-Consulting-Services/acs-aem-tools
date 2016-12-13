@@ -37,10 +37,7 @@ import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.util.Text;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.resource.PersistenceException;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.api.resource.*;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
@@ -314,6 +311,24 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                 }
             }
         }
+    }
+
+    /**
+     * Updates AEM System properties of the Asset.
+     * @param asset the asset to update.
+     */
+    private void updateSystemProperties(final Asset asset) {
+        Resource resource = asset.adaptTo(Resource.class);
+        Resource jcrContentResource = resource.getChild(JcrConstants.JCR_CONTENT);
+        if (jcrContentResource == null) {
+            log.error("Could not find the jcr:content node for asset [ {} ]", asset.getPath());
+            return;
+        }
+
+        final ModifiableValueMap properties = jcrContentResource.adaptTo(ModifiableValueMap.class);
+
+        properties.put("cq:name", asset.getName());
+        properties.put("cq:parentPath", StringUtils.removeEnd(asset.getPath(), "/" + asset.getName()));
     }
 
     /**
