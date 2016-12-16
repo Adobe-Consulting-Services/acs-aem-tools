@@ -233,6 +233,12 @@ angular.module('acs-tools-vlt-rcp-app', ['acsCoral', 'ACS.Tools.notifications'])
          You can 'fix' the warning by telling JSLint to ignore it: add regexp: true to your JSLint settings at the top of the file.
          http://stackoverflow.com/questions/10793814/how-to-rectify-insecure-error-in-jslint
          */
-        return input.replace(/:\/\/.*@/,"//");
+        var segments = input.match(/(\bhttps?:\/\/[\S]+:)([\S]+)(@\S*)/);
+        if (segments.length === 4) {
+           return segments[1] + '******' + segments[3];
+        } else {
+            return input;
+        }
+        /* jshint ignore:end */
     };
 });
