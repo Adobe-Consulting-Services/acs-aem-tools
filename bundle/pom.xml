@@ -48,6 +48,7 @@
                         <Import-Package>
                             org.apache.sling.hc.*;resolution:=optional,
                             ch.qos.logback.*;resolution:=optional,
+                            com.day.cq.widget;resolution:=optional,
                             !org.joda.convert,
                             *
                         </Import-Package>
