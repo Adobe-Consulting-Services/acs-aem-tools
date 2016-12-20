@@ -55,6 +55,11 @@
                             <artifactId>acs-aem-tools-bundle</artifactId>
                             <target>/apps/acs-tools/install</target>
                         </embedded>
+                        <embedded>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>acs-aem-tools-bundle-livereload</artifactId>
+                            <target>/apps/acs-tools/install</target>
+                        </embedded>
                     </embeddeds>
                     <targetURL>http://${crx.host}:${crx.port}/crx/packmgr/service.jsp</targetURL>
                 </configuration>

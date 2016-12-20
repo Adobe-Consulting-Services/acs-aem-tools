@@ -19,9 +19,9 @@
  */
 package com.adobe.acs.tools.clientlib_optimizer.impl;
 
-import java.util.Comparator;
+import com.adobe.granite.ui.clientlibs.ClientLibrary;
 
-import com.day.cq.widget.ClientLibrary;
+import java.util.Comparator;
 
 public class ClientLibraryPathComparator implements Comparator<ClientLibrary> {
 
