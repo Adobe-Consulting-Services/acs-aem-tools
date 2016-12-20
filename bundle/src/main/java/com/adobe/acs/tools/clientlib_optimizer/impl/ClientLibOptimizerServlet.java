@@ -1,3 +1,22 @@
+/*
+ * #%L
+ * ACS AEM Tools Bundle
+ * %%
+ * Copyright (C) 2016 Adobe
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 package com.adobe.acs.tools.clientlib_optimizer.impl;
 
 import java.io.IOException;
@@ -39,11 +58,11 @@ import com.day.cq.widget.LibraryType;
 public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
-	private static final String PARAM_LIBRARY_TYPE_CSS = "css";
+    private static final String PARAM_LIBRARY_TYPE_CSS = "css";
 
     private static final String PARAM_LIBRARY_TYPE_JS = "js";
 
@@ -107,28 +126,28 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
     }
                          
     private List<String> getSortedDependentCategories(Set<String> originalCategories, LibraryType type, List<String> existingCategories) {
-    	final Collection<ClientLibrary> libraries = htmlLibraryManager.getLibraries(
-    			originalCategories.toArray(new String[0]),
+        final Collection<ClientLibrary> libraries = htmlLibraryManager.getLibraries(
+                originalCategories.toArray(new String[0]),
                 null, // always request all types (to also consider transitive embeds/dependencies of the required type)
                 true,
                 false);
         
-    	return getSortedDependentCategories(libraries, originalCategories, type, existingCategories);
+        return getSortedDependentCategories(libraries, originalCategories, type, existingCategories);
     }
     
     static List<String> getSortedDependentCategories(Collection<ClientLibrary> libraries, Set<String> requestedCategories, LibraryType type, List<String> existingCategories) {
-    	// sort libraries by path name
-    	List<ClientLibrary> sortedLibraries = new ArrayList<ClientLibrary>(libraries);
-    	Collections.sort(sortedLibraries, new ClientLibraryPathComparator());
-    	 
-    	for (ClientLibrary library : libraries) {
-    		int index = existingCategories.isEmpty() ? 0 : existingCategories.size();
-    		ClientLibraryDependency dependency = new ClientLibraryDependency(null, library, requestedCategories, false, type);
-    		
-    		// don't give out all categories but only the requested ones and all dependent ones!
-    		existingCategories = dependency.buildDependencyTree(existingCategories, index);
-    	}
-    	return existingCategories;
+        // sort libraries by path name
+        List<ClientLibrary> sortedLibraries = new ArrayList<ClientLibrary>(libraries);
+        Collections.sort(sortedLibraries, new ClientLibraryPathComparator());
+
+        for (ClientLibrary library : libraries) {
+            int index = existingCategories.isEmpty() ? 0 : existingCategories.size();
+            ClientLibraryDependency dependency = new ClientLibraryDependency(null, library, requestedCategories, false, type);
+
+            // don't give out all categories but only the requested ones and all dependent ones!
+            existingCategories = dependency.buildDependencyTree(existingCategories, index);
+        }
+        return existingCategories;
     }
 
     // see  https://github.com/Adobe-Consulting-Services/acs-aem-tools/pull/47 for a discussion around that
@@ -136,12 +155,12 @@ public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
     private List<String> getCategories(Set<String> originalCategories, Map<LibraryType, Boolean> types) {
         List<String> categories = new ArrayList<String>();
         if (types.get(LibraryType.JS)) {
-        	categories = getSortedDependentCategories(originalCategories, LibraryType.JS, categories);
+            categories = getSortedDependentCategories(originalCategories, LibraryType.JS, categories);
         } 
         if (types.get(LibraryType.CSS)) {
-        	categories = getSortedDependentCategories(originalCategories, LibraryType.CSS, categories);
+            categories = getSortedDependentCategories(originalCategories, LibraryType.CSS, categories);
         } 
-		return categories;
+        return categories;
     }
 }
 
