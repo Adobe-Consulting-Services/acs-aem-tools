@@ -54,13 +54,7 @@ import com.day.cq.widget.LibraryType;
         selectors = { "optimize" },
         extensions = { "json" }
 )
-
-public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {
-
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
+public class ClientLibOptimizerServlet extends SlingSafeMethodsServlet {;
 
     private static final String PARAM_LIBRARY_TYPE_CSS = "css";
 
