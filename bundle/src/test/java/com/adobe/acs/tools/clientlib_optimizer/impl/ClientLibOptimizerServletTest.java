@@ -9,15 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.adobe.granite.ui.clientlibs.ClientLibrary;
+import com.adobe.granite.ui.clientlibs.LibraryType;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.junit.Assert;
-
-import com.day.cq.widget.ClientLibrary;
-import com.day.cq.widget.LibraryType;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ClientLibOptimizerServletTest {
