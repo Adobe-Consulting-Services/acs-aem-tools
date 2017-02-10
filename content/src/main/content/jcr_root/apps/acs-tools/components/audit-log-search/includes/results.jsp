@@ -22,7 +22,7 @@
 com.day.cq.rewriter.linkchecker.LinkCheckerSettings.fromRequest(slingRequest).setIgnoreInternals(true);
 %>
 <div class="section">
-	<h2 acs-coral-heading>Audit Events</h2>
+	<h2 acs-coral-heading><span ng-show="result.count > 0">Found {{result.count}}</span> Audit Events <span ng-show="result.count > 0">in {{result.time}}ms</span></h2>
 </div>
 <div class="section audit-log-search-results" ng-show="result.count > 0">
 	<table class="coral-Table coral-Table--hover data">
@@ -52,14 +52,12 @@ com.day.cq.rewriter.linkchecker.LinkCheckerSettings.fromRequest(slingRequest).se
 				</a>
 			</td>
 			<td class="coral-Table-cell">
-				{{event.time | date:'yyyy-MM-dd HH:mm:ss Z'}}
+				{{event.time | date:'yyyy-MM-dd'}}&nbsp;{{event.time | date:'HH:mm:ss'}}&nbsp;{{event.time | date:'Z'}}
 			</td>
 			<td class="coral-Table-cell">
-				<ul>
-					<li ng-repeat="modifiedProperty in event.modifiedProperties">
+				<div ng-repeat="modifiedProperty in event.modifiedProperties">
 						{{modifiedProperty}}
-					</li>
-				</ul>
+				</div>
 			</td>
 			<td class="coral-Table-cell">
 				<a target="_blank" href="/crx/de/index.jsp{{'#'+event.eventPath}}" class="coral-Button coral-Button--square">

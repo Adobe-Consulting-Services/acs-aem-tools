@@ -128,6 +128,15 @@
 	</div>
 	
 	<div class="form-row">
+		<h4 acs-coral-heading>
+			Limit
+		</h4>
+		<span>
+			<input type="number" name="limit" class="coral-Textfield" ng-model="form.limit" placeholder="Limit [ Optional, 10 ]"/>
+		</span>
+	</div>
+	
+	<div class="form-row">
 		<div class="form-left-cell">&nbsp;</div>
 		<button class="coral-Button coral-Button--primary">Search Audit Log</button>
 	</div>

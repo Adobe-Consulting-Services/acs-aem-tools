@@ -25,17 +25,21 @@ import java.io.ObjectInputStream;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.commons.json.JSONArray;
@@ -76,13 +80,24 @@ public class AuditLogSearchServlet extends SlingSafeMethodsServlet {
 				req = new AuditLogSearchRequest(request);
 				log.debug("Loaded search request: {}", req);
 
+				int limit = -1;
+				if (StringUtils.isNotEmpty(request.getParameter("limit"))) {
+					limit = Integer.parseInt(request.getParameter("limit"), 10);
+					log.debug("Limiting to {} results", limit);
+				}
+
 				JSONArray results = new JSONArray();
 				long count = 0;
-				String query = "SELECT * FROM [cq:AuditEvent] AS s WHERE " + req.getQueryParameters();
-				log.debug("Finding audit events with: {}", query);
-				Iterator<Resource> auditEvents = request.getResourceResolver().findResources(query, Query.JCR_SQL2);
-				while (auditEvents.hasNext()) {
-					results.put(serializeAuditEvent(auditEvents.next(), req));
+				String queryStr = "SELECT * FROM [cq:AuditEvent] AS s WHERE " + req.getQueryParameters();
+				log.debug("Finding audit events with: {}", queryStr);
+				ResourceResolver resolver = request.getResourceResolver();
+				QueryManager queryManager = resolver.adaptTo(Session.class).getWorkspace().getQueryManager();
+				Query query = queryManager.createQuery(queryStr, Query.JCR_SQL2);
+				query.setLimit(limit);
+				NodeIterator nodes = query.execute().getNodes();
+				log.debug("Query execution complete!");
+				while (nodes.hasNext()) {
+					results.put(serializeAuditEvent(resolver.getResource(nodes.nextNode().getPath()), req));
 					count++;
 				}
 				result.put("count", count);
@@ -145,6 +160,7 @@ public class AuditLogSearchServlet extends SlingSafeMethodsServlet {
 						for (String property : propertiesSet) {
 							modifiedProperties.put(property);
 						}
+						break;
 					}
 				} catch (Exception e) {
 					break;
