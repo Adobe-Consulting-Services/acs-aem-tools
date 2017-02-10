@@ -1,8 +1,8 @@
 /*
  * #%L
- * ACS AEM Tools Package
+ * ACS AEM Tools Package - Audit Log Search
  * %%
- * Copyright (C) 2014 Adobe
+ * Copyright (C) 2017 Dan Klco
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
