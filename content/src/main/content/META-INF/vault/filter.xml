@@ -6,4 +6,5 @@
     <filter root="/etc/acs-tools"/>
     <filter root="/etc/clientlibs/acs-tools"/>
     <filter root="/apps/cq/core/content/nav/tools/acs-tools"/>
+    <filter root="/oak:index/cqAuditEvent"/>
 </workspaceFilter>
