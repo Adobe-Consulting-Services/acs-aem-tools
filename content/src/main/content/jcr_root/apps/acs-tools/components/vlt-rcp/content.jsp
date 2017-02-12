@@ -133,7 +133,8 @@
                         </td>
                         <td class="coral-Table-cell">
                             <ul>
-                                <li>Source: {{ task.src }}</li>
+                                <li>Source: {{ task.src | removeCredentials
+                                    }}</li>
                                 <li>Destination: {{ task.dst }}</li>
                             </ul>
 
