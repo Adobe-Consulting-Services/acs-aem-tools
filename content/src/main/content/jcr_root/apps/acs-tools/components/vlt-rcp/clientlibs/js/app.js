@@ -26,7 +26,7 @@ angular.module('acs-tools-vlt-rcp-app', ['acsCoral', 'ACS.Tools.notifications'])
 
     $scope.rcp_uris = ['/system/jackrabbit/filevault/rcp', '/libs/granite/packaging/rcp'];
 
-    $scope.task_src = 'http://admin:admin@localhost:4502/crx/server/-/jcr:root/content/dam/my-site';
+    $scope.task_src = 'http://admin:admin@localhost:4502/crx/server/crx.default/jcr:root/content/dam/my-site';
 
     $scope.task_dst = '/content/dam/my-site';
 
