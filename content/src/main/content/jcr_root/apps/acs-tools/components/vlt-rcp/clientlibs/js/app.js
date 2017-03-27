@@ -192,7 +192,7 @@ angular.module('acs-tools-vlt-rcp-app', ['acsCoral', 'ACS.Tools.notifications'])
 
 
     $scope.reset = function() {
-        var taskSrc = 'http://admin:admin@localhost:4502/crx/server/-/jcr:root/content/dam/my-site',
+        var taskSrc = 'http://admin:admin@localhost:4502/crx/server/crx.default/jcr:root/content/dam/my-site',
             taskDst = '/content/dam/my-site',
             taskBatchSize = '1024',
             taskThrottle = '',
