@@ -151,12 +151,13 @@ angular.module('acs-tools-vlt-rcp-app', ['acsCoral', 'ACS.Tools.notifications'])
     };
 
     $scope.create = function () {
-        var src =  $scope.task_src.replace("://","://"+$scope.task_src_credentials+"@"), i = 0,
+        var i = 0,
             excludes = [],
             cmd = {
                 "cmd": "create",
                 "id": $scope.task_id,
-                "src": src,
+                "src": $scope.task_src,
+                "srcCreds": $scope.task_src_credentials,
                 "dst": $scope.task_dst,
                 "batchsize": $scope.task_batchSize || 1024,
                 "update": $scope.checkboxModel.update,
