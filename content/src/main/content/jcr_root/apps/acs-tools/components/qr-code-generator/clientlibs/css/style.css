@@ -1,0 +1,16 @@
+/* CSS for QR code pop up */
+
+#qrcodeTable {
+        padding: 10px;
+        margin: 30px 20px;
+        position: absolute;
+        top: 10px;
+        left: 20px;
+        background-color: white;
+        border: 10px solid;
+		display:none;
+}
+
+.qrcode-hidden {
+    display: none !important;
+} 
