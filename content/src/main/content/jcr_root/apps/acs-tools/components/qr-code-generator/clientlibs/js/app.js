@@ -15,10 +15,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * #L%
+ * #L% 
  */
 
-/*global JSON: false, angular: false */
+/*global angular: false, ace: false */
 
 angular.module('acs-tools-qr-code-generator-app', ['acsCoral', 'ACS.Tools.notifications']).controller('MainCtrl', ['$scope', '$http', '$timeout', 'NotificationsService', function ($scope, $http, $timeout, NotificationsService) {
 
@@ -89,14 +89,17 @@ angular.module('acs-tools-qr-code-generator-app', ['acsCoral', 'ACS.Tools.notifi
         restrict: 'A',
         link: function ($scope, $elem, attrs) {
 
-            // Fetch previous saved configurations
+            var DEFAULT_PAGE_URL = "/etc/acs-tools/qr-code-config/jcr:content/config.json",
+                parsedResponse;
+
+            // Fetch previously saved configurations
             $http({
                 method: 'GET',
-                url: qrCode.default_url,
+                url: DEFAULT_PAGE_URL,
                 headers: {
                     'Accept': '*/*',
                     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                },
+                }
             }).success(function (data, status, headers, config) {
                 parsedResponse = JSON.parse(data.config);
                 $scope.form.properties = parsedResponse.properties;
@@ -110,5 +113,5 @@ angular.module('acs-tools-qr-code-generator-app', ['acsCoral', 'ACS.Tools.notifi
             });
 
         }
-    }
+    };
 });

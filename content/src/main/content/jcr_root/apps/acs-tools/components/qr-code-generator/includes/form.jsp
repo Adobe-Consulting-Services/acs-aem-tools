@@ -18,8 +18,7 @@
   ~ #L%
   --%>
 
-    <form class="no-separator" name="tpgForm" novalidate ng-submit="saveConfig(tpgForm.$valid)">
-
+    <form class="no-separator" novalidate ng-submit="saveConfig(tpgForm.$valid)">
         <div class="form-row">
             <h4 acs-coral-heading>Enable QR Code Generator</h4>
 
