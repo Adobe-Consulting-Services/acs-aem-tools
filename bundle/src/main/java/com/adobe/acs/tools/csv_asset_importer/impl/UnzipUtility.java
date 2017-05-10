@@ -20,13 +20,13 @@
 
 package com.adobe.acs.tools.csv_asset_importer.impl;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import org.apache.commons.io.FileUtils;
 
 /**
  * This utility extracts files and directories of a standard zip file to a
@@ -34,10 +34,6 @@ import java.util.zip.ZipInputStream;
  *
  */
 public class UnzipUtility {
-	/**
-	 * Size of the buffer to read/write data
-	 */
-	private static final int BUFFER_SIZE = 4096;
 
 	/**
 	 * Extracts a zip file specified by the zipFilePath to a directory specified
@@ -59,7 +55,7 @@ public class UnzipUtility {
 			String filePath = destDirectory + File.separator + entry.getName();
 			if (!entry.isDirectory()) {
 				// if the entry is a file, extracts it
-				extractFile(zipIn, filePath);
+				FileUtils.copyInputStreamToFile(zipIn, new File(filePath));
 			} else {
 				// if the entry is a directory, make the directory
 				File dir = new File(filePath);
@@ -71,20 +67,4 @@ public class UnzipUtility {
 		zipIn.close();
 	}
 
-	/**
-	 * Extracts a zip entry (file entry)
-	 * 
-	 * @param zipIn
-	 * @param filePath
-	 * @throws IOException
-	 */
-	private static void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
-		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
-		byte[] bytesIn = new byte[BUFFER_SIZE];
-		int read = 0;
-		while ((read = zipIn.read(bytesIn)) != -1) {
-			bos.write(bytesIn, 0, read);
-		}
-		bos.close();
-	}
 }
