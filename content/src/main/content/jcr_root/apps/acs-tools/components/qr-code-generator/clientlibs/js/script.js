@@ -14,9 +14,9 @@ $.ajax({
 }).done(function (response) {
     parsedResponse = JSON.parse(response.config);
     isEnabled = parsedResponse.enable;
-
+    
     if (isEnabled) {
-        $('.qrcode-hidden').removeAttr('disabled');
+        $('.qr-code-url').removeAttr('disabled');
         mappingConfig = parsedResponse.properties;
         var host;
         for (host in mappingConfig) {

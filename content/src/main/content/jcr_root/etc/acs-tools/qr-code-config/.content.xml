@@ -6,6 +6,5 @@
         cq:lastModifiedBy="admin"
         jcr:primaryType="cq:PageContent"
         jcr:title="QR Code Config"
-        sling:resourceType="acs-tools/components/qr-code-generator"
-        config="\{&quot;bucketType&quot;:&quot;sling:Folder&quot;,&quot;properties&quot;:[{&quot;name&quot;:&quot;&quot;,&quot;value&quot;:&quot;&quot;,&quot;multi&quot;:false,&quot;$$hashKey&quot;:&quot;004&quot;}],&quot;enable&quot;:true}"/>
+        sling:resourceType="acs-tools/components/qr-code-generator"/>
 </jcr:root>
