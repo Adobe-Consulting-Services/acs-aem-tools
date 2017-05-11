@@ -1,13 +1,15 @@
 /*global JSON: false, angular: false */
 
 var DEFAULT_PAGE_URL = "/etc/acs-tools/qr-code-config/jcr:content/config.json";
-
-var qrElement = $(".qr-code-url")[0],
+var qrCode = {
+        pageURL: "/etc/acs-tools/qr-code-config/jcr:content/config.json",
+        qrElement: $(".qr-code-url")[0]
+    },
     publishHost, urlElement, isEnabled, url, mappingConfig, parsedResponse, host;
 
 // Get the configurations for current hostname
 $.ajax({
-    url: DEFAULT_PAGE_URL,
+    url: qrCode.pageURL,
     dataType: "json"
 }).done(function (response) {
     parsedResponse = JSON.parse(response.config);
@@ -22,11 +24,8 @@ $.ajax({
                 publishHost = mappingConfig[host].value;
 
             }
-
         }
-
     }
-
 });
 
 // Create QR code element on page if it does not exist
@@ -34,7 +33,7 @@ urlElement = document.createElement('div');
 urlElement.id = "qrcodeTable";
 $(".qr-code-url").append(urlElement);
 
-$(qrElement).on("click", function () {
+$(qrCode.qrElement).on("click", function () {
     url = publishHost + window.location.pathname;
 
     // Remove editor.html from URL

@@ -18,7 +18,7 @@
  * #L% 
  */
 
-/*global angular: false, ace: false */
+/*global angular: false, ace: false qrCode: false*/
 
 angular.module('acs-tools-qr-code-generator-app', ['acsCoral', 'ACS.Tools.notifications']).controller('MainCtrl', ['$scope', '$http', '$timeout', 'NotificationsService', function ($scope, $http, $timeout, NotificationsService) {
 
@@ -50,12 +50,7 @@ angular.module('acs-tools-qr-code-generator-app', ['acsCoral', 'ACS.Tools.notifi
         properties.splice(index, 1);
     };
 
-    $scope.saveConfig = function (isValid) {
-
-        if (!isValid) {
-            NotificationsService.add('error', "Error", "Form is invalid. Please correct and resubmit.");
-            return;
-        }
+    $scope.saveConfig = function () {
 
         $scope.results = {};
         $scope.app.running = true;
@@ -95,7 +90,7 @@ angular.module('acs-tools-qr-code-generator-app', ['acsCoral', 'ACS.Tools.notifi
             // Fetch previously saved configurations
             $http({
                 method: 'GET',
-                url: DEFAULT_PAGE_URL,
+                url: qrCode.pageURL,
                 headers: {
                     'Accept': '*/*',
                     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'

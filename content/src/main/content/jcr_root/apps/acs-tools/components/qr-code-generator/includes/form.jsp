@@ -18,7 +18,7 @@
   ~ #L%
   --%>
 
-    <form class="no-separator" novalidate ng-submit="saveConfig(tpgForm.$valid)">
+    <form class="no-separator" novalidate ng-submit="saveConfig()">
         <div class="form-row">
             <h4 acs-coral-heading>Enable QR Code Generator</h4>
 
@@ -62,15 +62,6 @@
                 </tbody>
             </table>
         </div>
-
-        <div class="form-row">
-            <div class="instructions" ng-non-bindable>
-                <p>
-                    Properties marked as "Multi" will split the Value on commas ( , ) turning the resulting segments into a String Array.
-                </p>
-            </div>
-        </div>
-
         <div class="form-row">
             <div class="form-left-cell">&nbsp;</div>
             <button class="coral-Button coral-Button--primary save-config">Save Configurations</button>
