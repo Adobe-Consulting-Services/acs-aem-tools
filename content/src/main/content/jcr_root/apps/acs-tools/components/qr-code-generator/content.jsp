@@ -28,6 +28,7 @@
     <ul>
         <li>Once enabled, QR Icon will be available while authoring a page.</li>
         <li>Mapping for Author and Publish Host URL. Example- Assume Author Host is '<i>author-project.com</i>' and Publish Host is '<i>project.com</i>'. If the page being authored is <b>author-project.com/content/project/en/home.html</b>, then generated QR code will have URL as <b>project.com/content/project/en/home.html</b></li>
+        <li>Do not add protocol <i>http</i> or <i>https</i> to the url.</li>
     </ul>
 
     <cq:include script="includes/form.jsp"/>

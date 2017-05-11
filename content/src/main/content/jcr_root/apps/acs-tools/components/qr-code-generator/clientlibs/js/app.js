@@ -52,10 +52,17 @@ angular.module('acs-tools-qr-code-generator-app', ['acsCoral', 'ACS.Tools.notifi
 
     $scope.saveConfig = function () {
 
-        $scope.results = {};
-        $scope.app.running = true;
-        NotificationsService.running($scope.app.running);
-        $(".coral-Button").attr('disabled');
+        // If enabled, at least 1 entry should be present
+        var isValid = function () {
+            return $scope.form.properties.length >= 1 && $scope.form.properties[0].name !== "" && $scope.form.properties[0].value !== "";
+
+        };
+
+        if ($scope.form.enable && !isValid()) {
+            NotificationsService.add('error', "Error", "Please add atleast one AEM Environments Configuration");
+            return;
+        }
+
         $http({
             method: 'POST',
             url: $scope.app.uri,
@@ -65,27 +72,27 @@ angular.module('acs-tools-qr-code-generator-app', ['acsCoral', 'ACS.Tools.notifi
             }
         }).
         success(function (data, status, headers, config) {
-            $scope.results = data || {};
             $scope.app.running = false;
             NotificationsService.add('success', "Success", "Your Configurations has been saved");
             NotificationsService.running($scope.app.running);
 
             // Feature is enabled in configurations, so removing disabled attribute
-            $(".coral-Button").removeAttr('disabled');
+            $(".qr-code-url").removeAttr('disabled');
         }).
         error(function (data, status, headers, config) {
             NotificationsService.add('error', 'ERROR', data.title + '. ' + data.message);
             $scope.app.running = false;
             NotificationsService.running($scope.app.running);
+
         });
     };
+
     }]).directive('qrCodeConfig', function ($http, NotificationsService) {
     return {
         restrict: 'A',
         link: function ($scope, $elem, attrs) {
 
-            var DEFAULT_PAGE_URL = "/etc/acs-tools/qr-code-config/jcr:content/config.json",
-                parsedResponse;
+            var parsedResponse;
 
             // Fetch previously saved configurations
             $http({
