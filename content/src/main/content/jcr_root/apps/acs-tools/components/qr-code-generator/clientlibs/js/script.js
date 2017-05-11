@@ -6,7 +6,7 @@ var qrCode = {
     },
     publishHost, urlElement, isEnabled, url, mappingConfig, parsedResponse, host;
 
-// Get the configurations for current hostname
+// Get all the configurations
 $.ajax({
     url: qrCode.pageURL,
     dataType: "json"
@@ -27,7 +27,7 @@ $.ajax({
     }
 });
 
-// Create QR code element on page if it does not exist
+// Create QR code element on page
 urlElement = document.createElement('div');
 urlElement.id = "qrcodeTable";
 $(".qr-code-url").append(urlElement);

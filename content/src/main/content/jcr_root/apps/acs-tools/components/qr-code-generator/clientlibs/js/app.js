@@ -76,8 +76,6 @@ angular.module('acs-tools-qr-code-generator-app', ['acsCoral', 'ACS.Tools.notifi
             NotificationsService.add('success', "Success", "Your Configurations has been saved");
             NotificationsService.running($scope.app.running);
 
-            // Feature is enabled in configurations, so removing disabled attribute
-            $(".qr-code-url").removeAttr('disabled');
         }).
         error(function (data, status, headers, config) {
             NotificationsService.add('error', 'ERROR', data.title + '. ' + data.message);
