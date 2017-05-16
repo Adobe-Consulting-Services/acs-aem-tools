@@ -26,7 +26,7 @@ angular.module('acs-tools-vlt-rcp-app', ['acsCoral', 'ACS.Tools.notifications'])
 
     $scope.rcp_uris = ['/system/jackrabbit/filevault/rcp', '/libs/granite/packaging/rcp'];
 
-    $scope.task_src = 'http://admin:admin@localhost:4502/crx/server/-/jcr:root/content/dam/my-site';
+    $scope.task_src = 'http://localhost:4502/crx/server/crx.default/jcr:root/content/dam/my-site';
 
     $scope.task_dst = '/content/dam/my-site';
 
@@ -151,12 +151,12 @@ angular.module('acs-tools-vlt-rcp-app', ['acsCoral', 'ACS.Tools.notifications'])
     };
 
     $scope.create = function () {
-        var i = 0,
+        var src =  $scope.task_src.replace("://","://"+$scope.task_src_credentials+"@"), i = 0,
             excludes = [],
             cmd = {
                 "cmd": "create",
                 "id": $scope.task_id,
-                "src": $scope.task_src,
+                "src": src,
                 "dst": $scope.task_dst,
                 "batchsize": $scope.task_batchSize || 1024,
                 "update": $scope.checkboxModel.update,
@@ -165,7 +165,6 @@ angular.module('acs-tools-vlt-rcp-app', ['acsCoral', 'ACS.Tools.notifications'])
                 "noOrdering": $scope.checkboxModel.noOrdering,
                 "throttle": $scope.task_throttle || 0
             };
-
         if ($scope.task_resumeFrom !== "") {
             cmd.resumeFrom = $scope.task_resumeFrom;
         }
@@ -192,7 +191,7 @@ angular.module('acs-tools-vlt-rcp-app', ['acsCoral', 'ACS.Tools.notifications'])
 
 
     $scope.reset = function() {
-        var taskSrc = 'http://admin:admin@localhost:4502/crx/server/-/jcr:root/content/dam/my-site',
+        var taskSrc = 'http://localhost:4502/crx/server/crx.default/jcr:root/content/dam/my-site',
             taskDst = '/content/dam/my-site',
             taskBatchSize = '1024',
             taskThrottle = '',
@@ -227,4 +226,19 @@ angular.module('acs-tools-vlt-rcp-app', ['acsCoral', 'ACS.Tools.notifications'])
         }
     }, 5000);
 
-}]);
+}]).filter('removeCredentials', function() {
+    return function(input) {
+        /*
+        The regex causes jslint error
+         You can 'fix' the warning by telling JSLint to ignore it: add regexp: true to your JSLint settings at the top of the file.
+         http://stackoverflow.com/questions/10793814/how-to-rectify-insecure-error-in-jslint
+         */
+        var segments = input.match(/(\bhttps?:\/\/[\S]+:)([\S]+)(@\S*)/);
+        if (segments.length === 4) {
+           return segments[1] + '******' + segments[3];
+        } else {
+            return input;
+        }
+        /* jshint ignore:end */
+    };
+});
