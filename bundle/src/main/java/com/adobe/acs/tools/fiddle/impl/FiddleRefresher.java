@@ -21,11 +21,14 @@ package com.adobe.acs.tools.fiddle.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+/**
+ * This interface is used by the FiddleRunServlet to tell the Fiddle Resource Provider to emit a change event so the Fiddle Script can be purged from the internal script cache and avoid executing stale scripts.
+ */
 @ProviderType
-public interface FiddleResourceProvider {
+public interface FiddleRefresher {
     /**
      * Method that emits a change event for the AEM Fiddle synthetic resource.
      * @param path the script path to emit the change for
      */
-    void emitFiddleScriptChange(String path);
+    void refresh(String path);
 }

@@ -46,7 +46,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 @SuppressWarnings("serial")
-@SlingServlet(resourceTypes = "acs-tools/components/aemfiddle", selectors = "run", methods = "POST")
+@SlingServlet(resourceTypes = "acs-tools/components/aemfiddle", selectors = "run", extensions = "html", methods = "POST")
 public class RunFiddleServlet extends SlingAllMethodsServlet {
     private static final Logger log = LoggerFactory.getLogger(RunFiddleServlet.class);
 
@@ -63,7 +63,7 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
     private File fileRoot;
 
     @Reference
-    private FiddleResourceProvider fiddleResourceProvider;
+    private FiddleRefresher fiddleRefresher;
 
     @Reference
     private SlingSettingsService slingSettingsService;
@@ -85,7 +85,7 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
 
         // doing this as a synchronous event so we ensure that
         // the JSP has been invalidated
-        fiddleResourceProvider.emitFiddleScriptChange(script.getPath());
+        fiddleRefresher.refresh(script.getPath());
 
         final RequestDispatcherOptions options = new RequestDispatcherOptions();
         options.setForceResourceType(Constants.PSEDUO_COMPONENT_PATH);
@@ -97,7 +97,7 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
         try {
             request.getResourceResolver().adaptTo(Session.class).getWorkspace().getObservationManager().setUserData("acs-aem-tools.aem-fiddle");
         } catch (RepositoryException e) {
-            log.warn("Unable to set [ user-event-data = acs-aem-tools.test-page-generator ] for fiddle execution.", e);
+            log.warn("Unable to set [ user-event-data = acs-aem-tools.aem-fiddle ] for fiddle execution.", e);
         }
 
         RequestDispatcher dispatcher = request.getRequestDispatcher(resource, options);

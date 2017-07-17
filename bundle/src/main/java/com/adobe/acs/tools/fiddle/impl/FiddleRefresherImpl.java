@@ -20,12 +20,12 @@
 package com.adobe.acs.tools.fiddle.impl;
 
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.observation.ResourceChange;
-import org.apache.sling.spi.resource.provider.ProviderContext;
 import org.apache.sling.spi.resource.provider.ResolveContext;
 import org.apache.sling.spi.resource.provider.ResourceContext;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
@@ -38,15 +38,21 @@ import java.util.Iterator;
 import java.util.List;
 
 @Component
-@Property(
-        name = ResourceProvider.PROPERTY_ROOT,
-        value = "/apps/acs-tools/components/aemfiddle/fiddle"
-)
-@Service(value = {ResourceProvider.class, FiddleResourceProvider.class})
-public class FiddleResourceProviderImpl extends ResourceProvider implements FiddleResourceProvider {
-    private static final Logger log = LoggerFactory.getLogger(FiddleResourceProviderImpl.class);
+@Properties({
+    @Property(
+            name = ResourceProvider.PROPERTY_NAME,
+            value = "acs-aem-tools.aem-fiddle"
+    ),
+    @Property(
+            name = ResourceProvider.PROPERTY_ROOT,
+            value = "/apps/acs-tools/components/aemfiddle/fiddle"
+    )
+})
+@Service(value = {ResourceProvider.class, FiddleRefresher.class})
+public class FiddleRefresherImpl extends ResourceProvider<Object> implements FiddleRefresher {
+    private static final Logger log = LoggerFactory.getLogger(FiddleRefresherImpl.class);
 
-    private volatile ProviderContext providerContext;
+    //private volatile ProviderContext providerContext;
 
     public Resource getResource(ResolveContext ctx, String path, ResourceContext resourceContext, Resource parent) {
         final ResourceResolver resourceResolver = ctx.getResourceResolver();
@@ -69,39 +75,22 @@ public class FiddleResourceProviderImpl extends ResourceProvider implements Fidd
         return null;
     }
 
-    public void start(ProviderContext ctx) {
-        super.start(ctx);
-        synchronized (providerContext) {
-            providerContext = ctx;
-        }
-    }
+    public void refresh(String path) {
+        if (getProviderContext() != null) {
+            final List<ResourceChange> resourceChangeList = new ArrayList<ResourceChange>();
+            final ResourceChange resourceChange = new ResourceChange(
+                    ResourceChange.ChangeType.CHANGED,
+                    path,
+                    false,
+                    Collections.<String>emptySet(),
+                    Collections.<String>emptySet(),
+                    Collections.<String>emptySet()
+            );
 
-    public void stop() {
-        super.stop();
-        synchronized (providerContext) {
-            providerContext = null;
-        }
-    }
-
-    public void emitFiddleScriptChange(String path) {
-        if (providerContext != null) {
-            synchronized (providerContext) {
-                final List<ResourceChange> resourceChangeList = new ArrayList<ResourceChange>();
-                final ResourceChange resourceChange = new ResourceChange(
-                        ResourceChange.ChangeType.CHANGED,
-                        path,
-                        false,
-                        Collections.<String>emptySet(),
-                        Collections.<String>emptySet(),
-                        Collections.<String>emptySet()
-                );
-
-                resourceChangeList.add(resourceChange);
-                providerContext.getObservationReporter().reportChanges(resourceChangeList, false);
-            }
+            resourceChangeList.add(resourceChange);
+            getProviderContext().getObservationReporter().reportChanges(resourceChangeList, false);
         } else {
-            log.warn("Unable to obtain a Observation Changer for AEM Fiddel script resource provider");
+            log.warn("Unable to obtain a Observation Changer for AEM Fiddle script resource provider");
         }
     }
-
 }
