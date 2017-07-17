@@ -29,6 +29,7 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.api.wrappers.SlingHttpServletRequestWrapper;
+import org.apache.sling.commons.classloader.ClassLoaderWriter;
 import org.apache.sling.settings.SlingSettingsService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -67,6 +68,9 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
 
     @Reference
     private SlingSettingsService slingSettingsService;
+
+    @Reference
+    private ClassLoaderWriter classLoaderWriter;
 
     @Override
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response)
@@ -120,7 +124,10 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
         }
     }
 
+
     private void clearCompiledFiddle(final ResourceResolver resourceResolver) {
+        classLoaderWriter.delete("/apps/org/apache");
+
         final Resource varClasses = resourceResolver.getResource(VAR_CLASSES);
 
         if (varClasses != null) {
@@ -187,5 +194,4 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
             }
         }
     }
-
 }
