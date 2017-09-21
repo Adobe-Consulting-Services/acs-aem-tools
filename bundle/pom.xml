@@ -63,7 +63,7 @@
                 <artifactId>maven-sling-plugin</artifactId>
                 <configuration>
                     <slingUrl>http://${crx.host}:${crx.port}/apps/acs-tools/install</slingUrl>
-                    <usePut>true</usePut>
+                    <deploymentMethod>SlingPostServlet</deploymentMethod>
                 </configuration>
             </plugin>
             <plugin>
