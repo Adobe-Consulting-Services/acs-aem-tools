@@ -48,8 +48,7 @@
          ng-show="result.explain.propertyIndexes || result.explain.traversal">
         <div ng-show="result.explain.propertyIndexes">
             Oak indexes used:
-            <span
-                    ng-repeat="propertyIndex in result.explain.propertyIndexes">{{propertyIndex}}{{$last ? '' : ', '}}</span>
+            <span ng-repeat="propertyIndex in result.explain.propertyIndexes track by $index">{{propertyIndex}}{{$last ? '' : ', '}}</span>
         </div>
 
         <div ng-show="result.explain.traversal">
