@@ -22,7 +22,6 @@ package com.adobe.acs.tools.fiddle.impl;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
-import org.apache.sling.api.SlingConstants;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.request.RequestDispatcherOptions;
@@ -34,8 +33,6 @@ import org.apache.sling.settings.SlingSettingsService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
-import org.osgi.service.event.Event;
-import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,12 +43,10 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.Map;
 
 @SuppressWarnings("serial")
-@SlingServlet(resourceTypes = "acs-tools/components/aemfiddle", selectors = "run", methods = "POST")
+@SlingServlet(resourceTypes = "acs-tools/components/aemfiddle", selectors = "run", extensions = "html", methods = "POST")
 public class RunFiddleServlet extends SlingAllMethodsServlet {
     private static final Logger log = LoggerFactory.getLogger(RunFiddleServlet.class);
 
@@ -68,7 +63,7 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
     private File fileRoot;
 
     @Reference
-    private EventAdmin eventAdmin;
+    private FiddleRefresher fiddleRefresher;
 
     @Reference
     private SlingSettingsService slingSettingsService;
@@ -90,9 +85,7 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
 
         // doing this as a synchronous event so we ensure that
         // the JSP has been invalidated
-        Map<String, String> props = Collections.singletonMap(
-                SlingConstants.PROPERTY_PATH, script.getPath());
-        eventAdmin.sendEvent(new Event(SlingConstants.TOPIC_RESOURCE_CHANGED, props));
+        fiddleRefresher.refresh(script.getPath());
 
         final RequestDispatcherOptions options = new RequestDispatcherOptions();
         options.setForceResourceType(Constants.PSEDUO_COMPONENT_PATH);
@@ -104,7 +97,7 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
         try {
             request.getResourceResolver().adaptTo(Session.class).getWorkspace().getObservationManager().setUserData("acs-aem-tools.aem-fiddle");
         } catch (RepositoryException e) {
-            log.warn("Unable to set [ user-event-data = acs-aem-tools.test-page-generator ] for fiddle execution.", e);
+            log.warn("Unable to set [ user-event-data = acs-aem-tools.aem-fiddle ] for fiddle execution.", e);
         }
 
         RequestDispatcher dispatcher = request.getRequestDispatcher(resource, options);
@@ -126,6 +119,7 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
             }
         }
     }
+
 
     private void clearCompiledFiddle(final ResourceResolver resourceResolver) {
         final Resource varClasses = resourceResolver.getResource(VAR_CLASSES);
@@ -194,5 +188,4 @@ public class RunFiddleServlet extends SlingAllMethodsServlet {
             }
         }
     }
-
 }
