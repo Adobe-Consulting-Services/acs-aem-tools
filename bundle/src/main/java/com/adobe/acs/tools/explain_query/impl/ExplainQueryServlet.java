@@ -69,13 +69,7 @@ import javax.management.openmbean.CompositeData;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -278,27 +272,27 @@ public class ExplainQueryServlet extends SlingAllMethodsServlet {
         final String plan = firstRow.getValue("plan").getString();
         json.put("plan", plan);
 
-        final JSONArray propertyIndexes = new JSONArray();
+        final Set<String> propertyIndexes = new HashSet<String>();
 
         final Matcher propertyMatcher = PROPERTY_INDEX_PATTERN.matcher(plan);
         /* Property Index */
         while (propertyMatcher.find()) {
             final String match = propertyMatcher.group(1);
             if (StringUtils.isNotBlank(match)) {
-                propertyIndexes.put(StringUtils.stripToEmpty(match));
+                propertyIndexes.add(StringUtils.stripToEmpty(match));
             }
         }
 
-        if (propertyIndexes.length() > 0) {
-            json.put("propertyIndexes", propertyIndexes);
+        if (!propertyIndexes.isEmpty()) {
+            json.put("propertyIndexes", new JSONArray().put(propertyIndexes));
         }
 
         final Matcher filterMatcher = FILTER_PATTERN.matcher(plan);
         if (filterMatcher.find()) {
             /* Filter (nodeType index) */
 
-            propertyIndexes.put("nodeType");
-            json.put("propertyIndexes", propertyIndexes);
+            propertyIndexes.add("nodeType");
+            json.put("propertyIndexes", new JSONArray().put(propertyIndexes));
             json.put("slow", true);
         }
 

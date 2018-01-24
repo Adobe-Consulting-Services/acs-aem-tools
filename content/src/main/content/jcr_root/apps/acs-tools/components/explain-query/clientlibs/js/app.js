@@ -67,7 +67,7 @@ angular.module('acs-tools-explain-query-app', ['ACS.Tools.notifications', 'acsCo
                 success(function (data, status, headers, config) {
                     $scope.result = data || {};
                     NotificationsService.running(false);
-                    NotificationsService.ad('success', 'SUCCESS', 'Review your query explanation');
+                    NotificationsService.add('success', 'SUCCESS', 'Review your query explanation');
 
                 }).
                 error(function (data, status, headers, config) {
