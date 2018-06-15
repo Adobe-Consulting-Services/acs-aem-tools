@@ -61,8 +61,9 @@
             <div class="coral-Selector">
                 <label class="coral-Selector-option auto-refresh-label">
                     <input class="coral-Selector-input" type="checkbox" ng-model="checkboxModel.autoRefresh">
-                    <span class="coral-Selector-description">
-                        <i class="coral-Icon coral-Icon--refresh coral-Selector-icon"></i>Auto Refresh
+                    <span class="coral-Selector-description auto-refresh-description">
+                        <i class="coral-Icon coral-Icon--refresh coral-Selector-icon"></i>
+                        <span class="auto-refresh-text">Auto Refresh</span>
                     </span>
                 </label>
             </div>

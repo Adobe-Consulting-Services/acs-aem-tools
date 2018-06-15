@@ -158,7 +158,7 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
                 "cmd": "create",
                 "id": $scope.task_id,
                 "src": $scope.task_src,
-                "srcCreds": $scope.task_src_credentials,
+                "srcCreds": $scope.task_src_username + ":" + $scope.task_src_password,
                 "dst": $scope.task_dst,
                 "batchsize": $scope.task_batchSize || 1024,
                 "update": $scope.checkboxModel.update,

@@ -36,22 +36,35 @@
                 <input class="coral-Form-field coral-Textfield" type="text"
                        ng-model="task_id"
                        name="id"/>
-
+                
+                <!-- Credintial Fields -->
                 <label class="coral-Form-fieldlabel">Source</label>
                 <input class="coral-Form-field coral-Textfield" type="text"
                        ng-model="task_src"
                        name="src"
                        placeholder="http://localhost:4502/crx/server/-/jcr:root/content/dam/my-site"/>
                 <div class="coral-Form-fieldwrapper">
-                    <label class="coral-Form-fieldlabel">Source Credentials
-                    </label>
-                    <input class="coral-Form-field coral-Textfield" type="password"
-                           ng-model="task_src_credentials"
-                           name="src_password"
-                    /> <span class="coral-Form-fieldinfo coral-Icon coral-Icon--infoCircle coral-Icon--sizeS" data-init="quicktip" data-quicktip-type="info" data-quicktip-arrow="right" data-quicktip-content="userid:password"></span>
+                    <label class="coral-Form-fieldlabel">Source User Name</label>
+                    <input class="coral-Form-field coral-Textfield" type="text"
+                           ng-model="task_src_username"
+                           name="username"/>
                 </div>
 
+                <div class="coral-Form-fieldwrapper">
+                    <label class="coral-Form-fieldlabel">Source Password</label>
+                    <input class="coral-Form-field coral-Textfield" ng-attr-type="{{showpassword ? 'text' : 'password'}}"
+                           ng-model="task_src_password"
+                           name="passsword"/>
+                </div>
+                <label class="coral-Form-fieldlabel">Show Password</label>
+                <span class="coral-Form-field coral-Switch">
+                    <input class="coral-Switch-input" type="checkbox"
+                           name="showpassword"
+                           ng-model="showpassword"><span class="coral-Switch-offLabel">No</span><span class="coral-Switch-onLabel">Yes</span>
+                </span>
+                <!-- // Credintial Fields -->
 
+                <!-- Switch Options -->
                 <label class="coral-Form-fieldlabel">Destination</label>
                 <input class="coral-Form-field coral-Textfield" type="text"
                        ng-model="task_dst"
@@ -85,7 +98,9 @@
                            name="noOrdering"
                            ng-model="checkboxModel.noOrdering"><span class="coral-Switch-offLabel">No</span><span class="coral-Switch-onLabel">Yes</span>
                 </span>
+                <!-- // Switch Options -->
 
+                <!-- Extra Options -->
                 <label class="coral-Form-fieldlabel">Resume from</label>
                 <input class="coral-Form-field coral-Textfield" type="text"
                        ng-model="task_resumeFrom"
@@ -121,6 +136,7 @@
                         </ul>
                     </div>
                 </div>
+                <!-- // Extra Options -->
             </section>
         </form>
     </div>
