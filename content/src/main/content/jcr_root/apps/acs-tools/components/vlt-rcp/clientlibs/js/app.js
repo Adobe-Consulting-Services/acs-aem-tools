@@ -235,7 +235,7 @@ angular.module('acs-tools-vlt-rcp-app', ['acsCoral', 'ACS.Tools.notifications'])
          http://stackoverflow.com/questions/10793814/how-to-rectify-insecure-error-in-jslint
          */
         var segments = input.match(/(\bhttps?:\/\/[\S]+:)([\S]+)(@\S*)/);
-        if (segments.length === 4) {
+        if (segments && segments.length === 4) {
            return segments[1] + '******' + segments[3];
         } else {
             return input;
