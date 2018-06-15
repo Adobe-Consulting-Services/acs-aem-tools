@@ -20,9 +20,10 @@
 
 /*global angular: false */
 
-angular.module('acs-tools-vlt-rcp-app', ['acsCoral', 'ACS.Tools.notifications']).controller('MainCtrl',
-    [ '$scope', '$http', '$timeout', '$interval', 'NotificationsService',
-        function ($scope, $http, $timeout, $interval, NotificationsService) {
+angular
+.module('acs-tools-vlt-rcp-app', ['acsCoral', 'ACS.Tools.notifications'])
+.controller('MainCtrl', ['$scope', '$http', '$timeout', '$interval', 'NotificationsService',
+function ($scope, $http, $timeout, $interval, NotificationsService) {
 
     $scope.rcp_uris = ['/system/jackrabbit/filevault/rcp', '/libs/granite/packaging/rcp'];
 
@@ -54,8 +55,8 @@ angular.module('acs-tools-vlt-rcp-app', ['acsCoral', 'ACS.Tools.notifications'])
     $scope.vltMissing = true;
 
     /*
-     * Loads the tasks
-     */
+    * Loads the tasks
+    */
     $scope.init = function (rcpUris) {
 
         $scope.rcp_uris = rcpUris || $scope.rcp_uris;
@@ -94,8 +95,8 @@ angular.module('acs-tools-vlt-rcp-app', ['acsCoral', 'ACS.Tools.notifications'])
     };
 
     /*
-     * Start task
-     */
+    * Start task
+    */
     $scope.start = function (task) {
         var cmd = {
             "cmd": "start",
@@ -113,8 +114,8 @@ angular.module('acs-tools-vlt-rcp-app', ['acsCoral', 'ACS.Tools.notifications'])
     };
 
     /*
-     * Stop task
-     */
+    * Stop task
+    */
     $scope.stop = function (task) {
         var cmd = {
             "cmd": "stop",
@@ -132,8 +133,8 @@ angular.module('acs-tools-vlt-rcp-app', ['acsCoral', 'ACS.Tools.notifications'])
     };
 
     /*
-     * Remove task
-     */
+    * Remove task
+    */
     $scope.remove = function (task) {
         var cmd = {
             "cmd": "remove",
@@ -227,16 +228,17 @@ angular.module('acs-tools-vlt-rcp-app', ['acsCoral', 'ACS.Tools.notifications'])
         }
     }, 5000);
 
-}]).filter('removeCredentials', function() {
+}])
+.filter('removeCredentials', function() {
     return function(input) {
         /*
         The regex causes jslint error
-         You can 'fix' the warning by telling JSLint to ignore it: add regexp: true to your JSLint settings at the top of the file.
-         http://stackoverflow.com/questions/10793814/how-to-rectify-insecure-error-in-jslint
-         */
+        You can 'fix' the warning by telling JSLint to ignore it: add regexp: true to your JSLint settings at the top of the file.
+        http://stackoverflow.com/questions/10793814/how-to-rectify-insecure-error-in-jslint
+        */
         var segments = input.match(/(\bhttps?:\/\/[\S]+:)([\S]+)(@\S*)/);
         if (segments && segments.length === 4) {
-           return segments[1] + '******' + segments[3];
+        return segments[1] + '******' + segments[3];
         } else {
             return input;
         }
