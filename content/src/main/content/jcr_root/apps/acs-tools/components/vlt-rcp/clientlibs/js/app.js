@@ -275,4 +275,18 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
         }
         /* jshint ignore:end */
     };
+})
+.filter('truncate', function() {
+    return function(input, limit) {
+        input = input || '';
+
+        if(input.length < limit) {
+            return input;
+        } else {
+            var half = limit / 2,
+                left = input.substring(0, half),
+                right = input.substring(input.length - half, input.length);
+            return left + '...' + right; 
+        }
+    };
 });

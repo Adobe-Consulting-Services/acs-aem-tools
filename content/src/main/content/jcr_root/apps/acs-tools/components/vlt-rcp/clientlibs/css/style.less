@@ -37,13 +37,18 @@
     .coral-Accordion-item {
       border: 1px #dfdfdf solid;
       .coral-Accordion-header {
-        height: 2.5rem;
+        height: auto;
+
         > i {
           min-width: 18px;
         }
         .task-actions {
           float: right;
-          margin-right: 3em;
+          margin-right: 0;
+          > button {
+            padding-left: 0;
+            padding-right: 0;
+          }
         }
         .coral-Accordion-title {
           font-size: 1.125rem

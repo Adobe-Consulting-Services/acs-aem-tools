@@ -99,6 +99,9 @@
             <p>
                 Click on the <i class="coral-Icon coral-Icon--duplicate"></i> icon to create a new task with duplicate values.
             </p>
+            <p>
+                When the "<i class="coral-Icon coral-Icon--refresh"></i> Auto Refresh" button is enabled, tasks will flash to indicate an update
+            </p>
 
             <ul class="coral-Accordion coral-Collapsible--block tasks"  id="tasks">
                 <li class="coral-Accordion-item" 
@@ -109,7 +112,9 @@
                         ng-click="taskExpandedStatuses[$index] = !taskExpandedStatuses[$index]; task.expanded = taskExpandedStatuses[$index]">
                         <i class="coral-Icon coral-Icon--sizeS" ng-class="{'coral-Icon--chevronRight': !task.expanded, 'coral-Icon--chevronDown': task.expanded}"></i>
                         <span class="coral-Accordion-title">{{ task.id }}</span>
-                        <span class="coral-Accordion-subtitle">{{ task.status.state }}</span>
+                        <span class="coral-Accordion-subtitle">
+                            status: {{ task.status.state }} | <b>src: </b>{{ task.src | removeCredentials | truncate:50 }} | <b>dest: </b> {{ task.dst  | truncate:50 }}
+                        </span>
                         <!-- Task Action buttons -->
                         <span class="task-actions">
                             <button class="coral-Button--quiet"
@@ -138,6 +143,7 @@
                             </button>
                         </span>
                         <!-- // Task Action buttons -->
+                        <br/>
                     </h3>
                     <div class="coral-Accordion-content" ng-style="{'display' : task.expanded ? 'block' : 'none'}">
                         
@@ -157,7 +163,7 @@
                         <div class="task-settings">
                             <h3>Task Settings</h3>
                             <ul>
-                                <li><b>Source:</b> {{ task.src | removeCredentials }}</li>
+                                <li><b>Source:</b> {{ task.src | removeCredentials}}</li>
                                 <li><b>Destination:</b> {{ task.dst }}</li>
                                 <li><b>Recursive:</b> {{ task.recursive }}</li>
                                 <li><b>Batch size:</b> {{ task.batchsize }}</li>
