@@ -94,6 +94,36 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
             });
     };
 
+    /**
+     * Set the scope values from a task
+     * Used for the duplicate functionality
+     * @param {*} task The task to duplicate
+     */
+    $scope.duplicate = function (task) {
+        $scope.task_id = task.id + "-copy"; // unique
+        $scope.task_src = task.src;
+        $scope.task_dst = task.dst;
+        $scope.task_batchSize = task.batchsize;
+        $scope.task_throttle = task.throttle;
+        $scope.checkboxModel = {
+            recursive: task.recursive,
+            update: task.update,
+            onlyNewer: task.onlyNewer,
+            noOrdering: task.noOrdering,
+            autoRefresh: false
+        };
+
+        if (task.excludes) {
+            $scope.excludes = task.excludes.map(function(exclude){
+                return {value: exclude};
+            });
+        }
+
+        if (task.resumeFrom) {
+            $scope.task_resumeFrom = task.resumeFrom;
+        }
+    };
+
     /*
     * Start task
     */

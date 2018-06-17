@@ -162,6 +162,16 @@
                               <i class="coral-Icon" ng-class="task.expanded ? 'coral-Icon--treeCollapse' : 'coral-Icon--treeExpand'"></i>
                             </button>
                             <button class="coral-Button coral-Button--square coral-Button--quiet"
+                                ng-click="duplicate(task)"
+                                data-target="#create-new-task-modal"
+                                data-toggle="modal">
+                                <i  class="coral-Icon coral-Icon--duplicate"
+                                    data-init="quicktip" 
+                                    data-quicktip-type="info" 
+                                    data-quicktip-arrow="top" 
+                                    data-quicktip-content="New duplicate task"></i>
+                            </button>
+                            <button class="coral-Button coral-Button--square coral-Button--quiet"
                                 ng-show="task.status.state == 'NEW'"
                                 ng-click="start(task)">
                               <i class="coral-Icon coral-Icon--playCircle"></i>
