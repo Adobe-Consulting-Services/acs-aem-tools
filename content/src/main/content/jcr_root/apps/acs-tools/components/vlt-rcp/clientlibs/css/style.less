@@ -23,20 +23,41 @@
   .tasks {
     width: 100%;
     margin-bottom: 50px;
-
-    td {
-      text-align: left;
-      vertical-align: top;
+    .coral-Accordion-item {
+      opacity: 1;
     }
-
-    td.actions {
-      text-align: center;
-      .action-button {
-        margin: 10px auto;
+    .coral-Accordion-item.ng-enter {
+      -webkit-transition: 1s;
+      transition: 1s;
+      opacity: 0;
+    }
+    .coral-Accordion-item.ng-enter-active {
+      opacity: 1;
+    }
+    .coral-Accordion-item {
+      border: 1px #dfdfdf solid;
+      .coral-Accordion-header {
+        height: 2.5rem;
+        > i {
+          min-width: 18px;
+        }
+        .task-actions {
+          float: right;
+          margin-right: 3em;
+        }
+        .coral-Accordion-title {
+          font-size: 1.125rem
+        }
       }
-    }
-    .no-padding {
-      padding: 0;
+      .coral-Accordion-content {
+        .task-status, .task-settings {
+          ul {
+            list-style: none;
+            padding: 0;
+            margin-left: 1em;
+          }
+        }
+      }
     }
   }
 
@@ -54,7 +75,10 @@
 }
 
 #create-new-task-modal {
-
+  width: 80%;
+  position: absolute;
+  top: 0 !important; // for some reason, the CUI modal has negative top value
+  margin-top: 0 !important; // for some reason, the CUI modal has negative margin value
   .coral-Modal-body {
     padding-left: 6em;
     padding-right: 6em;

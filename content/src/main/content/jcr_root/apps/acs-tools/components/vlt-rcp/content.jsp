@@ -29,7 +29,7 @@
 %><div  ng-controller="MainCtrl"
         ng-init="init(['${rcpPath}', '${legacyRcpPath}']);">
 
-    <%-- VLT-RCP Not installed --%>
+    <!-- VLT-RCP Not installed Message -->
     <div ng-show="vltMissing">
         <div acs-coral-alert data-alert-type="error" data-alert-size="large"
             data-alert-title="VLT-RCP servlet missing, inactive or unreachable">
@@ -54,9 +54,12 @@
                 </ol>
         </div>
     </div>
+    <!-- // VLT-RCP Not installed Message -->
+
 
     <div ng-show="!vltMissing" class="auto-refresh-section">
-
+        
+        <!-- Header buttons: add/refresh -->
         <div class="coral-ButtonGroup top-button-group">
             <div class="coral-Selector">
                 <label class="coral-Selector-option auto-refresh-label">
@@ -72,82 +75,97 @@
                     data-target="#create-new-task-modal"
                     data-toggle="modal"><i class="icon-add"></i> Add Task</button>
         </div>
+        <!-- // Header buttons: add/refresh -->
 
-        <%-- No Tasks Defined --%>
+        <!-- No tasks defined message -->
         <div class="section" ng-show="tasks.length == 0">
-
-            <%-- No Tasks Defined --%>
             <div acs-coral-alert data-alert-type="notice" data-alert-size="large"
                  data-alert-title="No tasks defined" data-dismissible="false">
                     No VLT-RCP tasks have been defined.
-
                     <ul>
                         <li><a href="#"
-                                 data-target="#create-new-task-modal"
-                                 data-toggle="modal">Create a new VLT-RCP task.</a></li>
+                               data-target="#create-new-task-modal"
+                               data-toggle="modal">Create a new VLT-RCP task.</a>
+                        </li>
                     </ul>
-
             </div>
-
         </div>
+        <!-- // No tasks defined message -->
 
-        <%-- Tasks Defined --%>
+        <!-- Tasks accordion section -->
         <div class="section" ng-show="tasks.length > 0">
 
             <h2 acs-coral-heading>Current Tasks</h2>
-
             <p>
-                Click on the <i class="coral-Icon coral-Icon--treeExpand"></i> to view the details for each Task.
+                Click on the <i class="coral-Icon coral-Icon--duplicate"></i> icon to create a new task with duplicate values.
             </p>
 
-            <table class="coral-Table data tasks">
-                <thead>
-                    <tr class="coral-Table-row">
-                        <th class="coral-Table-headerCell">Task Id</th>
-                        <th class="coral-Table-headerCell">Status</th>
-                        <th class="coral-Table-headerCell">Settings</th>
-                        <th class="coral-Table-headerCell">Actions</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <tr class="coral-Table-row" ng-repeat="task in tasks"
-                        ng-class="{ expanded : task.expanded }">
-                        <td class="coral-Table-cell">
-                            {{ task.id }}
-                        </td>
-
-                        <td class="coral-Table-cell">
-                            <div>{{ task.status.state }}</div>
-                            <div ng-show="task.expanded">
-
-                                <ul class="no-padding">
-                                    <li>Current path: {{ task.status.currentPath || 'N/A' }}</li>
-                                    <li>Last saved path:
-                                        {{ task.status.lastSavedPath || 'N/A' }}</li>
-                                    <li>Total nodes: {{ task.status.totalNodes }}</li>
-                                    <li>Total size: {{ task.status.totalSize }}</li>
-                                    <li>Current size: {{ task.status.currentSize }}</li>
-                                    <li>Current nodes: {{ task.status.currentNodes }}</li>
-                                </ul>
-                            </div>
-                        </td>
-                        <td class="coral-Table-cell">
-                            <ul class="no-padding">
-                                <li>Source: {{ task.src | removeCredentials
-                                    }}</li>
-                                <li>Destination: {{ task.dst }}</li>
+            <ul class="coral-Accordion coral-Collapsible--block tasks"  id="tasks">
+                <li class="coral-Accordion-item" 
+                    ng-class="{ 'is-active' :  task.expanded}"
+                    ng-repeat="task in tasks"
+                    ng-init="task.expanded = taskExpandedStatuses[$index]">
+                    <h3 class="coral-Accordion-header" 
+                        ng-click="taskExpandedStatuses[$index] = !taskExpandedStatuses[$index]; task.expanded = taskExpandedStatuses[$index]">
+                        <i class="coral-Icon coral-Icon--sizeS" ng-class="{'coral-Icon--chevronRight': !task.expanded, 'coral-Icon--chevronDown': task.expanded}"></i>
+                        <span class="coral-Accordion-title">{{ task.id }}</span>
+                        <span class="coral-Accordion-subtitle">{{ task.status.state }}</span>
+                        <!-- Task Action buttons -->
+                        <span class="task-actions">
+                            <button class="coral-Button--quiet"
+                                title="Create new duplicate task with this tasks values"
+                                ng-click="duplicate(task)"
+                                data-target="#create-new-task-modal"
+                                data-toggle="modal">
+                                <i  class="coral-Icon coral-Icon--sizeS coral-Icon--duplicate"></i>
+                            </button>
+                            <button class="coral-Button--quiet"
+                                title="Start task"
+                                ng-show="task.status.state == 'NEW'"
+                                ng-click="start(task)">
+                                <i class="coral-Icon coral-Icon--sizeS coral-Icon--playCircle"></i>
+                            </button>
+                            <button class="coral-Button--quiet"
+                                title="Stop task"
+                                ng-show="task.status.state == 'RUNNING'"
+                                ng-click="stop(task)">
+                                <i class="coral-Icon coral-Icon--sizeS coral-Icon--stopCircle"></i>
+                            </button>
+                            <button class="coral-Button--quiet"
+                                title="Delete Task"
+                                ng-click="remove(task)">
+                                <i class="coral-Icon coral-Icon--sizeS coral-Icon--delete"></i>
+                            </button>
+                        </span>
+                        <!-- // Task Action buttons -->
+                    </h3>
+                    <div class="coral-Accordion-content" ng-style="{'display' : task.expanded ? 'block' : 'none'}">
+                        
+                        <div class="task-status">
+                            <h3>Task Status</h3>
+                            <ul>
+                                <li><b>State:</b> {{ task.status.state }}</li>
+                                <li><b>Current path:</b> {{ task.status.currentPath || 'N/A' }}</li>
+                                <li><b>Last saved path:</b> {{ task.status.lastSavedPath || 'N/A' }}</li>
+                                <li><b>Total nodes:</b> {{ task.status.totalNodes }}</li>
+                                <li><b>Total size:</b> {{ task.status.totalSize }}</li>
+                                <li><b>Current size:</b> {{ task.status.currentSize }}</li>
+                                <li><b>Current nodes:</b> {{ task.status.currentNodes }}</li>
                             </ul>
+                        </div>
 
-                            <ul ng-show="task.expanded" class="no-padding">
-                                <li>Recursive: {{ task.recursive }}</li>
-                                <li>Batch size: {{ task.batchsize }}</li>
-                                <li>Update: {{ task.update }}</li>
-                                <li>Only newer: {{ task.onlyNewer }}</li>
-                                <li>No ordering: {{ task.noOrdering }}</li>
-                                <li>Throttle: {{ task.throttle || 0}} seconds</li>
-                                <li>Resume from: {{ task.resumeFrom || 'Not set'}}</li>
-
+                        <div class="task-settings">
+                            <h3>Task Settings</h3>
+                            <ul>
+                                <li><b>Source:</b> {{ task.src | removeCredentials }}</li>
+                                <li><b>Destination:</b> {{ task.dst }}</li>
+                                <li><b>Recursive:</b> {{ task.recursive }}</li>
+                                <li><b>Batch size:</b> {{ task.batchsize }}</li>
+                                <li><b>Update:</b> {{ task.update }}</li>
+                                <li><b>Only newer:</b> {{ task.onlyNewer }}</li>
+                                <li><b>No ordering:</b> {{ task.noOrdering }}</li>
+                                <li><b>Throttle:</b> {{ task.throttle || 0}} seconds</li>
+                                <li><b>Resume from:</b> {{ task.resumeFrom || 'Not set'}}</li>
                                 <li ng-show="task.excludes.length > 0">
                                     Excludes:
                                     <ul>
@@ -155,41 +173,12 @@
                                     </ul>
                                 </li>
                             </ul>
-                        </td>
-                        <td class="coral-Table-cell actions">
-                            <button class="coral-Button coral-Button--square coral-Button--quiet"
-                                ng-click="task.expanded = !task.expanded">
-                              <i class="coral-Icon" ng-class="task.expanded ? 'coral-Icon--treeCollapse' : 'coral-Icon--treeExpand'"></i>
-                            </button>
-                            <button class="coral-Button coral-Button--square coral-Button--quiet"
-                                ng-click="duplicate(task)"
-                                data-target="#create-new-task-modal"
-                                data-toggle="modal">
-                                <i  class="coral-Icon coral-Icon--duplicate"
-                                    data-init="quicktip" 
-                                    data-quicktip-type="info" 
-                                    data-quicktip-arrow="top" 
-                                    data-quicktip-content="New duplicate task"></i>
-                            </button>
-                            <button class="coral-Button coral-Button--square coral-Button--quiet"
-                                ng-show="task.status.state == 'NEW'"
-                                ng-click="start(task)">
-                              <i class="coral-Icon coral-Icon--playCircle"></i>
-                            </button>
-                            <button class="coral-Button coral-Button--square coral-Button--quiet"
-                                ng-show="task.status.state == 'RUNNING'"
-                                ng-click="stop(task)">
-                              <i class="coral-Icon coral-Icon--stopCircle"></i>
-                            </button>
-                            <button class="coral-Button coral-Button--square coral-Button--quiet"
-                                ng-click="remove(task)">
-                              <i class="coral-Icon coral-Icon--delete"></i>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                        </div>
+                    </div>
+                </li>
+            </ul>
         </div>
+        <!-- // Tasks accordion section -->
 
         <cq:include script="includes/create-task-modal.jsp"/>
     </div>

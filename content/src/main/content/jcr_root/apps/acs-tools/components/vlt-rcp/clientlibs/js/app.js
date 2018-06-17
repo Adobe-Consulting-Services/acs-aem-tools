@@ -18,10 +18,10 @@
  * #L%
  */
 
-/*global angular: false */
+/*global angular,CUI: false */
 
 angular
-.module('acs-tools-vlt-rcp-app', ['acsCoral', 'ACS.Tools.notifications'])
+.module('acs-tools-vlt-rcp-app', ['ngAnimate','acsCoral', 'ACS.Tools.notifications'])
 .controller('MainCtrl', ['$scope', '$http', '$timeout', '$interval', 'NotificationsService',
 function ($scope, $http, $timeout, $interval, NotificationsService) {
 
@@ -54,6 +54,8 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
 
     $scope.vltMissing = true;
 
+    $scope.taskExpandedStatuses = [];
+
     /*
     * Loads the tasks
     */
@@ -80,18 +82,21 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
         });
     };
 
+    /**
+     * Refresh tasks
+     */
     $scope.refresh = function () {
         $http.get($scope.app.uri,
             {
                 params: {ck: (new Date()).getTime()}
             }
-        ).
-            success(function (data, status, headers, config) {
-                $scope.tasks = data.tasks || [];
-            })
-            .error(function (data, status, headers, config) {
-                NotificationsService.add('error', 'ERROR', 'Could not refresh tasks');
-            });
+        )
+        .success(function (data, status, headers, config) {
+            $scope.tasks = data.tasks || [];
+        })
+        .error(function (data, status, headers, config) {
+            NotificationsService.add('error', 'ERROR', 'Could not refresh tasks');
+        });
     };
 
     /**
@@ -139,7 +144,7 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
                 $scope.refresh();
             }).
             error(function (data, status, headers, config) {
-                NotificationsService.add('error', 'ERROR', 'Could not retrieve tasks');
+                NotificationsService.add('error', 'ERROR', 'Error while starting task: '+task.id+'. Please check logs');
             });
     };
 
@@ -181,6 +186,9 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
             });
     };
 
+    /**
+     * Create new task
+     */
     $scope.create = function () {
         var i = 0,
             cmd = {
@@ -206,17 +214,18 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
             });
         }
 
-        $http.post($scope.app.uri, cmd).
-            success(function (data, status, headers, config) {
-                NotificationsService.add('info', 'INFO', 'Task created.');
+        $http
+        .post($scope.app.uri, cmd)
+        .success(function (data, status, headers, config) {
+            NotificationsService.add('info', 'INFO', 'Task created.');
 
-                $scope.refresh();
-                angular.element('#create-new-task-modal').modal('hide');
-                $scope.reset();
-            }).
-            error(function (data, status, headers, config) {
-                NotificationsService.add('error', 'ERROR', data.message);
-            });
+            $scope.refresh();
+            angular.element('#create-new-task-modal').modal('hide');
+            $scope.reset();
+        })
+        .error(function (data, status, headers, config) {
+            NotificationsService.add('error', 'ERROR', data.message);
+        });
     };
 
 
