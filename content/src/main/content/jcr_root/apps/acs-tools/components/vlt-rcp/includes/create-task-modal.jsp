@@ -17,7 +17,7 @@
   ~ limitations under the License.
   ~ #L%
   --%>
-<div id="create-new-task-modal" class="coral-Modal">
+<div id="create-new-task-modal" class="coral-Modal coral-Modal--fullscreen" data-fullscreen="true">
 
     <div class="coral-Modal-header">
         <i class="coral-Modal-typeIcon coral-Icon coral-Icon--sizeS"></i>
@@ -29,40 +29,45 @@
 
     <div class="coral-Modal-body">
 
-        <form name="myForm" class="coral-Form coral-Form--aligned">
+        <form name="myForm" class="coral-Form coral-Form--aligned" autocomplete="off" novalidate>
             <section class="create-new-task">
-
-                <label class="coral-Form-fieldlabel">Task Id</label>
-                <input class="coral-Form-field coral-Textfield" type="text"
-                       ng-model="task_id"
-                       name="id"/>
-                
-                <!-- Credintial Fields -->
-                <label class="coral-Form-fieldlabel">Source</label>
-                <input class="coral-Form-field coral-Textfield" type="text"
-                       ng-model="task_src"
-                       name="src"
-                       placeholder="http://localhost:4502/crx/server/-/jcr:root/content/dam/my-site"/>
+                <!-- Credintial Fields, keep at top to avoid issues with password managers -->
                 <div class="coral-Form-fieldwrapper">
                     <label class="coral-Form-fieldlabel">Source User Name</label>
                     <input class="coral-Form-field coral-Textfield" type="text"
-                           ng-model="task_src_username"
-                           name="username"/>
+                            autocomplete="username"
+                            ng-model="task_src_username"
+                            name="username"/>
                 </div>
 
                 <div class="coral-Form-fieldwrapper">
                     <label class="coral-Form-fieldlabel">Source Password</label>
                     <input class="coral-Form-field coral-Textfield" ng-attr-type="{{showpassword ? 'text' : 'password'}}"
-                           ng-model="task_src_password"
-                           name="passsword"/>
+                            ng-model="task_src_password"
+                            name="passsword"/>
                 </div>
                 <label class="coral-Form-fieldlabel">Show Password</label>
                 <span class="coral-Form-field coral-Switch">
                     <input class="coral-Switch-input" type="checkbox"
-                           name="showpassword"
-                           ng-model="showpassword"><span class="coral-Switch-offLabel">No</span><span class="coral-Switch-onLabel">Yes</span>
+                            name="showpassword"
+                            ng-model="showpassword"><span class="coral-Switch-offLabel">No</span><span class="coral-Switch-onLabel">Yes</span>
                 </span>
                 <!-- // Credintial Fields -->
+                
+                <div class="coral-Form-fieldwrapper">
+                    <label class="coral-Form-fieldlabel">Task Id</label>
+                    <input class="coral-Form-field coral-Textfield" type="text"
+                            ng-model="task_id"
+                            name="task_id"/>
+                </div>
+
+                <div class="coral-Form-fieldwrapper">
+                    <label class="coral-Form-fieldlabel">Source</label>
+                    <input class="coral-Form-field coral-Textfield" type="text"
+                            ng-model="task_src"
+                            name="src"
+                            placeholder="http://localhost:4502/crx/server/-/jcr:root/content/dam/my-site"/>
+                </div>
 
                 <!-- Switch Options -->
                 <label class="coral-Form-fieldlabel">Destination</label>
@@ -121,8 +126,8 @@
 
                 <label class="coral-Form-fieldlabel">Excludes</label>
                 <div class="coral-Form-field excludes">
-                    <a class="addButton" ng-click="addExclude()">
-                        <i class="coral-Icon coral-Icon--addCircle"></i>
+                    <a class="coral-Button" ng-click="addExclude()">
+                        <i class="coral-Icon coral-Icon--addCircle"></i> Add Exclude Rule
                     </a>
                     <div class="add-remove-list" ng-show="excludes.length > 0">
                         <ul ng-repeat="exclude in excludes track by $index">

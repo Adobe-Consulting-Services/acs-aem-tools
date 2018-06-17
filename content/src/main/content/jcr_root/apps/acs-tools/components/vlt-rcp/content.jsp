@@ -121,7 +121,7 @@
                             <div>{{ task.status.state }}</div>
                             <div ng-show="task.expanded">
 
-                                <ul>
+                                <ul class="no-padding">
                                     <li>Current path: {{ task.status.currentPath || 'N/A' }}</li>
                                     <li>Last saved path:
                                         {{ task.status.lastSavedPath || 'N/A' }}</li>
@@ -133,13 +133,13 @@
                             </div>
                         </td>
                         <td class="coral-Table-cell">
-                            <ul>
+                            <ul class="no-padding">
                                 <li>Source: {{ task.src | removeCredentials
                                     }}</li>
                                 <li>Destination: {{ task.dst }}</li>
                             </ul>
 
-                            <ul ng-show="task.expanded">
+                            <ul ng-show="task.expanded" class="no-padding">
                                 <li>Recursive: {{ task.recursive }}</li>
                                 <li>Batch size: {{ task.batchsize }}</li>
                                 <li>Update: {{ task.update }}</li>

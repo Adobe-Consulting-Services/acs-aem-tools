@@ -35,6 +35,9 @@
         margin: 10px auto;
       }
     }
+    .no-padding {
+      padding: 0;
+    }
   }
 
   .top-button-group {
@@ -52,18 +55,19 @@
 
 #create-new-task-modal {
 
-  width: 80%;
-  margin-bottom: 50px;
-  position: absolute;
+  .coral-Modal-body {
+    padding-left: 6em;
+    padding-right: 6em;
+  }
 
   input[type=text], input[type=password] {
-      width: 75%;
+      width: 100%;
   }
   
   .excludes {
-      width: 75%;
+      width: 100%;
       input[type=text] {
-          width: 80%;
+          width: 90%;
       }
   }
 

@@ -183,7 +183,6 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
 
     $scope.create = function () {
         var i = 0,
-            excludes = [],
             cmd = {
                 "cmd": "create",
                 "id": $scope.task_id,
@@ -202,10 +201,9 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
         }
 
         if ($scope.excludes.length > 0) {
-            for (; i < $scope.excludes.length; i++) {
-                excludes.push($scope.excludes[i].value);
-            }
-            cmd.excludes = excludes;
+            cmd.excludes = $scope.excludes.map(function(exclude){
+                return exclude.value;
+            });
         }
 
         $http.post($scope.app.uri, cmd).
@@ -223,24 +221,18 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
 
 
     $scope.reset = function() {
-        var taskSrc = 'http://localhost:4502/crx/server/crx.default/jcr:root/content/dam/my-site',
-            taskDst = '/content/dam/my-site',
-            taskBatchSize = '1024',
-            taskThrottle = '',
-            checkboxModel = {
-                recursive: false,
-                update: false,
-                onlyNewer: false,
-                noOrdering: false,
-                autoRefresh: false
-            };
-
         $scope.task_id = '';
-        $scope.task_src = taskSrc;
-        $scope.task_dst = taskDst;
-        $scope.task_batchSize = taskBatchSize;
-        $scope.task_throttle = taskThrottle;
-        $scope.checkboxModel = checkboxModel;
+        $scope.task_src = 'http://localhost:4502/crx/server/crx.default/jcr:root/content/dam/my-site';
+        $scope.task_dst = '/content/dam/my-site';
+        $scope.task_batchSize = '1024';
+        $scope.task_throttle = '';
+        $scope.checkboxModel = {
+            recursive: false,
+            update: false,
+            onlyNewer: false,
+            noOrdering: false,
+            autoRefresh: false
+        };
         $scope.excludes = [];
     };
 
