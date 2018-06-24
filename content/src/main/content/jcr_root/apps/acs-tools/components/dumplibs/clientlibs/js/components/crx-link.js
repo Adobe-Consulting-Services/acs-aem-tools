@@ -17,11 +17,17 @@
  * limitations under the License.
  * #L%
  */
-
-/*global Vue */
-/*jslint browser:true */
-var app = new Vue({
-    el: '#acs-tools-dumplibs'
+/*global Vue, axios, console */
+Vue.component('crx-link', {
+    props: ['link'],
+    methods: {
+        isLink: function (l) {
+            'use strict';
+            return Vue.type.isString(l) && l.startsWith('/');
+        }
+    },
+    template: '<span>'
+            + '  <a class="coral-Link" v-if="isLink(link)" :href="\'/crx/de/index.jsp#\'+link">{{link}} </a>'
+            + '  <span v-else>{{link}}</span>'
+            + '</span>'
 });
-
-

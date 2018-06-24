@@ -1,3 +1,4 @@
+
 /*
  * #%L
  * ACS AEM Tools Package
@@ -17,11 +18,22 @@
  * limitations under the License.
  * #L%
  */
-
-/*global Vue */
+/*global clearTimeout, Vue */
 /*jslint browser:true */
-var app = new Vue({
-    el: '#acs-tools-dumplibs'
+Vue.use({
+    install: function (Vue) {
+        'use strict';
+        // Returns helper functions to check types
+        // credit: https://webbjocke.com/javascript-check-data-types/
+        Vue.type = {
+            // Returns if a value is a string
+            isString: function isString(value) {
+                return typeof value === 'string' || value instanceof String;
+            },
+            // Returns if a value is an object
+            isObject: function (value) {
+                return value && typeof value === 'object' && value.constructor === Object;
+            }
+        };
+    }
 });
-
-

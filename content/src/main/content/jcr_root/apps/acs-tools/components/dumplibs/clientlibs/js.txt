@@ -1,3 +1,18 @@
 #base=js
 
+utils/array-filter-with-predicate.js
+utils/object-assign.js
+
+plugins/type-ckecker.js
+plugins/debounce.js
+plugins/key-value-array.js
+
+mixins/event-hub.js
+
+components/crx-link.js
+components/list.js
+components/text-field.js
+components/radio-field.js
+components/clientlib-modal.js
+components/clientlib-table.js
 app.js

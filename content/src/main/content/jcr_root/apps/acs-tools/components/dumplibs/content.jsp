@@ -20,24 +20,6 @@
 
 <%@include file="/libs/foundation/global.jsp" %>
 <div id="acs-tools-dumplibs">
-  <div is="clientlib-table" inline-template>
-      <table class="coral-Table coral-Table--bordered">
-          <thead>
-            <tr class="coral-Table-row">
-              <th class="coral-Table-headerCell">Path</th>
-              <th class="coral-Table-headerCell">Types</th>
-              <th class="coral-Table-headerCell">Catigories</th>
-              <th class="coral-Table-headerCell">Channels</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="coral-Table-row" v-for="clientlib in clientlibs">
-              <td class="coral-Table-cell">{{clientlib.path}}</td>
-              <td class="coral-Table-cell">{{clientlib.types.join(', ')}}</td>
-              <td class="coral-Table-cell">{{clientlib.categories.join(', ')}}</td>
-              <td class="coral-Table-cell">{{clientlib.channels.join(', ')}}</td>
-            </tr>
-          </tbody>
-      </table>
-  </div>
+  <cq:include script="components/clientlib-table.jsp"/>
+  <cq:include script="components/clientlib-modal.jsp"/>
 </div>

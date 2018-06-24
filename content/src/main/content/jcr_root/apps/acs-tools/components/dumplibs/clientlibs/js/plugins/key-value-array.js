@@ -1,3 +1,4 @@
+
 /*
  * #%L
  * ACS AEM Tools Package
@@ -17,11 +18,19 @@
  * limitations under the License.
  * #L%
  */
-
-/*global Vue */
+/*global clearTimeout, Vue */
 /*jslint browser:true */
-var app = new Vue({
-    el: '#acs-tools-dumplibs'
+Vue.use({
+    install: function (Vue) {
+        'use strict';
+        // Returns helper function to transform an object to key/value pair array
+        Vue.toKeyValArray = function (object) {
+            return Object.keys(object).map(function (key) {
+                return {
+                    key: key,
+                    val: object[key]
+                };
+            });
+        };
+    }
 });
-
-

@@ -1,0 +1,76 @@
+/* https://github.com/vladocar/Katana */
+.main {
+    display: flex;
+    flex-flow: row wrap;
+    width: 94%;
+    margin: 0 auto;
+  }
+  
+  .col-1 {
+    width: calc(100% - 15px);
+    margin: 0 0 0 15px;
+  }
+  
+  .col-2 {
+    width: calc(50% - 15px);
+    margin: 0 0 0 15px;
+  }
+  
+  .col-3 {
+    width: calc(33.3333333333% - 15px);
+    margin: 0 0 0 15px;
+  }
+  
+  .col-4 {
+    width: calc(25% - 15px);
+    margin: 0 0 0 15px;
+  }
+  
+  .col-5 {
+    width: calc(20% - 15px);
+    margin: 0 0 0 15px;
+  }
+  
+  .col-6 {
+    width: calc(16.6666666667% - 15px);
+    margin: 0 0 0 15px;
+  }
+  
+  .col-7 {
+    width: calc(14.2857142857% - 15px);
+    margin: 0 0 0 15px;
+  }
+  
+  .col-8 {
+    width: calc(12.5% - 15px);
+    margin: 0 0 0 15px;
+  }
+  
+  .col-9 {
+    width: calc(11.1111111111% - 15px);
+    margin: 0 0 0 15px;
+  }
+  
+  .col-10 {
+    width: calc(10% - 15px);
+    margin: 0 0 0 15px;
+  }
+  
+  .col-11 {
+    width: calc(9.0909090909% - 15px);
+    margin: 0 0 0 15px;
+  }
+  
+  .col-12 {
+    width: calc(8.3333333333% - 15px);
+    margin: 0 0 0 15px;
+  }
+  
+  .fluid {
+    flex: 2;
+    margin: 0 0 0 15px;
+  }
+  
+  .clear {
+    width: 100%;
+  }

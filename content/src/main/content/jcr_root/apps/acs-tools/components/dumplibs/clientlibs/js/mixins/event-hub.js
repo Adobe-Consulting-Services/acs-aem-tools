@@ -17,11 +17,18 @@
  * limitations under the License.
  * #L%
  */
+/*global Vue, console */
+(function(){
+    'use strict';
+    // A new Vue instance to serve as an event hub
+    var eventHub = new Vue();
 
-/*global Vue */
-/*jslint browser:true */
-var app = new Vue({
-    el: '#acs-tools-dumplibs'
-});
-
-
+    // Distribute to components using global mixin
+    Vue.mixin({
+        data: function () {
+            return {
+                eventHub: eventHub
+            };
+        }
+    });
+}());

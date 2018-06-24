@@ -18,9 +18,80 @@
  * #L%
  */
 
+ .acs-tools-page .page .content .content-container .content-container-inner {
+  max-width: 960px;
+  width: auto;
+  margin: 0 auto;
+}
+
 #acs-tools-dumplibs {
+
+  // make sure scrollbars are always visible
+  ::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+  }
+  // make sure modal body is not longer than viewport
+  .coral-Modal-body {
+    max-height: 80vh;
+    overflow: auto;
+  }
+  // Clientlib info list
+  .coral-Modal .clientlib {
+    padding-bottom: 2em;
+  }
+  .coral-Modal .clientlib + .clientlib {
+    border-top: 1px solid black;
+    padding-top: 1em;
+  }
+
+  .coral-Form {
+    overflow: hidden;
+  }
+  
+  .wait-centered {
+    display: block;
+    margin: 0 auto;
+  }
+
+  // credit: https://stackoverflow.com/a/31173205/5633515
+  .coral-Modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: auto;
+    height: auto;
+    -webkit-transform: translate(-50%,-50%);
+    -moz-transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    -o-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+  }
+
+  .coral-Modal.active {
+    display: block;
+  }
+
+  // for some reason the coral-Table--bordered does not have a border in coralui2.css
+  .coral-Table.coral-Table--bordered {
+    border: .25rem solid #e9e9e9;
+  }
+
   table td {
     max-width: 400px;
     word-wrap: break-word;
   }
+  .coral-Form-fieldwrapper {
+    float: left;
+    margin: 1em 1em 1em 1em;
+    + .coral-Form-fieldwrapper {
+      margin: 1em 0 1em 1em;
+    }
+  }
+
 }
