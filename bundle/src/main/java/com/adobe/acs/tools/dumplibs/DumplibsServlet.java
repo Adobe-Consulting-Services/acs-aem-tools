@@ -86,7 +86,7 @@ public class DumplibsServlet extends SlingSafeMethodsServlet {
     private void handleCategoriesRequest(SlingHttpServletRequest request, SlingHttpServletResponse response, DumplibsParams p)
             throws IOException {
 
-        Collection<ClientLibrary> libs = libraryManager.getLibraries(p.getCategories(), p.getType(), !p.isThemed(), p.isThemed());
+        Collection<ClientLibrary> libs = libraryManager.getLibraries(p.getCategories(), p.getType(), !p.isThemed(), p.isTrans());
         try {
 
             JSONArray libsJSON = clientLibrariesCollectionToJSON(libs); // should never be null
