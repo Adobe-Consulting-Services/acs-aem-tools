@@ -18,94 +18,98 @@
  * #L%
  */
 /*global Vue, axios, console */
-Vue.component('clientlib-modal', {
-    data: function () {
-        'use strict';
-        return {
-            open: false,
-            clientlib: {},
-            clientlibs: [],
-            header: "",
-            loading: true,
-            error: false
-        }
-    },
-    methods: {
-        getClientlibs: function (params) {
-            return axios.get('/bin/acs-tools/dumplibs.json', {
-                params: params
-            })
-        },
-        openModalByPath(data) {
-            this.open = data.open;
-            this.header = data.header;
-            var that = this;
-            this.getClientlibs(data.params)
-            .then(function (response) {
-                that.clientlibs = [response.data];
-                console.log("openModalByPath - that.clientlibs:", that.clientlibs);
-                that.clientlibs = that.clientlibs.map(Vue.toKeyValArray)
-                console.log(that.clientlibs)
-                that.loading = false;
-            })
-            .catch(function (e) {
-                that.loading = false;
-                that.error = true;
-                console.error(e);
-            });
-        },
-        openModalByCategory: function(data) {
-            this.open = data.open;
-            this.header = data.header;
-            var that = this;
-            this.getClientlibs(data.params)
-            .then(function (response) {
-                that.clientlibs = response.data;
-                var jsPromises = that.clientlibs.map(function (lib) {
-                    return that.getClientlibs({path: lib.path, type: "JS"})
-                });
-                var cssPromises = that.clientlibs.map(function (lib) {
-                    return that.getClientlibs({path: lib.path, type: "CSS"})
-                });
 
-                axios.all(jsPromises)
-                .then(axios.spread((...jsResponses) => {
-                    for (let i = 0; i < jsResponses.length; i++) {
-                        that.clientlibs[i].js =  jsResponses[i].data
-                    }
-                }))
-                .then(function(){
-                    axios.all(cssPromises)
-                    .then(axios.spread((...cssResponses) => {
-                        for (let i = 0; i < cssResponses.length; i++) {
-                            that.clientlibs[i].css =  cssResponses[i].data
-                        }
-                        
-                        that.clientlibs = that.clientlibs.map(Vue.toKeyValArray)
-                        that.loading = false;
-                    }))
-                    .catch(function (e) {
+(function () {
+    'use strict';
+    Vue.component('clientlib-modal', {
+        data: function () {
+            return {
+                open: false,
+                clientlib: {},
+                clientlibs: {
+                    js: [],
+                    css: []
+                },
+                header: "",
+                loading: true,
+                error: false
+            };
+        },
+        methods: {
+            getClientlibs: function (params) {
+                return axios.get('/bin/acs-tools/dumplibs.json', {
+                    params: params
+                });
+            },
+            getClientlibDetails: function (libs, type, callback) {
+                var that = this,
+                    returnLibs = [],
+                    promises = libs.map(function (lib) {
+                        return that.getClientlibs({ path: lib.path, type: type });
+                    });
+                return axios.all(promises)
+                    .then(axios.spread(function () {
+                        var responses = Array.prototype.slice.call(arguments);
+                        responses.forEach(function (response, i) {
+                            returnLibs[i] = Object.assign({}, libs[i], response.data, {types: ""});
+                        });
+                        callback(returnLibs);
+                    }))['catch'](function (e) { // jslint did not like .catch (reserved word).. smh
                         that.loading = false;
                         that.error = true;
                         console.error(e);
                     });
-                })
-                .catch(function (e) {
-                    that.loading = false;
-                    that.error = true;
-                    console.error(e);
-                });
-            })
-            .catch(function (e) {
-                that.loading = false;
-                that.error = true;
-                console.error(e);
-            });
+            },
+            openModalByPath: function (data) {
+                this.open = data.open;
+                this.header = data.header;
+                var that = this,
+                    promises = [
+                        this.getClientlibs(Object.assign({}, data.params, { type: "JS" })),
+                        this.getClientlibs(Object.assign({}, data.params, { type: "CSS" }))
+                    ];
+                axios.all(promises)
+                    .then(axios.spread(function () {
+                        var jsClientLibs = [arguments[0].data].map(Vue.toKeyValArray),
+                            cssClientLibs = [arguments[1].data].map(Vue.toKeyValArray);
+                        that.$set(that.clientlibs, 'js', jsClientLibs);
+                        that.$set(that.clientlibs, 'css', cssClientLibs);
+                        that.loading = false;
+                    }))['catch'](function (e) { // jslint did not like .catch (reserved word).. smh
+                        that.loading = false;
+                        that.error = true;
+                        console.error(e);
+                    });
+            },
+            openModalByCategory: function (data) {
+                this.open = data.open;
+                this.header = data.header;
+                this.loading = true;
+                var that = this;
+                // get all clientlibs with catigory
+                this.getClientlibs(data.params)
+                    .then(function (response) {
+                        var promises = [
+                            that.getClientlibDetails(response.data, "JS", function (jsLibs) {
+                                that.$set(that.clientlibs, 'js', jsLibs.map(Vue.toKeyValArray));
+                            }),
+                            that.getClientlibDetails(response.data, "CSS", function (cssLibs) {
+                                that.$set(that.clientlibs, 'css', cssLibs.map(Vue.toKeyValArray));
+                            })];
+                        axios.all(promises)
+                            .then(axios.spread(function () {
+                                that.loading = false;
+                            }));
+                    })['catch'](function (e) { // jslint did not like .catch (reserved word).. smh
+                        that.loading = false;
+                        that.error = true;
+                        console.error(e);
+                    });
+            }
+        },
+        created: function () {
+            this.eventHub.$on('open-modal-path', this.openModalByPath);
+            this.eventHub.$on('open-modal-category', this.openModalByCategory);
         }
-    },
-    created: function () {
-        this.eventHub.$on('open-modal-path', this.openModalByPath)
-        this.eventHub.$on('open-modal-category', this.openModalByCategory)
-        
-    }
-});
+    });
+}());

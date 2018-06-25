@@ -10,14 +10,24 @@
     </div>
     <div class="coral-Modal-body">
         <div class="coral-Wait coral-Wait--large wait-centered" v-bind:style="{ display: loading ? 'block' : 'none'}"></div>
-
-        <div v-for="(lib, index) in clientlibs" class="clientlib">
-            <list :value="lib" :header="'Clientlib '+(index+1)+' of '+clientlibs.length"></list>
+        <div class="coral-TabPanel" data-init='tabs' >
+            <nav class="coral-TabPanel-navigation">
+                <a class="coral-TabPanel-tab is-active" data-toggle="tab">JS Libs</a>
+                <a class="coral-TabPanel-tab" data-toggle="tab">CSS Libs</a>
+            </nav>
+            <div class="coral-TabPanel-content">
+                <section class="coral-TabPanel-pane is-active">
+                    <div v-for="(lib, index) in clientlibs.js" class="clientlib">
+                        <list :value="lib" :header="'Clientlib '+(index+1)+' of '+clientlibs.js.length"></list>
+                    </div>
+                </section>
+                <section class="coral-TabPanel-pane">
+                    <div v-for="(lib, index) in clientlibs.css" class="clientlib">
+                        <list :value="lib" :header="'Clientlib '+(index+1)+' of '+clientlibs.css.length"></list>
+                    </div>
+                </section>
+            </div>
         </div>
-
-    </div>
-    <div class="coral-Modal-footer">
-        <button type="button" class="coral-Button" data-dismiss="modal" @click="open=false">Close</button>
     </div>
 </div>
 <div class="coral-Modal-backdrop" v-bind:style="{display: open ? 'block' : 'none'}" aria-hidden="true"></div>

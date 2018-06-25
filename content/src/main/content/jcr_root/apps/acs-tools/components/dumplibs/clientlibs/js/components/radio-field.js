@@ -18,25 +18,27 @@
  * #L%
  */
 /*global Vue, console */
-Vue.component('radio-field', {
-    props: ['value', 'options', 'quicktip', 'label', 'emptyOption'],
-    data: function () {
-        'use strict';
-        return {
-            // using a value to allow radio checked status to change
-            // This value is not used for anything else
-            radioValue: ""
-        };
-    },
-    template: '<div class="coral-Form-fieldwrapper">'
-            + '  <label class="coral-Form-fieldlabel">{{label}}</label>'
-            + '  <div class="coral-Form-field coral-RadioGroup coral-RadioGroup--labelsBelow">'
-            + '    <label class="coral-Radio" v-for="opt in options">'
-            + '      <input type="radio" :value="opt" v-model="radioValue" @change="$emit(\'update:value\', $event.target.value)" class="coral-Radio-input" />'
-            + '      <span class="coral-Radio-checkmark"></span>'
-            + '      <span class="coral-Radio-description">{{opt ? opt : emptyOption}}</span>'
-            + '    </label>'
-            + '  <span class="coral-Form-fieldinfo coral-Icon coral-Icon--infoCircle coral-Icon--sizeS" data-init="quicktip" data-quicktip-type="info" data-quicktip-arrow="right" v-if="quicktip" :data-quicktip-content="quicktip"></span>'
-            + '  </div>'
-            + '</div>'
-});
+(function () {
+    'use strict';
+    Vue.component('radio-field', {
+        props: ['value', 'options', 'quicktip', 'label', 'emptyOption'],
+        data: function () {
+            return {
+                // using a value to allow radio checked status to change
+                // This value is not used for anything else
+                radioValue: ''
+            };
+        },
+        template: '<div class="coral-Form-fieldwrapper">'
+                + '  <label class="coral-Form-fieldlabel">{{label}}</label>'
+                + '  <div class="coral-Form-field coral-RadioGroup coral-RadioGroup--labelsBelow">'
+                + '    <label class="coral-Radio" v-for="opt in options">'
+                + '      <input type="radio" :value="opt" v-model="radioValue" @change="$emit(\'update:value\', $event.target.value)" class="coral-Radio-input" />'
+                + '      <span class="coral-Radio-checkmark"></span>'
+                + '      <span class="coral-Radio-description">{{opt ? opt : emptyOption}}</span>'
+                + '    </label>'
+                + '  <span class="coral-Form-fieldinfo coral-Icon coral-Icon--infoCircle coral-Icon--sizeS" data-init="quicktip" data-quicktip-type="info" data-quicktip-arrow="right" v-if="quicktip" :data-quicktip-content="quicktip"></span>'
+                + '  </div>'
+                + '</div>'
+    });
+}());

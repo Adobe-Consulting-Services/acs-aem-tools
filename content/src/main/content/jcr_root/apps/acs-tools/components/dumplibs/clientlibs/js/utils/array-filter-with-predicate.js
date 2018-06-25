@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-/*jslint this */
+/*jslint this: true */
 /*jslint browser:true */
 (function () {
     'use strict';

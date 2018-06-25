@@ -18,16 +18,18 @@
  * #L%
  */
 /*global Vue, console */
-Vue.component('text-field', {
-    props: ['value', 'quicktip', 'placeholder', 'label'],
-    template: '<div class="coral-Form-fieldwrapper">'
-            + '  <label class="coral-Form-fieldlabel">{{label ? label : placeholder}}</label>'
-            + '  <input class="coral-Form-field coral-Textfield"'
-            + '         @input="$emit(\'update:value\', $event.target.value)"'
-            + '         type="text" :placeholder="placeholder ? placeholder : label">'
-            + '  <span class="coral-Form-fieldinfo coral-Icon coral-Icon--infoCircle coral-Icon--sizeS"'
-            + '        data-init="quicktip" data-quicktip-type="info"'
-            + '        data-quicktip-arrow="right"'
-            + '        :data-quicktip-content="quicktip"></span>'
-            + '</div>'
-});
+(function () {
+    Vue.component('text-field', {
+        props: ['value', 'quicktip', 'placeholder', 'label'],
+        template: '<div class="coral-Form-fieldwrapper">'
+                + '  <label class="coral-Form-fieldlabel">{{label ? label : placeholder}}</label>'
+                + '  <input class="coral-Form-field coral-Textfield"'
+                + '         @input="$emit(\'update:value\', $event.target.value)"'
+                + '         type="text" :placeholder="placeholder ? placeholder : label">'
+                + '  <span class="coral-Form-fieldinfo coral-Icon coral-Icon--infoCircle coral-Icon--sizeS"'
+                + '        data-init="quicktip" data-quicktip-type="info"'
+                + '        data-quicktip-arrow="right"'
+                + '        :data-quicktip-content="quicktip"></span>'
+                + '</div>'
+    });
+}());

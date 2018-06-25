@@ -20,8 +20,11 @@
 
 /*global Vue */
 /*jslint browser:true */
-var app = new Vue({
-    el: '#acs-tools-dumplibs'
-});
+(function () {
+    'use strict';
+    var app = new Vue({
+        el: '#acs-tools-dumplibs'
+    });
+}());
 
 

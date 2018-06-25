@@ -22,39 +22,42 @@
 /**
  * A component that shows an object as a list
  */
-Vue.component('list', {
-    props: ['value', 'header'],
-    methods: {
-        isObject: function (val){
-            return Vue.type.isObject(val);
+(function () {
+    'use strict';
+    Vue.component('list', {
+        props: ['value', 'header'],
+        methods: {
+            isObject: function (val){
+                return Vue.type.isObject(val);
+            },
+            isString: function (arg) {
+                return Vue.type.isString(arg);
+            },
+            toKeyValArray: function (object) {
+                return Vue.toKeyValArray(object);
+            }
         },
-        isString: function (arg) {
-            return Vue.type.isString(arg);
-        },
-        toKeyValArray: function (object) {
-            return Vue.toKeyValArray(object)
-        }
-    },
-    template: '<div>'
-            + '  <h3>{{header}}</h3>'
-            + '  <ul class="coral-List">'
-            + '    <template v-for="entry in value">'
-            + '      <li class="coral-List-item" v-if="entry && entry.val">'
-                       // entry is a string
-            + '        <span v-if="isString(entry.val)">'
-            + '          <b>{{entry.key}}:</b> <crx-link :link="entry.val"> </crx-link>'
-            + '        </span>'
-                       // entry is an array
-            + '       <span v-else-if="Array.isArray(entry.val)">'
-            + '         <b>{{entry.key}}:</b>'
-            + '          <ul class="coral-List">'
-            + '            <li class="coral-List-item" v-for="item in entry.val"><crx-link :link="item"> </crx-link></li>'
-            + '          </ul>'
-            + '        </span>'
-                       // entry is an Object - recurse
-            + '        <list style="padding-left: 2em;" v-else-if="isObject(entry.val)" :value="toKeyValArray(entry.val)" :header="entry.key"></list>'
-            + '      </li>'
-            + '    </template>'
-            + '  </ul>'
-            + '</div>'
-});
+        template: '<div>'
+                + '  <h3>{{header}}</h3>'
+                + '  <ul class="coral-List">'
+                + '    <template v-for="entry in value">'
+                + '      <li class="coral-List-item" v-if="entry && entry.val">'
+                           // entry is a string
+                + '        <span v-if="isString(entry.val)">'
+                + '          <b>{{entry.key}}:</b> <crx-link :link="entry.val"> </crx-link>'
+                + '        </span>'
+                           // entry is an array
+                + '       <span v-else-if="Array.isArray(entry.val)">'
+                + '         <b>{{entry.key}}:</b>'
+                + '          <ul class="coral-List">'
+                + '            <li class="coral-List-item" v-for="item in entry.val"><crx-link :link="item"> </crx-link></li>'
+                + '          </ul>'
+                + '        </span>'
+                           // entry is an Object - recurse
+                + '        <list style="padding-left: 2em;" v-else-if="isObject(entry.val)" :value="toKeyValArray(entry.val)" :header="entry.key"></list>'
+                + '      </li>'
+                + '    </template>'
+                + '  </ul>'
+                + '</div>'
+    });
+}());

@@ -18,7 +18,7 @@
  * #L%
  */
 /*global Vue, console */
-(function(){
+(function () {
     'use strict';
     // A new Vue instance to serve as an event hub
     var eventHub = new Vue();

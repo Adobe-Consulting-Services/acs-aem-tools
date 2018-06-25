@@ -84,7 +84,7 @@
                 </executions>
                 <configuration>
                     <sourceJsFolder>src/main/content/jcr_root</sourceJsFolder>
-                    <failOnIssues>false</failOnIssues>
+                    <failOnIssues>true</failOnIssues>
                     <predefinedVars>jQuery,window,$</predefinedVars>
                     <excludes>
                         <exclude>**/etc/clientlibs/acs-tools/vendor/**/*.js</exclude>

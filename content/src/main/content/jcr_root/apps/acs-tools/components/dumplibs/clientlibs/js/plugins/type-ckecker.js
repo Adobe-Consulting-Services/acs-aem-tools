@@ -20,20 +20,22 @@
  */
 /*global clearTimeout, Vue */
 /*jslint browser:true */
-Vue.use({
-    install: function (Vue) {
-        'use strict';
-        // Returns helper functions to check types
-        // credit: https://webbjocke.com/javascript-check-data-types/
-        Vue.type = {
-            // Returns if a value is a string
-            isString: function isString(value) {
-                return typeof value === 'string' || value instanceof String;
-            },
-            // Returns if a value is an object
-            isObject: function (value) {
-                return value && typeof value === 'object' && value.constructor === Object;
-            }
-        };
-    }
-});
+(function () {
+    'use strict';
+    Vue.use({
+        install: function (Vue) {
+            // Returns helper functions to check types
+            // credit: https://webbjocke.com/javascript-check-data-types/
+            Vue.type = {
+                // Returns if a value is a string
+                isString: function isString(value) {
+                    return typeof value === 'string' || value instanceof String;
+                },
+                // Returns if a value is an object
+                isObject: function (value) {
+                    return value && typeof value === 'object' && value.constructor === Object;
+                }
+            };
+        }
+    });
+}());

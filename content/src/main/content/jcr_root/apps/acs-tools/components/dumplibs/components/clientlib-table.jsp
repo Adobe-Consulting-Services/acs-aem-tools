@@ -10,23 +10,19 @@
 
             </section>
         </form>
-        <div class="coral-Wait coral-Wait--large wait-centered" v-bind:style="{ display: loading ? 'block' : 'none'}"></div>
+        <div class="coral-Wait coral-Wait--medium wait-centered" v-bind:style="{ display: loading ? 'block' : 'none'}"></div>
         <table class="coral-Table coral-Table--bordered" v-if="filteredClientlibs.length > 0">
             <thead class="coral-Table-head">
                 <tr class="coral-Table-row">
-                    <th class="coral-Table-headerCell col-6">Path</th>
-                    <th class="coral-Table-headerCell col-1">Actions</th>
+                    <th class="coral-Table-headerCell col-7">Path</th>
                     <th class="coral-Table-headerCell col-1">Types</th>
-                    <th class="coral-Table-headerCell col-2">Catigories</th>
+                    <th class="coral-Table-headerCell col-2">Categories</th>
                     <th class="coral-Table-headerCell col-2">Channels</th>
                 </tr>
             </thead>
             <tbody class="coral-Table-body">
                 <tr class="coral-Table-row" v-for="clientlib in filteredClientlibs">
                     <td class="coral-Table-cell col-6"><a class="coral-Link" href="javascript:void(0)" @click="openModalByPath(clientlib, clientlib.path, {'path': clientlib.path})">{{clientlib.path}}</a></td>
-                    <td class="coral-Table-cell col-1">
-                        <i class="coral-Icon coral-Icon--editCircle coral-Icon--sizeXS"></i>
-                    </td>
                     <td class="coral-Table-cell col-1">{{clientlib.types.join(', ')}}</td>
                     <td class="coral-Table-cell col-2">
                         <span v-for="(catig, index) in clientlib.categories">
@@ -40,7 +36,7 @@
                 </tr>
             </tbody>
         </table>
-        <div class="coral-Well" v-if="filteredClientlibs.length === 0 && !error">
+        <div class="coral-Well" v-if="!loading && filteredClientlibs.length === 0 && !error">
             There are no clientlibs that match your search criteria
         </div>
         <div class="coral-Well" v-if="error">

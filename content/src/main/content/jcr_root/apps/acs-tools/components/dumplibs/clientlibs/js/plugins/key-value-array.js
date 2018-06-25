@@ -20,17 +20,19 @@
  */
 /*global clearTimeout, Vue */
 /*jslint browser:true */
-Vue.use({
-    install: function (Vue) {
-        'use strict';
-        // Returns helper function to transform an object to key/value pair array
-        Vue.toKeyValArray = function (object) {
-            return Object.keys(object).map(function (key) {
-                return {
-                    key: key,
-                    val: object[key]
-                };
-            });
-        };
-    }
-});
+(function () {
+    'use strict';
+    Vue.use({
+        install: function (Vue) {
+            // Returns helper function to transform an object to key/value pair array
+            Vue.toKeyValArray = function (object) {
+                return Object.keys(object).map(function (key) {
+                    return {
+                        key: key,
+                        val: object[key]
+                    };
+                });
+            };
+        }
+    });
+}());
