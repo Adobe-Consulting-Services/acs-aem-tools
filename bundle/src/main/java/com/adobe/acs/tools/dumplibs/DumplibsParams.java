@@ -25,20 +25,20 @@ public class DumplibsParams {
 
     DumplibsParams(SlingHttpServletRequest request){
         path = request.getParameter(PARAM_PATH);
-        categories = getCatigoriesArray(request.getParameter(PARAM_CATEGORIES));
+        categories = getCategoriesArray(request.getParameter(PARAM_CATEGORIES));
 
         themed = parseBoolean(request.getParameter(PARAM_THEMED));
         trans = parseBoolean(request.getParameter(PARAM_TRANS));
         type = getLibraryType(request.getParameter(PARAM_TYPE));
     }
 
-    private  String[] getCatigoriesArray(String catigs){
-        if(catigs == null) return null;
-        String[] catigsArr = catigs.split(",");
-        for (int i = 0; i < catigsArr.length; i++) {
-            catigsArr[i] = catigsArr[i].trim();
+    private  String[] getCategoriesArray(String categories){
+        if(categories == null) return null;
+        String[] categoriesArr = categories.split(",");
+        for (int i = 0; i < categoriesArr.length; i++) {
+            categoriesArr[i] = categoriesArr[i].trim();
         }
-        return catigsArr;
+        return categoriesArr;
     }
 
     private LibraryType getLibraryType(String typeString) {

@@ -54,7 +54,7 @@ public class DumplibsServlet extends SlingSafeMethodsServlet {
         else if (p.getCategories() != null) {
             handleCategoriesRequest(request, response, p);
         }
-        // Neither path nor catigories are present in request params
+        // Neither path nor categories are present in request params
         // get all clientlibs
         else {
             handleAllLibsRequest(request, response, p);
