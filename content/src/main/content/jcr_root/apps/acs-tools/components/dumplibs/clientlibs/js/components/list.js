@@ -20,7 +20,16 @@
 /*global Vue, axios, console */
 
 /**
- * A component that shows an object as a list
+ * A component that shows an object/string/array as a list
+ * The property `value` must be an array, it's a list after all.
+ * Each entry in the `value` array has to be a `key`/`value` object.
+ * Each `value` in each entry can be:
+ *  1. object:
+ *      The object is transformed to an array of key/value strings to render as a list (recursively)
+ *  2. array:
+ *      The array must be an array of key/value strings to render as a list
+ *  3. string:
+ *      rendered as is
  */
 (function () {
     'use strict';

@@ -36,6 +36,9 @@
             };
         },
         methods: {
+            /**
+             * Get more details about an array of clientlibraries using their paths
+             */
             getClientlibDetails: function (libs, type, callback) {
                 var that = this,
                     returnLibs = [],
@@ -55,6 +58,9 @@
                         console.error(e);
                     });
             },
+            /**
+             *  Open modal that shows a singlr clientlib with a certain path
+             */
             openModalByPath: function (data) {
                 this.open = data.open;
                 this.header = data.header;
@@ -76,6 +82,9 @@
                         console.error(e);
                     });
             },
+            /**
+             *  Open modal that shows all clientlibs with a certain category
+             */
             openModalByCategory: function (data) {
                 this.open = data.open;
                 this.header = data.header;
@@ -90,7 +99,9 @@
                             }),
                             that.getClientlibDetails(response.data, "CSS", function (cssLibs) {
                                 that.$set(that.clientlibs, 'css', cssLibs.map(Vue.toKeyValArray));
-                            })];
+                            })
+                        ];
+                        // once all promises are resolved, hide loading animation
                         axios.all(promises)
                             .then(axios.spread(function () {
                                 that.loading = false;
@@ -103,6 +114,9 @@
             }
         },
         created: function () {
+            // react to published events to open modal component with different options
+            // The events are published primarely from the table component, but can be published 
+            // from anywhere in the app
             this.eventHub.$on('open-modal-path', this.openModalByPath);
             this.eventHub.$on('open-modal-category', this.openModalByCategory);
         }

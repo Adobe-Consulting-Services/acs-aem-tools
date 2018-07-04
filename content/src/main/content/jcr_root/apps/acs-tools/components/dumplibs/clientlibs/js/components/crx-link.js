@@ -18,6 +18,10 @@
  * #L%
  */
 /*global Vue, axios, console */
+/**
+ * Takes a url as a property, if it starts with `/` it renders a link (<a> tag) and an adjacent icon to open that url in crx/de
+ * If it does not start with `/` renders a <span>
+ */
 (function () {
     'use strict';
     Vue.component('crx-link', {

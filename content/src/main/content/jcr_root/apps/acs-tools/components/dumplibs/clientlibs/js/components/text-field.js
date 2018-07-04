@@ -18,6 +18,9 @@
  * #L%
  */
 /*global Vue, console */
+/**
+ * Coral UI text field as a vue component
+ */
 (function () {
     Vue.component('text-field', {
         props: ['value', 'quicktip', 'placeholder', 'label'],

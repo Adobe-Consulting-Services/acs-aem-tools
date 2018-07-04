@@ -20,6 +20,9 @@
  */
 /*global Vue, axios */
 /*jslint browser:true */
+/**
+ * A plugin to house all HTTP interactions with servlet, think of it as an HTTP service.
+ */
 (function () {
     'use strict';
     Vue.use({

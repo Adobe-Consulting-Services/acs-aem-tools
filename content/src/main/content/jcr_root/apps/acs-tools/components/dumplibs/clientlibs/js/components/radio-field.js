@@ -18,6 +18,9 @@
  * #L%
  */
 /*global Vue, console */
+/**
+ * Coral UI radio group as a vue component
+ */
 (function () {
     'use strict';
     Vue.component('radio-field', {

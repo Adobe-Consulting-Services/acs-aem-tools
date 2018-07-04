@@ -18,6 +18,9 @@
  * #L%
  */
 /*global Vue, console */
+/**
+ * A vue mixin to add an eventhub to components to do pub/sub type interactions between components
+ */
 (function () {
     'use strict';
     // A new Vue instance to serve as an event hub

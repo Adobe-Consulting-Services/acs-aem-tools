@@ -20,12 +20,15 @@
  */
 /*global clearTimeout, Vue */
 /*jslint browser:true */
+/**
+ * A utility to check javascript types.
+ * Credit: https://webbjocke.com/javascript-check-data-types/
+ */
 (function () {
     'use strict';
     Vue.use({
         install: function (Vue) {
             // Returns helper functions to check types
-            // credit: https://webbjocke.com/javascript-check-data-types/
             Vue.type = {
                 // Returns if a value is a string
                 isString: function isString(value) {

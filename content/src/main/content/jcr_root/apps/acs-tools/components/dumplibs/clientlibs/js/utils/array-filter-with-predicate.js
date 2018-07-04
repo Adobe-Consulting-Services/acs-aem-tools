@@ -19,6 +19,13 @@
  */
 /*jslint this: true */
 /*jslint browser:true */
+
+/**
+ * Built this to filters a large array based on predicates.
+ * It provides a declarative way to filter an array of objects whose properties are strings.
+ * But it can be adapted and improved for other types.
+ * I created a gist for it here: https://gist.github.com/ahmed-musallam/5b8c4f97b85e76e576203e284c0fb820
+ */
 (function () {
     'use strict';
     Array.prototype.filterWithPredicates = function (predicates, operator) {

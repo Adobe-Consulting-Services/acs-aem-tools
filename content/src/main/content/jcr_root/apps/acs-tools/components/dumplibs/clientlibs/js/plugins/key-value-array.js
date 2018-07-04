@@ -20,6 +20,10 @@
  */
 /*global clearTimeout, Vue */
 /*jslint browser:true */
+/**
+ * Plugin to convert an object to a key/value array
+ * example {"type": "popcorn"} becomes [{key:"type", value:"popcorn"}]
+ */
 (function () {
     'use strict';
     Vue.use({
