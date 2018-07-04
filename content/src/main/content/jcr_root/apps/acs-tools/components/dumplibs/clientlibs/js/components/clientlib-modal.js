@@ -36,6 +36,9 @@
             };
         },
         methods: {
+            isEmpty: function (object) {
+                return Object.keys(object).length === 0 && object.constructor === Object;
+            },
             /**
              * Get more details about an array of clientlibraries using their paths
              */
@@ -71,8 +74,12 @@
                     ];
                 axios.all(promises)
                     .then(axios.spread(function () {
-                        var jsClientLibs = [arguments[0].data].map(Vue.toKeyValArray),
-                            cssClientLibs = [arguments[1].data].map(Vue.toKeyValArray);
+                        var jsClientLibs = arguments[0].data,
+                            cssClientLibs = arguments[1].data;
+
+                        jsClientLibs = that.isEmpty(jsClientLibs) ? [] : [jsClientLibs].map(Vue.toKeyValArray);
+                        cssClientLibs = that.isEmpty(cssClientLibs) ? [] : [cssClientLibs].map(Vue.toKeyValArray);
+                        
                         that.$set(that.clientlibs, 'js', jsClientLibs);
                         that.$set(that.clientlibs, 'css', cssClientLibs);
                         that.loading = false;

@@ -17,13 +17,19 @@
             </nav>
             <div class="coral-TabPanel-content">
                 <section class="coral-TabPanel-pane is-active">
-                    <div v-for="(lib, index) in clientlibs.js" class="clientlib">
+                    <div  v-if="clientlibs.js && clientlibs.js.length" v-for="(lib, index) in clientlibs.js" class="clientlib">
                         <list :value="lib" :header="'Clientlib '+(index+1)+' of '+clientlibs.js.length"></list>
+                    </div>
+                    <div v-if="!clientlibs.js || clientlibs.js.length === 0" class="coral-Well">
+                        No JS clientlib found
                     </div>
                 </section>
                 <section class="coral-TabPanel-pane">
-                    <div v-for="(lib, index) in clientlibs.css" class="clientlib">
+                    <div v-if="clientlibs.css && clientlibs.css.length" v-for="(lib, index) in clientlibs.css" class="clientlib">
                         <list :value="lib" :header="'Clientlib '+(index+1)+' of '+clientlibs.css.length"></list>
+                    </div>
+                    <div v-if="!clientlibs.css || clientlibs.css.length === 0" class="coral-Well">
+                        No CSS clientlib found
                     </div>
                 </section>
             </div>

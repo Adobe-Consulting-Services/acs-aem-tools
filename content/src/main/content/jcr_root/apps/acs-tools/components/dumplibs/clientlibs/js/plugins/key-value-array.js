@@ -30,6 +30,10 @@
         install: function (Vue) {
             // Returns helper function to transform an object to key/value pair array
             Vue.toKeyValArray = function (object) {
+                // empty object
+                if(Object.keys(object).length === 0 && object.constructor === Object){
+                    return [];
+                }
                 return Object.keys(object).map(function (key) {
                     return {
                         key: key,
