@@ -84,18 +84,18 @@
         mounted: function () {
             var that = this;
             this.debouncedFilterClientlibs = Vue.debounce(this.filterClientlibs, 300, false);
-            axios.get('/bin/acs-tools/dumplibs.json')
-                .then(function (response) {
-                    // JSON responses are automatically parsed.
-                    that.clientlibs = response.data.slice(0);
-                    that.filterClientlibs();
-                    that.loading = false;
-                    return;
-                })['catch'](function (e) { // jslint did not like .catch (reserved word).. smh
-                    that.loading = false;
-                    that.error = true;
-                    console.error(e);
-                });
+            Vue.getClientlibs()
+            .then(function (response) {
+                // JSON responses are automatically parsed.
+                that.clientlibs = response.data.slice(0);
+                that.filterClientlibs();
+                that.loading = false;
+                return;
+            })['catch'](function (e) { // jslint did not like .catch (reserved word).. smh
+                that.loading = false;
+                that.error = true;
+                console.error(e);
+            });
         }
     });
 }());

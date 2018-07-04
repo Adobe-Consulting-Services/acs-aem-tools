@@ -6,6 +6,7 @@ utils/object-assign.js
 plugins/type-ckecker.js
 plugins/debounce.js
 plugins/key-value-array.js
+plugins/clientlib.js
 
 mixins/event-hub.js
 

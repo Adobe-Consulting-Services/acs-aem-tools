@@ -36,16 +36,11 @@
             };
         },
         methods: {
-            getClientlibs: function (params) {
-                return axios.get('/bin/acs-tools/dumplibs.json', {
-                    params: params
-                });
-            },
             getClientlibDetails: function (libs, type, callback) {
                 var that = this,
                     returnLibs = [],
                     promises = libs.map(function (lib) {
-                        return that.getClientlibs({ path: lib.path, type: type });
+                        return Vue.getClientlibs({ path: lib.path, type: type });
                     });
                 return axios.all(promises)
                     .then(axios.spread(function () {
@@ -65,8 +60,8 @@
                 this.header = data.header;
                 var that = this,
                     promises = [
-                        this.getClientlibs(Object.assign({}, data.params, { type: "JS" })),
-                        this.getClientlibs(Object.assign({}, data.params, { type: "CSS" }))
+                        Vue.getClientlibs(Object.assign({}, data.params, { type: "JS" })),
+                        Vue.getClientlibs(Object.assign({}, data.params, { type: "CSS" }))
                     ];
                 axios.all(promises)
                     .then(axios.spread(function () {
@@ -87,7 +82,7 @@
                 this.loading = true;
                 var that = this;
                 // get all clientlibs with catigory
-                this.getClientlibs(data.params)
+                Vue.getClientlibs(data.params)
                     .then(function (response) {
                         var promises = [
                             that.getClientlibDetails(response.data, "JS", function (jsLibs) {
