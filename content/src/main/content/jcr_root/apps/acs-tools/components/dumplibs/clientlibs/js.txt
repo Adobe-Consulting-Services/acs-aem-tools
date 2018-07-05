@@ -14,6 +14,7 @@ components/crx-link.js
 components/list.js
 components/text-field.js
 components/radio-field.js
+components/accordion.js
 components/clientlib-modal.js
 components/clientlib-table.js
 app.js
