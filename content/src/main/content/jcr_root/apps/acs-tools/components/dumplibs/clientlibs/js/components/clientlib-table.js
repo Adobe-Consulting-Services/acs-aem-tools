@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-/*global Vue, axios, console */
+/*global Vue, axios, console, localStorage */
 (function () {
     'use strict';
     Vue.component('clientlib-table', {
@@ -38,6 +38,8 @@
         watch: {
             filters: {
                 handler: function (filters) {
+                    // store filters to localstorage
+                    localStorage.setItem('dumplibs-filters', JSON.stringify(filters));
                     this.debouncedFilterClientlibs(filters);
                 },
                 deep: true
@@ -50,6 +52,7 @@
                     return;
                 }
 
+                // no filters, no need to filter; use all clientlibs
                 if (!filters) {
                     this.filteredClientlibs = this.clientlibs;
                     return;
@@ -74,16 +77,24 @@
 
                 this.filteredClientlibs = this.clientlibs.filterWithPredicates(predicates);
             },
+            // open the modal with a clienlib based on path
             openModalByPath: function (clientlib, header, params) {
                 this.eventHub.$emit('open-modal-path', { open: true, header: header, clientlib: clientlib, params: params });
             },
+            // open the modal with a clienlib/s based on category
             openModalByCategory: function (clientlib, header, params) {
                 this.eventHub.$emit('open-modal-category', { open: true, header: header, clientlib: clientlib, params: params });
             }
         },
         mounted: function () {
-            var that = this;
+            var that = this,
+                filters = localStorage.getItem('dumplibs-filters');
+            if (filters) { // load filters from localstorage, if any
+                that.filters = JSON.parse(filters);
+            }
+            // register debounced clientlib filter function
             this.debouncedFilterClientlibs = Vue.debounce(this.filterClientlibs, 300, false);
+            // get all clientlibs, then filter them
             Vue.getClientlibs()
             .then(function (response) {
                 // JSON responses are automatically parsed.
