@@ -1,1 +1,1 @@
-vue.js
+vue.min.js
