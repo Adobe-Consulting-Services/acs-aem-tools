@@ -24,7 +24,8 @@ import java.util.Map;
         label = "ACS AEM Tools - Dumplibs",
         description = "ACS AEM Tools End-point for Dumplibs",
         methods = {"GET"},
-        paths = {"/bin/acs-tools/dumplibs"},
+        resourceTypes = {"acs-tools/components/dumplibs"},
+        selectors = {"app"},
         extensions = {"json"},
         metatype = true
 )

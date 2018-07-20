@@ -4,4 +4,5 @@
     jcr:primaryType="cq:Component"
     jcr:title="Dumplibs"
     sling:resourceSuperType="acs-tools/components/base-page"
-    componentGroup=".hidden"/>
+    componentGroup=".hidden"
+    sling:resourceType="acs-tools/components/dumplibs"/>
