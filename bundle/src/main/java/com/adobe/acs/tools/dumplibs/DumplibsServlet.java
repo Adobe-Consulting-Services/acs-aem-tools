@@ -6,6 +6,7 @@ import com.adobe.granite.ui.clientlibs.HtmlLibraryManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -31,6 +32,7 @@ public class DumplibsServlet extends SlingSafeMethodsServlet {
 
     private static final Logger log = LoggerFactory.getLogger(DumplibsServlet.class);
     private static final String CONTENT_TYPE_JSON = "application/json";
+    private static final Gson gson = new Gson();
 
     @Reference
     HtmlLibraryManager libraryManager;
@@ -66,7 +68,10 @@ public class DumplibsServlet extends SlingSafeMethodsServlet {
             throws IOException {
         HtmlLibrary lib = libraryManager.getLibrary(p.getType(), p.getPath());
         response.setContentType(CONTENT_TYPE_JSON);
-        response.getWriter().print(htmlLibraryToJSON(lib).toString());
+        JsonObject jsonObject = lib == null
+                                ? new JsonObject()
+                                : (JsonObject) htmlLibraryToJSON(lib);
+        response.getWriter().print(jsonObject.toString());
     }
 
     /**
@@ -103,7 +108,6 @@ public class DumplibsServlet extends SlingSafeMethodsServlet {
     private JsonElement htmlLibraryToJSON(HtmlLibrary clientlib) {
 
         DumplibsHtmlLibrary lib = new DumplibsHtmlLibrary(clientlib);
-        Gson gson = new Gson();
         return gson.toJsonTree(lib);
 
     }
@@ -116,7 +120,6 @@ public class DumplibsServlet extends SlingSafeMethodsServlet {
      */
     private JsonElement clientLibraryToJSON(ClientLibrary clientlib) {
         DumplibsClientLibrary lib = new DumplibsClientLibrary(clientlib);
-        Gson gson = new Gson();
         return gson.toJsonTree(lib);
     }
 
