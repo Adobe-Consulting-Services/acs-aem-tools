@@ -3,23 +3,20 @@ package com.adobe.acs.tools.dumplibs;
 import com.adobe.granite.ui.clientlibs.ClientLibrary;
 import com.adobe.granite.ui.clientlibs.HtmlLibrary;
 import com.adobe.granite.ui.clientlibs.HtmlLibraryManager;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
-import org.apache.sling.commons.json.JSONArray;
-import org.apache.sling.commons.json.JSONException;
-import org.apache.sling.commons.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 @SlingServlet(
@@ -68,16 +65,8 @@ public class DumplibsServlet extends SlingSafeMethodsServlet {
     private void handlePathRequest(SlingHttpServletRequest request, SlingHttpServletResponse response, DumplibsParams p)
             throws IOException {
         HtmlLibrary lib = libraryManager.getLibrary(p.getType(), p.getPath());
-        try {
-
-            JSONObject libJSON = htmlLibraryToJSON(lib); // should never be null
-            response.setContentType(CONTENT_TYPE_JSON);
-            response.getWriter().print(libJSON.toString());
-
-        } catch (JSONException e) {
-            log.error("JSON Exception while building ClientLib JSON for clientlib path:" + p.getPath(), e.getMessage());
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
+        response.setContentType(CONTENT_TYPE_JSON);
+        response.getWriter().print(htmlLibraryToJSON(lib).toString());
     }
 
     /**
@@ -87,16 +76,10 @@ public class DumplibsServlet extends SlingSafeMethodsServlet {
             throws IOException {
 
         Collection<ClientLibrary> libs = libraryManager.getLibraries(p.getCategories(), p.getType(), !p.isThemed(), p.isTrans());
-        try {
 
-            JSONArray libsJSON = clientLibrariesCollectionToJSON(libs); // should never be null
-            response.setContentType(CONTENT_TYPE_JSON);
-            response.getWriter().print(libsJSON.toString());
-
-        } catch (JSONException e) {
-            log.error("JSON Exception while building ClientLib JSON for clientlib categories:" + p.getCategoriesString(), e.getMessage());
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
+        JsonArray libsJSON = clientLibrariesCollectionToJSON(libs); // should never be null
+        response.setContentType(CONTENT_TYPE_JSON);
+        response.getWriter().print(libsJSON.toString());
     }
 
     /**
@@ -106,112 +89,64 @@ public class DumplibsServlet extends SlingSafeMethodsServlet {
             throws IOException {
 
         Map<String, ClientLibrary> libs = libraryManager.getLibraries();
-        try {
-
-            JSONArray libsJSON = clientLibrariesMapToJSON(libs); // should never be null
-            response.setContentType(CONTENT_TYPE_JSON);
-            response.getWriter().print(libsJSON.toString());
-
-        } catch (JSONException e) {
-            log.error("JSON Exception while building ClientLib JSON for all clientlibs", e.getMessage());
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
+        JsonArray libsJSON = clientLibrariesMapToJSON(libs); // should never be null
+        response.setContentType(CONTENT_TYPE_JSON);
+        response.getWriter().print(libsJSON.toString());
     }
 
     /**
-     * Transforms an HtmlLibrary object to JSON
+     * Transforms an HtmlLibrary object to JsonElement;
      *
      * @param clientlib
-     * @return A non null JSONObject
-     * @throws JSONException
+     * @return the JsonElement representation of the HtmlLibrary
      */
-    private JSONObject htmlLibraryToJSON(HtmlLibrary clientlib)
-            throws JSONException {
-        JSONObject libJSON = new JSONObject();
+    private JsonElement htmlLibraryToJSON(HtmlLibrary clientlib) {
 
-        if (clientlib != null) {
-            libJSON.put("name", clientlib.getName());
-            libJSON.put("type", clientlib.getType());
-            libJSON.put("path", clientlib.getPath());
-            libJSON.put("minifiedPath", clientlib.getPath(true));
-            libJSON.put("libraryPath", clientlib.getLibraryPath());
-            libJSON.put("scripts", toJSONArray(clientlib.getScripts()));
-        }
-        return libJSON;
+        DumplibsHtmlLibrary lib = new DumplibsHtmlLibrary(clientlib);
+        Gson gson = new Gson();
+        return gson.toJsonTree(lib);
+
     }
 
     /**
-     * Transforms an ClientLibrary object to JSON
+     * Transforms an ClientLibrary object to JsonElement;
      *
      * @param clientlib
-     * @return A non null JSONObject
-     * @throws JSONException
+     * @return the JsonElement representation of the ClientLibrary
      */
-    private JSONObject clientLibraryToJSON(ClientLibrary clientlib)
-            throws JSONException {
-        JSONObject libJSON = new JSONObject();
-        if (clientlib != null) {
-            libJSON.put("path", clientlib.getPath());
-            libJSON.put("types", toJSONArray(clientlib.getTypes()));
-            libJSON.put("categories", toJSONArray(clientlib.getCategories()));
-            libJSON.put("channels", toJSONArray(clientlib.getChannels()));
-        }
-        return libJSON;
+    private JsonElement clientLibraryToJSON(ClientLibrary clientlib) {
+        DumplibsClientLibrary lib = new DumplibsClientLibrary(clientlib);
+        Gson gson = new Gson();
+        return gson.toJsonTree(lib);
     }
 
     /**
-     * Transforms a ClientLibrary map to a JSONArray
+     * Transforms a ClientLibrary map to a JsonArray
      *
      * @param libraries
-     * @return a non null JSONArray
-     * @throws JSONException
+     * @return a non null JsonArray
      */
-    private JSONArray clientLibrariesMapToJSON(Map<String, ClientLibrary> libraries)
-            throws JSONException {
+    private JsonArray clientLibrariesMapToJSON(Map<String, ClientLibrary> libraries) {
         return clientLibrariesCollectionToJSON(libraries.values());
     }
 
     /**
-     * Transforms a ClientLibrary Collection to a JSONArray
+     * Transforms a ClientLibrary Collection to a JsonArray
      *
      * @param libraries
-     * @return @return a non null JSONArray
-     * @throws JSONException
+     * @return @return a non null JsonArray
      */
-    private JSONArray clientLibrariesCollectionToJSON(Collection<ClientLibrary> libraries)
-            throws JSONException {
-        JSONArray clientlibs = new JSONArray();
+    private JsonArray clientLibrariesCollectionToJSON(Collection<ClientLibrary> libraries) {
+
+        JsonArray clientlibs = new JsonArray();
 
         if (libraries != null || !libraries.isEmpty()) {
             for (ClientLibrary lib : libraries) {
-                clientlibs.put(clientLibraryToJSON(lib));
+                clientlibs.add(clientLibraryToJSON(lib));
             }
         }
 
         return clientlibs;
     }
 
-    /**
-     * Shorthand method to convert any Collection to a JSONArray
-     *
-     * @param collection
-     * @return
-     */
-    private JSONArray toJSONArray(Collection<?> collection) {
-        return new JSONArray(collection);
-    }
-
-    /**
-     * Shorthand method to convert any Array to a JSONArray
-     *
-     * @param arr
-     * @return
-     */
-    private JSONArray toJSONArray(Object[] arr) {
-        List<String> list = new ArrayList<String>();
-        for (Object o : arr) {
-            list.add(o.toString()); // assuming the converted object has a decent toString method :)
-        }
-        return toJSONArray(list);
-    }
 }
