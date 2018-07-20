@@ -6,10 +6,12 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Obtains dumplibs servlet needed parameters from request
+ */
 public class DumplibsParams {
 
     private static final Logger log = LoggerFactory.getLogger(DumplibsParams.class);
-
 
     private static final String PARAM_CATEGORIES = "categories";
     private static final String PARAM_PATH = "path";
@@ -26,12 +28,16 @@ public class DumplibsParams {
     DumplibsParams(SlingHttpServletRequest request){
         path = request.getParameter(PARAM_PATH);
         categories = getCategoriesArray(request.getParameter(PARAM_CATEGORIES));
-
         themed = parseBoolean(request.getParameter(PARAM_THEMED));
         trans = parseBoolean(request.getParameter(PARAM_TRANS));
         type = getLibraryType(request.getParameter(PARAM_TYPE));
     }
 
+    /**
+     * Parse string of categories into an array of strings
+     * @param categories
+     * @return an array of categories
+     */
     private  String[] getCategoriesArray(String categories){
         if(categories == null) return null;
         String[] categoriesArr = categories.split(",");
@@ -39,6 +45,10 @@ public class DumplibsParams {
             categoriesArr[i] = categoriesArr[i].trim();
         }
         return categoriesArr;
+    }
+
+    private boolean parseBoolean(String str){
+        return "yes".equalsIgnoreCase(str) || "1".equalsIgnoreCase(str) || "true".equalsIgnoreCase(str);
     }
 
     private LibraryType getLibraryType(String typeString) {
@@ -51,8 +61,13 @@ public class DumplibsParams {
         }
     }
 
-    private boolean parseBoolean(String str){
-        return "yes".equalsIgnoreCase(str) || "1".equalsIgnoreCase(str) || "true".equalsIgnoreCase(str);
+    /**
+     * Returns comma delimited categories string
+     * @return
+     */
+    public String getCategoriesString() {
+        String[] categories = getCategories();
+        return categories == null ? "null" : StringUtils.join(categories, ",");
     }
 
     public String[] getCategories() {
@@ -75,8 +90,4 @@ public class DumplibsParams {
         return themed;
     }
 
-    public String getCategoriesString() {
-        String[] categories = getCategories();
-        return categories == null ? "null" : StringUtils.join(categories, ",");
-    }
 }
