@@ -1,0 +1,107 @@
+/*
+ * #%L
+ * ACS AEM Tools Package
+ * %%
+ * Copyright (C) 2014 Adobe
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
+ .acs-tools-page .page .content .content-container .content-container-inner {
+  max-width: 960px;
+  width: auto;
+  margin: 0 auto;
+}
+
+#acs-tools-dumplibs {
+
+  // make sure scrollbars are always visible
+  ::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+  }
+  
+  .wait-centered {
+    display: block;
+    margin: 0 auto;
+  }
+
+  // Modal
+  // credit: https://stackoverflow.com/a/31173205/5633515
+  .coral-Modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 70vw;
+    height: 95vh;
+    -webkit-transform: translate(-50%,-50%);
+    -moz-transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    -o-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+
+    &.active {
+      display: block;
+    }
+    // make sure modal body is not longer than viewport
+    .coral-Modal-body {
+      height: ~"calc(95vh - 50px)";
+      overflow: hidden;
+      .coral-TabPanel {
+        margin: 0;
+        height: 100%;
+        .coral-TabPanel-content {
+          height: 90%;
+          overflow: scroll;
+          .coral-Icon {
+            color: black;
+          }
+        }
+      }
+      .clientlib {
+        padding-bottom: 2em;
+      }
+      .clientlib + .clientlib {
+        border-top: 1px solid rgba(0,0,0,0.2);
+        padding-top: 1em;
+      }
+    }
+  }
+
+  // for some reason the coral-Table--bordered does not have a border in coralui2.css
+  .coral-Table {
+    &.coral-Table--bordered {
+      border: .25rem solid #e9e9e9;
+    }
+    td {
+      max-width: 400px;
+      word-wrap: break-word;
+    }
+  }
+  .coral-Form {
+    overflow: hidden;
+    .coral-Form-fieldwrapper {
+      float: left;
+      margin: 1em 1em 1em 1em;
+      + .coral-Form-fieldwrapper {
+        margin: 1em 0 1em 1em;
+      }
+    }
+  }
+}
