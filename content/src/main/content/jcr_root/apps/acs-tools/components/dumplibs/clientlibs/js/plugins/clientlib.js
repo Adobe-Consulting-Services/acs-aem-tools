@@ -29,7 +29,7 @@
         install: function (Vue) {
             // Helper for HTTP requests to clientlib servlet
             Vue.getClientlibs = function (params) {
-                return axios.get('/apps/acs-tools/components/dumplibs.app.json', {
+                return axios.get('/etc/acs-tools/dumplibs/_jcr_content.app.json', {
                     params: params
                 });
             };
