@@ -45,9 +45,9 @@ import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.commons.osgi.PropertiesUtil;
 
-@Component(label = "ACS AEM Commons - Sling Component Debug Filter",
+@Component(label = "ACS AEM Tools - Sling Component Debug Filter",
            policy = ConfigurationPolicy.REQUIRE,
-           description = "Configuration of ACS AEM Commons Sling Component Debug Filter",
+           description = "Configuration of ACS AEM Tools Sling Component Debug Filter",
            immediate = true,
            metatype = true)
 @Properties({ @Property(name = "service.ranking",
