@@ -62,66 +62,70 @@
                     fileSearchPath: '${fileSearchPath}',
                     predicatesPath: '${predicatesPath}'
                 }); running = true; refresh();">
-    <div class="endor-Panel-header endor-BreadcrumbBar">
 
-        <nav class="endor-Crumbs">
-            <a class="endor-Crumbs-item" href="/">
-                <i class="endor-Crumbs-item-icon coral-Icon coral-Icon--adobeExperienceManager coral-Icon--sizeM"></i>
+    <%-- Header --%>
+
+    <coral-shell-header
+            class="coral--dark granite-shell-header coral3-Shell-header"
+            role="region"
+            aria-label="Header Bar"
+            aria-hidden="false">
+        <coral-shell-header-home class="globalnav-toggle"
+                                 data-globalnav-toggle-href="/"
+                                 role="heading"
+                                 aria-level="2">
+            <a is="coral-shell-homeanchor"
+               style="display: inline-block; padding-right: 0;"
+               icon="adobeExperienceManagerColor"
+               href="/"
+               class="coral3-Shell-homeAnchor">
+                <coral-shell-homeanchor-label>Adobe Experience Manager</coral-shell-homeanchor-label>
             </a>
-            <a class="endor-Crumbs-item" href="/miscadmin">Tools</a>
-            <a class="endor-Crumbs-item" href="${currentPage.path}.html">Query Editor</a>
-        </nav>
+            <span style="line-height: 2.375rem;">/ ACS AEM Tools / Query Editor</span>
+        </coral-shell-header-home>
+        <coral-shell-header-actions>
+            <span class="auto-query-wrapper">
+                <label acs-coral-checkbox>
+                    <input type="checkbox" ng-model="autoQuery" ng-change="refresh()"/>
+                    <span>Auto Query</span>
+                </label>
+                <div ng-show="showAutoQueryWarning"
+                     class="auto-query-warning tooltip notice arrow-top">
 
-    </div>
-    <div class="js-endor-page endor-Panel-content endor-Panel-content--breadcrumbBarHeight endor-Page">
-        <div class="endor-Page-content endor-Panel">
-            <nav class="endor-Panel-header endor-BlackBar">
-                <div class="endor-BlackBar-right">
-                    <span class="auto-query-wrapper">
-                        <label acs-coral-checkbox>
-                            <input type="checkbox" ng-model="autoQuery" ng-change="refresh()"/>
-                            <span>Auto Query</span>
-                        </label>
-                        <div ng-show="showAutoQueryWarning"
-                             class="auto-query-warning tooltip notice arrow-top">
-        
-                            Enabling Auto Query may result in long running queries that
-                            can cause unresponsiveness.
-                        </div>
-                    </span>
-                    <button class="coral-Button coral-Button--primary" ng-click="query()" ng-disabled="autoQuery">
-                        <span ng-show="!status.requesting">Run Query</span>
-                        <span ng-show="status.requesting">Querying...</span>
-                    </button>
+                    Enabling Auto Query may result in long running queries that
+                    can cause unresponsiveness.
                 </div>
-            </nav>
-            <div class="endor-Panel-content endor-Panel-content--blackBarHeight endor-Page" role="main">
- 
-                    <pre id="ace-input"
-                         ui-ace="{
-                              mode: 'querybuilder',
-                              theme: 'vibrant_ink',
-                              onLoad: initEditor,
-                              onChange: $parent.refresh
-                         }"
-                         ng-init="aceEditorBasePath='${aceEditorBasePath}'"
-                         ng-model="$parent.source"
-                         ng-controller="QueryInputCtrl"></pre>
+            </span>
+            <button class="coral-Button coral-Button--primary" ng-click="query()" ng-disabled="autoQuery">
+                <span ng-show="!status.requesting">Run Query</span>
+                <span ng-show="status.requesting">Querying...</span>
+            </button>
+        </coral-shell-header-actions>
+    </coral-shell-header>
 
-                    <pre id="ace-output"
-                         ui-ace="{
-                              mode: 'json',
-                              theme: 'vibrant_ink',
-                              onLoad: initEditor
-                         }"
-                         readonly="true"
-                         ng-init="aceEditorBasePath='${aceEditorBasePath}'"
-                         ng-model="$parent.json"
-                         ng-controller="QueryOutputCtrl"></pre>
 
-            </div>
-        </div>
-    </div>
+
+    <pre id="ace-input"
+         ui-ace="{
+              mode: 'querybuilder',
+              theme: 'vibrant_ink',
+              onLoad: initEditor,
+              onChange: $parent.refresh
+         }"
+         ng-init="aceEditorBasePath='${aceEditorBasePath}'"
+         ng-model="$parent.source"
+         ng-controller="QueryInputCtrl"></pre>
+
+    <pre id="ace-output"
+         ui-ace="{
+              mode: 'json',
+              theme: 'vibrant_ink',
+              onLoad: initEditor
+         }"
+         readonly="true"
+         ng-init="aceEditorBasePath='${aceEditorBasePath}'"
+         ng-model="$parent.json"
+         ng-controller="QueryOutputCtrl"></pre>
 
     <div ng-show="status.requesting" class="query-run-overlay-wrapper">
         <div class="spinner large"></div>

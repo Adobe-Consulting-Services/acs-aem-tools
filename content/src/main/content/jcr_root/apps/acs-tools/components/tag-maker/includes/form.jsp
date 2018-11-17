@@ -17,6 +17,23 @@
   ~ limitations under the License.
   ~ #L%
   --%>
+
+
+<div acs-coral-alert
+     data-alert-type="notice"
+     data-alert-size="large"
+     data-alert-title="Tag Maker has moved to ACS AEM Commons' Tag Creator"
+     class="coral-Alert coral-Alert--notice coral-Alert--large">
+
+    <div class="coral-Alert-message">
+        Tag Maker has been moved to ACS AEM Commons as <strong><a href="https://adobe-consulting-services.github.io/acs-aem-commons/features/mcp-tools/tag-creator/index.html" target="_blank">Tag Creator</a></strong>.
+        <br/>
+        <br/>
+        Please prefer ACS AEM Commons' <strong><a href="https://adobe-consulting-services.github.io/acs-aem-commons/features/mcp-tools/tag-creator/index.html" target="_blank">Tag Creator</a></strong> over ACS AEM Tools Tag Maker. Do note that Tag Creator accepts Excel files rather than CSV files.
+    </div>
+</div>
+
+
 <form ng-submit="makeTags()">
 
     <div class="form-row">

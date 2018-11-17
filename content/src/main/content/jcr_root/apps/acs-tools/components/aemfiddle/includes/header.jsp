@@ -21,17 +21,39 @@
 %><%@page session="false"%>
 
 <%-- Header --%>
-<div class="endor-Panel-header endor-BreadcrumbBar">
 
-    <nav class="endor-Crumbs">
-        <a class="endor-Crumbs-item" href="/" ng-hide="data.app.running">
-            <i class="endor-Crumbs-item-icon coral-Icon coral-Icon--adobeExperienceManager coral-Icon--sizeM"></i>
-        </a>
-        <a class="endor-Crumbs-item" href="#" ng-show="data.app.running">
-            <i class="endor-Crumbs-item-icon coral-Icon coral-Icon--circle coral-Icon--sizeM"></i>
-        </a>
-        <a class="endor-Crumbs-item" href="/miscadmin">Tools</a>
-        <a class="endor-Crumbs-item" href="<%= currentPagePath %>.html">AEM Fiddle</a>
-    </nav>
+<coral-shell-header
+        class="coral--dark granite-shell-header coral3-Shell-header"
+        role="region"
+        aria-label="Header Bar"
+        aria-hidden="false">
+    <coral-shell-header-home class="globalnav-toggle"
+                             data-globalnav-toggle-href="/"
+                             role="heading"
+                             aria-level="2">
+        <a is="coral-shell-homeanchor"
+           style="display: inline-block; padding-right: 0;"
+           icon="adobeExperienceManagerColor"
+           href="/"
+           class="coral3-Shell-homeAnchor">
+            <coral-icon ng-hide="!data.app.running"
+                       class="coral3-Icon coral3-Shell-homeAnchor-icon coral3-Icon--sizeM coral3-Icon--adobeExperienceManagerColor"
+                       icon="adobeExperienceManagerColor"
+                       size="M"
+                       role="img"
+                       aria-label="adobe experience manager color"></coral-icon>
+            <coral-icon ng-hide="data.app.running"
+                        class="coral3-Icon coral3-Shell-homeAnchor-icon coral3-Icon--sizeM"
+                        icon="circle"
+                        size="M"
+                        role="img"
+                        aria-label="running color"></coral-icon>
 
-</div>
+
+            <coral-shell-homeanchor-label>Adobe Experience Manager</coral-shell-homeanchor-label>
+        </a>
+        <span style="line-height: 2.375rem;">/ ACS AEM Tools / AEM Fiddle</span>
+    </coral-shell-header-home>
+    <%@include file="blackbar.jsp" %>
+
+</coral-shell-header>

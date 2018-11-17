@@ -26,11 +26,6 @@
     }
 
     .ace_editor {
-        margin: 0;
-        width: 50%;
-        height: 100%;
-        float: left;
-
         .link {
             border-bottom: 1px solid #6f0 !important;
             position: relative;
@@ -46,6 +41,10 @@
         z-index: 20000;
 
         .auto-query-warning {
+            border: solid 1px black;
+            background-color: white;
+            border-radius: 3px;
+
             color: #4B4B4B;
             min-width: @auto-query-notification-width;
             width: @auto-query-notification-width;
@@ -137,4 +136,21 @@
         to { .transform(translate(2px, 2px) rotate(0deg);); }
     }
 
+}
+
+
+#ace-input {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    right: 50%;
+    bottom: 10px;
+}
+
+#ace-output {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    bottom: 10px;
+    left: 50%;
 }

@@ -35,8 +35,8 @@ angular.module('qeControllers').
                 duration: 0
             };
 
-            $scope.source = 'type=nt:file\n' +
-                'nodename=*.jar\n' +
+            $scope.source = 'type=cq:Page\n' +
+                'fulltext=experience\n' +
                 'orderby=@jcr:content/jcr:lastModified\n' +
                 'orderby.sort=desc';
 
