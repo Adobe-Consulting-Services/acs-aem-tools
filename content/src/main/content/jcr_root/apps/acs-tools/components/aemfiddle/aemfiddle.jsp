@@ -56,26 +56,21 @@
     </head>
 
 
-    <body class="endor-Panel coral--light" id="acs-tools-aemfiddle-app" ng-controller="MainCtrl">
+    <body class="coral--light" id="acs-tools-aemfiddle-app" ng-controller="MainCtrl">
         <%@include file = "includes/header.jsp" %>
 
-        <div class="js-endor-page endor-Panel-content endor-Panel-content--breadcrumbBarHeight endor-Page">
-            <%@include file="includes/rail.jsp" %>
+        <%@include file="includes/rail.jsp" %>
 
-            <div class="endor-Page-content endor-Panel">
-                <%@include file="includes/blackbar.jsp" %>
-                <div class="endor-Panel-content endor-Panel-content--blackBarHeight endor-Page" role="main">
-                    <div id="left-pane">
-                        <%@include file="includes/input.jsp" %>
+        <div class="" role="main">
+            <div id="left-pane">
+                <%@include file="includes/input.jsp" %>
 
-                        <%-- Resize strip/handle; Requires classes: 'ui-resizable-handle' and 'ui-resizable-e' --%>
-                        <div id="handle" class="ui-resizable-handle ui-resizable-e"></div>
-                    </div>
+                <%-- Resize strip/handle; Requires classes: 'ui-resizable-handle' and 'ui-resizable-e' --%>
+                <div id="handle" class="ui-resizable-handle ui-resizable-e"></div>
+            </div>
 
-                    <div id="right-pane">
-                        <%@include file="includes/output.jsp" %>
-                    </div>
-                </div>
+            <div id="right-pane">
+                <%@include file="includes/output.jsp" %>
             </div>
         </div>
 

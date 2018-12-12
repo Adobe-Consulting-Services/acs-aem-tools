@@ -17,20 +17,13 @@
  * limitations under the License.
  * #L%
  */
-.endor-BlackBar {
-    .endor-BlackBar-title {
-        display: inline;
-        margin-left: 1em;
-    }
+.header-actions {
+    margin-left: 0;
 
-    .endor-BlackBar-item {
-        float: inherit;
-    }
-
-    .endor-BlackBar-right {
-        .endor-BlackBar-item {
-            float: left;
-        }
+    .header-item {
+        float: left;
+        padding-left: 1.5rem;
+        line-height: 2.25rem;
     }
 
     input.resource {
@@ -40,8 +33,9 @@
         font-size: 0.85rem;
         width: 250px;
         display: inline;
+        padding: 5px 10px;
         &:focus {
-            width: 500px;
+            width: 300px;
         }
     }
 
@@ -94,9 +88,89 @@
     }
 }
 
+
+
+
+#popover-new-rail {
+    .rail-section {
+        max-width: 75%;
+        min-width: 300px;
+    }
+
+    h3 {
+        margin-bottom: 1rem;
+    }
+
+    .rail-buttons {
+        float: right;
+    }
+
+    .rail-button {
+        margin-left: .5rem;
+        color: #ccc;
+
+        &:hover {
+            color: black;
+        }
+    }
+
+    .rail-form {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: solid 1px #eee;
+
+        .rail-form__title {
+            font-size: .9rem;
+            margin-bottom: .5rem;
+        }
+
+        .rail-form__fields {
+            margin-bottom: 1rem;
+
+        }
+
+        .rail-form__input {
+            padding: .5rem;
+            width: 80%;
+        }
+    }
+
+
+    .rail-fiddle {
+        margin-top: .5rem;
+        padding-top: .5rem;
+        border-top: solid 1px #eee;
+
+        .rail-fiddle__delete {
+            color: #ccc;
+            display: inline-block;
+            &:hover {
+                color: black;
+            }
+
+        }
+
+        .rail-fiddle__load {
+            color: black;
+            margin-left: .5rem;
+            display: inline-block;
+            text-decoration: none;
+            margin-left: 1rem;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+
+
+    }
+
+
+}
+
 #left-pane , #right-pane {
     position: absolute;
-    top: 0;
+    top: 50px;
     bottom: 0;
 }
 
@@ -171,6 +245,10 @@
             vertical-align: middle;
             .toggle-output-icon {
                 float: left;
+               color: #666;
+                &:hover {
+                    color: black;
+                }
             }
         }
     }
@@ -208,8 +286,15 @@
 
     .output-error .output-rendered {
         font-size: .9rem;
-        h1 {
-            font-size: 1.25rem;
+    }
+
+    &.output-error {
+        font-size: 1rem;
+        line-height: 1.1rem;
+
+        h1, h2, h3, h4, h5, h6 {
+            font-size: 1rem;
+            line-height: 1.1rem;
         }
     }
 }

@@ -20,11 +20,25 @@
 
 <%@include file="/libs/foundation/global.jsp" %><%
 
-%><form class="no-separator"
+%>
+
+<div acs-coral-alert
+     data-alert-type="notice"
+     data-alert-size="large"
+     data-alert-title="Explain Query is now part of AEM"
+     class="coral-Alert coral-Alert--notice coral-Alert--large">
+
+    <div class="coral-Alert-message">
+        <a href="/libs/granite/operations/content/diagnosistools/queryPerformance.html">Explain Query</a> is incorporated into Adobe Experience Manager 6.2+.
+        <p>Please prefer the <a href="/libs/granite/operations/content/diagnosistools/queryPerformance.html">Explain Query</a> provided by AEM as it is updated and more accurate than this version provided by ACS AEM Tools.</p>
+    </div>
+</div>
+
+<form class="no-separator"
         ng-submit="explain()">
 
     <div class="form-row">
-        <h4 acs-coral-heading>Language</h4>
+        <h4 acs-coral-heading>Language</h4>w
 
         <div class="select-wrapper">
             <select ng-model="form.language"
@@ -45,7 +59,7 @@
                     ng-model="form.statement"
                     rows="4"
                     class="coral-Textfield coral-Textfield--multiline"
-                    cols="20"
+                    style="width: 75%"
                     ng-required="true"
                     placeholder="Query statement; must match the selected Language above"></textarea>
         </span>
