@@ -23,11 +23,8 @@
     pageContext.setAttribute("rcpPath",
             resourceResolver.map(slingRequest, "/system/jackrabbit/filevault/rcp"));
 
-    pageContext.setAttribute("legacyRcpPath",
-            resourceResolver.map(slingRequest, "/libs/granite/packaging/rcp"));
-
 %><div  ng-controller="MainCtrl"
-        ng-init="init(['${rcpPath}', '${legacyRcpPath}']);">
+        ng-init="init(['${rcpPath}']);">
 
     <!-- VLT-RCP Not installed Message -->
     <div ng-show="vltMissing">
@@ -48,8 +45,8 @@
                     <li>
                         The VLT-RCP endpoint URL must be accessible and not blocked via
                         Dispatcher or another reverse proxy. Note: The VLT RCP servlet
-                        endpoint changed from &quot;/system/jackrabbit/filevault/rcp&quot; to
-                        &quot;/libs/granite/packaging/rcp&quot; in VLT-RCP 3.1.6.
+                        endpoint changed from &quot;/libs/granite/packaging/rcp&quot; to
+                        &quot;/system/jackrabbit/filevault/rcp&quot; in VLT-RCP 3.1.6.
                     </li>
                 </ol>
         </div>
@@ -73,7 +70,9 @@
 
             <button class="coral-Button"
                     data-target="#create-new-task-modal"
-                    data-toggle="modal"><i class="icon-add"></i> Add Task</button>
+                    data-toggle="modal"><i class="icon-add">
+                    <i class="coral-Icon coral-Icon--add coral-Selector-icon"></i>
+                    Add Task</button>
         </div>
         <!-- // Header buttons: add/refresh -->
 
@@ -118,7 +117,13 @@
                         <!-- Task Action buttons -->
                         <span class="task-actions">
                             <button class="coral-Button--quiet"
-                                title="Create new duplicate task with this tasks values"
+                                title="Edit task"
+                                ng-click="edit(task)"
+                                data-target="#create-new-task-modal"
+                                data-toggle="modal">
+                                <i  class="coral-Icon coral-Icon--sizeS coral-Icon--edit"></i>
+                            <button class="coral-Button--quiet"
+                                title="Create new task with this task's values"
                                 ng-click="duplicate(task)"
                                 data-target="#create-new-task-modal"
                                 data-toggle="modal">
@@ -126,7 +131,7 @@
                             </button>
                             <button class="coral-Button--quiet"
                                 title="Start task"
-                                ng-show="task.status.state == 'NEW'"
+                                ng-show="task.status.state != 'RUNNING' || task.status.state == 'STOPPING'"
                                 ng-click="start(task)">
                                 <i class="coral-Icon coral-Icon--sizeS coral-Icon--playCircle"></i>
                             </button>
@@ -135,6 +140,13 @@
                                 ng-show="task.status.state == 'RUNNING'"
                                 ng-click="stop(task)">
                                 <i class="coral-Icon coral-Icon--sizeS coral-Icon--stopCircle"></i>
+                            </button>
+                            <button class="coral-Button--quiet"
+                                title="Set credentials"
+                                ng-click="editCredentials(task)"
+                                data-target="#set-credentials-modal"
+                                data-toggle="modal">
+                                <i class="coral-Icon coral-Icon--sizeS coral-Icon--userEdit"></i>
                             </button>
                             <button class="coral-Button--quiet"
                                 title="Delete Task"
@@ -172,12 +184,16 @@
                                 <li><b>No ordering:</b> {{ task.noOrdering }}</li>
                                 <li><b>Throttle:</b> {{ task.throttle || 0}} seconds</li>
                                 <li><b>Resume from:</b> {{ task.resumeFrom || 'Not set'}}</li>
+                                <li><b>Use system properties:</b> {{ task.useSystemProperties || 'No'}}</li>
+                                <li><b>Allow self-signed certificate:</b> {{ task.allowSelfSignedCertificate || 'No'}}</li>
+                                <li><b>Disable hostname verification:</b> {{ task.disableHostnameVerification || 'No'}}</li>
                                 <li ng-show="task.excludes.length > 0">
                                     Excludes:
                                     <ul>
                                         <li ng-repeat="exclude in task.excludes track by $index">{{exclude}}</li>
                                     </ul>
                                 </li>
+                                <li ng-show="task.filter && task.filter.length > 0"><b>Filter:</b> {{ task.filter || 'Not set'}}</li>
                             </ul>
                         </div>
                     </div>
@@ -187,6 +203,7 @@
         <!-- // Tasks accordion section -->
 
         <cq:include script="includes/create-task-modal.jsp"/>
+        <cq:include script="includes/set-credentials-modal.jsp"/>
     </div>
 
 </div>

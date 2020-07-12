@@ -25,7 +25,7 @@ angular
 .controller('MainCtrl', ['$scope', '$http', '$timeout', '$interval', 'NotificationsService',
 function ($scope, $http, $timeout, $interval, NotificationsService) {
 
-    $scope.rcp_uris = ['/system/jackrabbit/filevault/rcp', '/libs/granite/packaging/rcp'];
+    $scope.rcp_uris = ['/system/jackrabbit/filevault/rcp'];
 
     $scope.task_src = 'http://localhost:4502/crx/server/crx.default/jcr:root/content/dam/my-site';
 
@@ -55,8 +55,11 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
     $scope.vltMissing = true;
 
     $scope.taskExpandedStatuses = [];
+    
+    /** false in case the scope refers to an existing task, otherwise true */
+    $scope.isNew = true; 
 
-    /*
+   /**
     * Loads the tasks
     */
     $scope.init = function (rcpUris) {
@@ -99,13 +102,18 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
         });
     };
 
+    $scope.editCredentials = function (task) {
+        $scope.task_id = task.id;
+        $scope.task_src_username = "";
+        $scope.task_src_password = "";
+    };
+
     /**
      * Set the scope values from a task
-     * Used for the duplicate functionality
-     * @param {*} task The task to duplicate
+     * @param {*} task The task to edit
      */
-    $scope.duplicate = function (task) {
-        $scope.task_id = task.id + "-copy"; // unique
+    $scope.edit = function (task) {
+        $scope.task_id = task.id;
         $scope.task_src = task.src;
         $scope.task_dst = task.dst;
         $scope.task_batchSize = task.batchsize;
@@ -115,21 +123,40 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
             update: task.update,
             onlyNewer: task.onlyNewer,
             noOrdering: task.noOrdering,
-            autoRefresh: false
+            autoRefresh: false,
+            useSystemProperties: task.useSystemProperties,
+            allowSelfSignedCertificate: task.allowSelfSignedCertificate,
+            disableHostnameVerification: task.disableHostnameVerification
         };
 
         if (task.excludes) {
             $scope.excludes = task.excludes.map(function(exclude){
                 return {value: exclude};
             });
+        } else if (task.filter) {
+            $scope.filter = task.filter;
         }
 
         if (task.resumeFrom) {
             $scope.task_resumeFrom = task.resumeFrom;
         }
+        $scope.isNew = false;
     };
 
-    /*
+
+    /**
+     * Set the scope values from a task
+     * Used for the duplicate functionality
+     * @param {*} task The task to duplicate
+     */
+    $scope.duplicate = function (task) {
+        $scope.edit(task);
+        // different task id
+        $scope.task_id = task.id + "-copy"; // unique
+        $scope.isNew = true;
+    };
+
+   /**
     * Start task
     */
     $scope.start = function (task) {
@@ -148,7 +175,7 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
             });
     };
 
-    /*
+   /**
     * Stop task
     */
     $scope.stop = function (task) {
@@ -167,7 +194,7 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
             });
     };
 
-    /*
+   /**
     * Remove task
     */
     $scope.remove = function (task) {
@@ -202,6 +229,9 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
                 "onlyNewer": $scope.checkboxModel.onlyNewer,
                 "recursive": $scope.checkboxModel.recursive,
                 "noOrdering": $scope.checkboxModel.noOrdering,
+                "useSystemProperties": $scope.checkboxModel.useSystemProperties,
+                "allowSelfSignedCertificate": $scope.checkboxModel.allowSelfSignedCertificate,
+                "disableHostnameVerification": $scope.checkboxModel.disableHostnameVerification,
                 "throttle": $scope.task_throttle || 0
             };
         if ($scope.task_resumeFrom !== "") {
@@ -212,8 +242,9 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
             cmd.excludes = $scope.excludes.map(function(exclude){
                 return exclude.value;
             });
+        } else if ($scope.filter && $scope.filter.length > 0) {
+            cmd.filter = $scope.filter;
         }
-
         $http
         .post($scope.app.uri, cmd)
         .success(function (data, status, headers, config) {
@@ -228,10 +259,77 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
         });
     };
 
+    /**
+     * Create new task
+     */
+    $scope.save = function () {
+        var i = 0,
+            cmd = {
+                "cmd": "edit",
+                "id": $scope.task_id,
+                "src": $scope.task_src,
+                "srcCreds": $scope.task_src_username + ":" + $scope.task_src_password,
+                "dst": $scope.task_dst,
+                "batchsize": $scope.task_batchSize || 1024,
+                "update": $scope.checkboxModel.update,
+                "onlyNewer": $scope.checkboxModel.onlyNewer,
+                "recursive": $scope.checkboxModel.recursive,
+                "noOrdering": $scope.checkboxModel.noOrdering,
+                "useSystemProperties": $scope.checkboxModel.useSystemProperties,
+                "allowSelfSignedCertificate": $scope.checkboxModel.allowSelfSignedCertificate,
+                "disableHostnameVerification": $scope.checkboxModel.disableHostnameVerification,
+                "throttle": $scope.task_throttle || 0
+            };
+        if ($scope.task_resumeFrom !== "") {
+            cmd.resumeFrom = $scope.task_resumeFrom;
+        }
+
+        if ($scope.excludes.length > 0) {
+            cmd.excludes = $scope.excludes.map(function(exclude){
+                return exclude.value;
+            });
+        } else if ($scope.filter && $scope.filter.length > 0) {
+            cmd.filter = $scope.filter;
+        }
+        $http
+        .post($scope.app.uri, cmd)
+        .success(function (data, status, headers, config) {
+            NotificationsService.add('info', 'INFO', 'Task modified.');
+
+            $scope.refresh();
+            angular.element('#create-new-task-modal').modal('hide');
+            $scope.reset();
+        })
+        .error(function (data, status, headers, config) {
+            NotificationsService.add('error', 'ERROR', data.message);
+        });
+    };
+
+    /**
+     * Set credentials task
+     */
+     $scope.set_credentials = function () {
+         var cmd = {
+             "cmd": "set-credentials",
+             "id": $scope.task_id,
+             "srcCreds": $scope.task_src_username + ":" + $scope.task_src_password
+         };
+
+         $http.post($scope.app.uri, cmd).
+             success(function (data, status, headers, config) {
+                 NotificationsService.add('info', 'INFO', 'Set credentials for task ' + $scope.task_id + '.');
+                 $scope.refresh();
+             }).
+             error(function (data, status, headers, config) {
+                 NotificationsService.add('error', 'ERROR', 'Could not set credentials for task.');
+             });
+     };
 
     $scope.reset = function() {
         $scope.task_id = '';
         $scope.task_src = 'http://localhost:4502/crx/server/crx.default/jcr:root/content/dam/my-site';
+        $scope.task_src_username = '';
+        $scope.task_src_password = '';
         $scope.task_dst = '/content/dam/my-site';
         $scope.task_batchSize = '1024';
         $scope.task_throttle = '';
@@ -240,9 +338,14 @@ function ($scope, $http, $timeout, $interval, NotificationsService) {
             update: false,
             onlyNewer: false,
             noOrdering: false,
-            autoRefresh: false
+            autoRefresh: false,
+            useSystemProperties: false,
+            allowSelfSignedCertificate: false,
+            disableHostnameVerification: false
         };
         $scope.excludes = [];
+        $scope.filter = '';
+        $scope.isNew = true;
     };
 
     $scope.addExclude = function () {
