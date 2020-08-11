@@ -18,10 +18,9 @@
   ~ #L%
   --%>
 <div id="create-new-task-modal" class="coral-Modal">
-
     <div class="coral-Modal-header">
         <i class="coral-Modal-typeIcon coral-Icon coral-Icon--sizeS"></i>
-        <h2 class="coral-Modal-title coral-Heading coral-Heading--2">Create a new task</h2>
+        <h2 class="coral-Modal-title coral-Heading coral-Heading--2">{{ isNew ? 'Create a new task' : 'Edit a task' }}</h2>
         <button type="button" class="coral-MinimalButton coral-Modal-closeButton" title="Close" data-dismiss="modal" ng-click="reset();">
             <i class="coral-Icon coral-Icon--sizeXS coral-Icon--close coral-MinimalButton-icon "></i>
         </button>
@@ -33,8 +32,9 @@
             <section class="create-new-task">
 
                 <div class="coral-Form-fieldwrapper">
-                    <label class="coral-Form-fieldlabel">Task Id</label>
+                    <label class="coral-Form-fieldlabel" >Task Id</label>
                     <input class="coral-Form-field coral-Textfield" type="text"
+                            ng-readonly="!isNew"
                             ng-model="task_id"
                             name="task_id"/>
                 </div>
@@ -47,20 +47,22 @@
                             placeholder="http://localhost:4502/crx/server/-/jcr:root/content/dam/my-site"/>
                 </div>
 
-                <!-- Credintial Fields -->
+                <!-- Credential Fields -->
                 <div class="coral-Form-fieldwrapper">
                     <label class="coral-Form-fieldlabel">Source User Name</label>
                     <input class="coral-Form-field coral-Textfield" type="text"
                             autocomplete="username"
                             ng-model="task_src_username"
-                            name="username"/>
+                            name="username"
+                            placeholder="Set again with each edit"/>
                 </div>
 
                 <div class="coral-Form-fieldwrapper">
                     <label class="coral-Form-fieldlabel">Source Password</label>
                     <input class="coral-Form-field coral-Textfield" ng-attr-type="{{showpassword ? 'text' : 'password'}}"
                             ng-model="task_src_password"
-                            name="passsword"/>
+                            name="passsword"
+                            placeholder="Set again with each edit"/>
                 </div>
                 <label class="coral-Form-fieldlabel">Show Password</label>
                 <span class="coral-Form-field coral-Switch">
@@ -68,7 +70,7 @@
                             name="showpassword"
                             ng-model="showpassword"><span class="coral-Switch-offLabel">No</span><span class="coral-Switch-onLabel">Yes</span>
                 </span>
-                <!-- // Credintial Fields -->
+                <!-- // Credential Fields -->
 
                 <!-- Switch Options -->
                 <label class="coral-Form-fieldlabel">Destination</label>
@@ -103,6 +105,27 @@
                     <input class="coral-Switch-input" type="checkbox"
                            name="noOrdering"
                            ng-model="checkboxModel.noOrdering"><span class="coral-Switch-offLabel">No</span><span class="coral-Switch-onLabel">Yes</span>
+                </span>
+
+                <label class="coral-Form-fieldlabel">Use system properties for connection settings</label>
+                <span class="coral-Form-field coral-Switch">
+                    <input class="coral-Switch-input" type="checkbox"
+                           name="useSystemProperties"
+                           ng-model="checkboxModel.useSystemProperties"><span class="coral-Switch-offLabel">No</span><span class="coral-Switch-onLabel">Yes</span>
+                </span>
+
+                <label class="coral-Form-fieldlabel">Allow self-signed certificate</label>
+                <span class="coral-Form-field coral-Switch">
+                    <input class="coral-Switch-input" type="checkbox"
+                           name="allowSelfSignedCertificate"
+                           ng-model="checkboxModel.allowSelfSignedCertificate"><span class="coral-Switch-offLabel">No</span><span class="coral-Switch-onLabel">Yes</span>
+                </span>
+
+                <label class="coral-Form-fieldlabel">Disable hostname verification</label>
+                <span class="coral-Form-field coral-Switch">
+                    <input class="coral-Switch-input" type="checkbox"
+                           name="disableHostnameVerification"
+                           ng-model="checkboxModel.disableHostnameVerification"><span class="coral-Switch-offLabel">No</span><span class="coral-Switch-onLabel">Yes</span>
                 </span>
                 <!-- // Switch Options -->
 
@@ -142,13 +165,19 @@
                         </ul>
                     </div>
                 </div>
+                
+                <label class="coral-Form-fieldlabel">Filter</label>
+                <textarea class="coral-Form-field coral-Textfield coral-Textfield--multiline" type="text" rows="10"
+                       ng-model="filter"
+                       name="filter">
+                </textarea>
                 <!-- // Extra Options -->
             </section>
         </form>
     </div>
 
     <div class="coral-Modal-footer">
-        <button class="coral-Button coral-Button--primary" data-dismiss="modal" ng-click="create();">Create New Task</button>
+        <button class="coral-Button coral-Button--primary" data-dismiss="modal" ng-click="isNew ? create() : save();">{{ isNew ? 'Create New Task' : 'Save Changes' }}</button>
         <button class="coral-Button" data-dismiss="modal" ng-click="reset();">Cancel</button>
     </div>
 
