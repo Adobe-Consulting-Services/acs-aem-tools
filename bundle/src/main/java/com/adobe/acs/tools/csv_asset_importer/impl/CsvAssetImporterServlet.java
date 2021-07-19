@@ -20,37 +20,9 @@
 
 package com.adobe.acs.tools.csv_asset_importer.impl;
 
-import com.day.cq.commons.jcr.JcrConstants;
-import com.day.cq.commons.jcr.JcrUtil;
-import com.day.cq.dam.api.Asset;
-import com.day.cq.dam.api.AssetManager;
-import com.day.cq.dam.api.DamConstants;
-import com.day.cq.dam.commons.util.DamUtil;
-import com.day.text.csv.Csv;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.LineIterator;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.sling.SlingServlet;
-import org.apache.jackrabbit.commons.JcrUtils;
-import org.apache.jackrabbit.util.Text;
-import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.resource.*;
-import org.apache.sling.api.servlets.SlingAllMethodsServlet;
-import org.apache.sling.commons.json.JSONException;
-import org.apache.sling.commons.json.JSONObject;
-import org.apache.sling.commons.mime.MimeTypeService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -62,6 +34,42 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.LineIterator;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.sling.SlingServlet;
+import org.apache.jackrabbit.commons.JcrUtils;
+import org.apache.jackrabbit.util.Text;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.resource.ModifiableValueMap;
+import org.apache.sling.api.resource.PersistenceException;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.api.servlets.SlingAllMethodsServlet;
+import org.apache.sling.commons.json.JSONException;
+import org.apache.sling.commons.json.JSONObject;
+import org.apache.sling.commons.mime.MimeTypeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.day.cq.commons.jcr.JcrConstants;
+import com.day.cq.commons.jcr.JcrUtil;
+import com.day.cq.dam.api.Asset;
+import com.day.cq.dam.api.AssetManager;
+import com.day.cq.dam.api.DamConstants;
+import com.day.cq.dam.commons.util.DamUtil;
+import com.day.text.csv.Csv;
 
 @SlingServlet(
         label = "ACS AEM Tools - Excel to Asset Servlet",
@@ -88,9 +96,24 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
         final JSONObject jsonResponse = new JSONObject();
         final Parameters params = new Parameters(request);
         if (params.getFile() != null) {
-
-            final long start = System.currentTimeMillis();
-            final Iterator<String[]> rows = this.getRowsFromCsv(params);
+        	Iterator<String[]> rows = null;
+			final long start = System.currentTimeMillis();
+			String inFileMimeType = params.getMimeType();
+			String tempDir = null;
+			if (StringUtils.equalsIgnoreCase(inFileMimeType, "application/zip")) {
+				final File tmpDir = new File(FileUtils.getTempDirectory(), "acs-tools-csv-importer-" + start);
+				tempDir = tmpDir.getAbsolutePath();
+				InputStream inputStream = params.getFile();
+				// un-archive the zip file.
+				UnzipUtility.unzip(inputStream, tempDir);
+				IOUtils.closeQuietly(inputStream);
+				InputStream is = new FileInputStream(tempDir + "/import.csv");
+				rows = this.getRowsFromCsv(params, is);
+				IOUtils.closeQuietly(is);
+				params.setFileLocation(tempDir);
+			} else {
+				rows = this.getRowsFromCsv(params);
+			}
 
             try {
                 // First row is property names
@@ -176,6 +199,8 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
                 log.error("Could not process CSV import", e);
                 this.addMessage(jsonResponse, "Could not process CSV import. " + e.getMessage());
                 response.setStatus(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } finally{
+            	FileUtils.deleteDirectory(new File(tempDir));
             }
         } else {
             log.error("Could not find CSV file in request.");
@@ -214,6 +239,37 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
 
         return csv.read(is, params.getCharset());
     }
+    
+    /**
+  	 * Interrogates the Request parameters and returns a prepared and parsed set
+  	 * of rows from the CSV file.
+  	 *
+  	 * @param params
+  	 *            the Request parameters
+  	 * @return The rows from the uploaded CSV file
+  	 * @throws IOException
+  	 */
+  	private Iterator<String[]> getRowsFromCsv(final Parameters params, InputStream is) throws IOException {
+  		final Csv csv = new Csv();
+
+  		if (params.getDelimiter() != null) {
+  			log.debug("Setting Field Delimiter to [ {} ]", params.getDelimiter());
+  			csv.setFieldDelimiter(params.getDelimiter());
+  		}
+
+  		if (params.getSeparator() != null) {
+  			log.debug("Setting Field Separator to [ {} ]", params.getSeparator());
+  			csv.setFieldSeparatorRead(params.getSeparator());
+  		}
+
+  		// Hack to prevent empty-value ending lines from breaking
+  		is = this.terminateLines(is,
+  				params.getSeparator() != null ? params.getSeparator() : csv.getFieldSeparatorRead(),
+  				params.getCharset());
+
+  		return csv.read(is, params.getCharset());
+  	}
+
 
     /**
      * Import the row of data into the DAM.
@@ -711,4 +767,5 @@ public class CsvAssetImporterServlet extends SlingAllMethodsServlet {
             log.error("Could not formulate JSON Response", e);
         }
     }
+    
 }
