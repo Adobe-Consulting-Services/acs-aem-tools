@@ -55,11 +55,6 @@
                             <artifactId>acs-aem-tools-bundle</artifactId>
                             <target>/apps/acs-tools/install</target>
                         </embedded>
-                        <embedded>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>acs-aem-tools-bundle-livereload</artifactId>
-                            <target>/apps/acs-tools/install</target>
-                        </embedded>
                     </embeddeds>
                     <dependencies>
                         <dependency>
@@ -106,59 +101,13 @@
                 </configuration>
             </plugin>
 
-            <!-- configuration to create minimal package -->
-            <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <id>create-min-package</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>execute</goal>
-                        </goals>
-                        <configuration>
-                            <source>${pom.basedir}/src/main/script/CreateMinPackage.groovy</source>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.8</version>
-                <executions>
-                    <execution>
-                        <id>attach-artifacts</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>attach-artifact</goal>
-                        </goals>
-                        <configuration>
-                            <artifacts>
-                                <artifact>
-                                    <file>${project.build.directory}/${project.artifactId}-${project.version}-min.zip
-                                    </file>
-                                    <type>zip</type>
-                                    <classifier>min</classifier>
-                                </artifact>
-                            </artifacts>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+           
         </plugins>
     </build>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>acs-aem-tools-bundle</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>acs-aem-tools-bundle-livereload</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
