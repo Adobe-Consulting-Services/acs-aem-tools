@@ -45,8 +45,7 @@ import java.util.Map;
         methods = {"GET"},
         resourceTypes = {"acs-tools/components/dumplibs"},
         selectors = {"app"},
-        extensions = {"json"},
-        metatype = true
+        extensions = {"json"}
 )
 public class DumplibsServlet extends SlingSafeMethodsServlet {
 

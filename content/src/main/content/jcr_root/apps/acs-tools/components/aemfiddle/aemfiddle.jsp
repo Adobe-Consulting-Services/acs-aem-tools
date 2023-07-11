@@ -102,5 +102,33 @@
         <script type="text/javascript">
             angular.bootstrap(document.getElementById('acs-tools-aemfiddle-app'), ['aemFiddle']);
         </script>
+
+
+        <script type="text/javascript">
+            /** This is a workaround for a bug in AEM 6.5.16+ that loads the coral popover JS twice, making the popover click handler immediately close the popover. */
+            $(document).ready(function () {
+              const clickHandlers = $._data(document, "events").click;
+
+              if (clickHandlers) {
+                const popoverHandlers = clickHandlers.filter((handler) => {
+                  const namespace = handler.namespace || "";
+                  const event = handler.origType || handler.type || "";
+                  return namespace.includes("data-api.popover") && event.includes("click");
+                });
+
+                popoverHandlers.forEach((handler) => {
+                  console.log(handler);
+                  popoverHandlers.slice(1).forEach((handler) => {
+                    $(document).off(
+                      "touchstart.popover.data-api click.popover.data-api",
+                      handler.selector || "**",
+                      handler.handler
+                    );
+                  });
+                });
+              }
+            });
+        </script>
+
     </body>
 </html>
