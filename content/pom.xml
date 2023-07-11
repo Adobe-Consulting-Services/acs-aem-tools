@@ -82,7 +82,7 @@
                     <failOnIssues>true</failOnIssues>
                     <predefinedVars>jQuery,window,$</predefinedVars>
                     <excludes>
-                        <exclude>**/etc/clientlibs/acs-tools/vendor/**/*.js</exclude>
+                        <exclude>**/apps/acs-tools/clientlibs/vendor/**/*.js</exclude>
                     </excludes>
                 </configuration>
             </plugin>

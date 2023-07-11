@@ -3,4 +3,4 @@
     jcr:primaryType="cq:ClientLibraryFolder"
     categories="aemfiddle.app"
     jsProcessor="[default:none,min:gcc]"
-    dependencies="[moment,coralui2,acs-tools.ace,acs-tools.coralui2.angularjs,acs-tools.angularjs]"/>
+    dependencies="[moment,coralui2,acs-tools.coralui2.angularjs,acs-tools.angularjs]"/>
