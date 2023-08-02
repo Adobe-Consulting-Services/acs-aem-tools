@@ -18,7 +18,7 @@
  * #L%
  */
 
-    package com.adobe.acs.tools.csv_asset_importer.impl;
+package com.adobe.acs.tools.csv_asset_importer.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -58,7 +58,8 @@ public class Parameters {
 
     private String fileLocation;
 
-    private String[] ignoreProperties;
+
+	private String[] ignoreProperties;
 
     private ImportStrategy importStrategy;
     
@@ -69,6 +70,8 @@ public class Parameters {
     private String charset = DEFAULT_CHARSET;
 
     private InputStream file;
+    
+    private String mimeType;
 
     private Long throttle = DEFAULT_THROTTLE;
 
@@ -172,6 +175,7 @@ public class Parameters {
         }
 
         if (fileParam != null && fileParam.getInputStream() != null) {
+        	this.mimeType = fileParam.getContentType();
             this.file = fileParam.getInputStream();
         }
 
@@ -289,4 +293,18 @@ public class Parameters {
 
         return sw.toString();
     }
+
+	/**
+	 * @return the inFileMimeType
+	 */
+	public String getMimeType() {
+		return mimeType;
+	}
+
+	/**
+	 * @param fileLocation the fileLocation to set
+	 */
+	public void setFileLocation(String fileLocation) {
+		this.fileLocation = fileLocation;
+	}
 }
